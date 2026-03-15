@@ -130,11 +130,12 @@ async function ollamaJSON(system, prompt) {
         prompt,
         stream:  false,
         format:  'json',
+        keep_alive: -1,       // keep model loaded in RAM permanently
         options: {
           temperature: 0.1,
           top_p:       0.9,
           num_ctx:     512,   // small context = much faster inference
-          num_predict: 150,   // reduced: faster response, still enough for JSON
+          num_predict: 100,   // shorter = faster; prompts are structured so 100 is enough
           num_thread:  6,     // physical core count on Ryzen 5 3600 (not hyperthreads)
         }
       })
