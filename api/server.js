@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
-const AI_MODEL   = process.env.AI_MODEL   || 'llama3.2:3b';
+const AI_MODEL   = process.env.AI_MODEL   || 'llama3.2:1b';
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '32kb' }));
@@ -99,7 +99,7 @@ async function ollamaJSON(system, prompt) {
           top_p:       0.9,
           num_ctx:     512,   // small context = much faster inference
           num_predict: 150,   // reduced: faster response, still enough for JSON
-          num_thread:  32,    // use all CPU cores
+          num_thread:  6,     // physical core count on Ryzen 5 3600 (not hyperthreads)
         }
       })
     });
