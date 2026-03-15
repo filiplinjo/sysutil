@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free AI-powered developer tools. Generate cron expressions, regex patterns, explain Linux commands and decode error messages using plain English. No API keys, no data sent to third parties.">
+<meta name="keywords" content="ai cron expression generator, ai regex generator, explain linux command, ai error decoder, natural language to cron, natural language to regex, free ai developer tools">
+<title>AI Developer Tools: Generate Cron, Regex, Explain Commands & Errors | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="AI Developer Tools: Generate Cron, Regex, Explain Commands & Errors | SysUtil">
+<meta property="og:description" content="Free AI-powered developer tools. Generate cron expressions and regex from plain English, explain any Linux command, decode error messages. Private and on-premise.">
+<meta property="og:url" content="https://sysutil.dev/blog/ai-developer-tools-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AI Developer Tools: Generate Cron, Regex, Explain Commands & Errors | SysUtil">
+<meta name="twitter:description" content="Generate cron expressions, regex patterns, explain Linux commands and decode errors in plain English. Free, private, no API keys needed.">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  .tool-card{background:#1e2130;border:1px solid #2d3148;border-radius:12px;padding:20px 24px;margin:16px 0}
+  .tool-card-title{font-size:1rem;font-weight:700;color:#e2e8f0;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .tool-card-title span{font-size:1.3rem}
+  .tool-card p{margin:0;color:#64748b;font-size:0.88rem}
+  .example-box{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;margin:16px 0}
+  .example-label{font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px}
+  .example-input{color:#94a3b8;font-size:0.9rem;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1a1d2e}
+  .example-output{font-family:monospace;color:#a5b4fc;font-size:0.9rem}
+  .example-output .label{color:#64748b;font-family:'Segoe UI',sans-serif;font-size:0.78rem;display:block;margin-bottom:4px}
+  .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+  @media(max-width:560px){.tools-grid{grid-template-columns:1fr}}
+  .related-link{display:inline-flex;align-items:center;gap:6px;background:#1e2130;border:1px solid #2d3148;color:#a5b4fc;text-decoration:none;padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:600;transition:all 0.15s;margin:4px}
+  .related-link:hover{border-color:#6366f1;background:#1a1d2e}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I generate a cron expression from plain English?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the AI Cron Builder at sysutil.dev/ai. Type your schedule in plain English — for example 'every weekday at 9am' or 'first day of every month at midnight' — and the AI generates the correct 5-field cron expression with a breakdown of each field."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can AI generate regex patterns?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The AI Regex Builder at sysutil.dev/ai lets you describe what you want to match in plain English, such as 'email addresses' or 'IPv4 addresses but not private ranges', and returns a regex pattern with a token-by-token breakdown and example matches."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find out what a Linux command does?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Paste any Linux or shell command into the Command Explainer at sysutil.dev/ai. The AI returns a plain English summary and breaks down every token — flags, arguments, pipes, and operators — individually. It also highlights any dangerous operations like rm -rf."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my data sent to OpenAI or any third party?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. SysUtil's AI tools run entirely on-premise using Ollama and an open-source language model. Your input never leaves the server and is never sent to OpenAI, Anthropic, or any other third-party AI provider."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What AI model powers these tools?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The tools run on Mistral 7B via Ollama, a fully open-source large language model that runs locally on the server. No external API calls are made."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<script src="/nav.js"></script>
+
+<div class="container">
+  <header>
+    <p class="meta">Developer Tools · AI · March 2026</p>
+    <h1>AI Developer Tools: Generate Cron, Regex, Explain Commands &amp; Errors</h1>
+    <p class="intro">Four free AI-powered tools for developers — describe what you want in plain English and get the right answer instantly. Runs on-premise, nothing leaves the server.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Skip the guide — go straight to the tools</p>
+    <a href="/ai" class="cta-btn">Open AI Tools →</a>
+  </div>
+
+  <h2>Why AI Tools for Developers?</h2>
+
+  <p>Every developer has hit the same wall: you know what you <em>want</em> — run a job every weekday at 9am, match email addresses but not .gov domains, figure out what that <code>find</code> pipeline actually does — but translating that into the right syntax takes time. You search, you trial-and-error, you Stack Overflow.</p>
+
+  <p>AI bridges that gap. Instead of learning obscure syntax, you describe the intent and get the correct output immediately. These four tools cover the most common cases where developers waste time on syntax rather than solving the actual problem.</p>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-card-title"><span>⏰</span> Cron Builder</div>
+      <p>Describe a schedule → get the cron expression with a field breakdown</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-card-title"><span>🔍</span> Regex Builder</div>
+      <p>Describe what to match → get a pattern with token explanation</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-card-title"><span>🐧</span> Command Explainer</div>
+      <p>Paste any shell command → get a plain English breakdown</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-card-title"><span>🔥</span> Error Decoder</div>
+      <p>Paste an error or stack trace → get the cause and how to fix it</p>
+    </div>
+  </div>
+
+  <h2>Cron Expression Builder</h2>
+
+  <p>Cron syntax is powerful but unintuitive. The five-field format (<code>minute hour dom month dow</code>) is easy to get wrong, especially for complex schedules involving weekdays, multiple times, or ranges. The AI Cron Builder lets you skip the syntax entirely.</p>
+
+  <h3>How to use it</h3>
+  <p>Go to <a href="/ai">sysutil.dev/ai</a>, select <strong>Cron Builder</strong>, and type your schedule in plain English. Press Enter or click Generate.</p>
+
+  <div class="example-box">
+    <div class="example-label">Example</div>
+    <div class="example-input">Input: "every weekday at 9am"</div>
+    <div class="example-output">
+      <span class="label">Expression</span>
+      0 9 * * 1-5
+      <span class="label" style="margin-top:10px">Breakdown</span>
+      minute: 0 — on the hour<br>
+      hour: 9 — 9am<br>
+      dom: * — every day<br>
+      month: * — every month<br>
+      dow: 1-5 — Monday through Friday
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-label">More examples</div>
+    <div class="example-output">
+      "every 15 minutes"              → <code>*/15 * * * *</code><br>
+      "every Sunday at 2am"           → <code>0 2 * * 0</code><br>
+      "first day of every month"      → <code>0 0 1 * *</code><br>
+      "every hour between 8am–6pm"    → <code>0 8-18 * * *</code><br>
+      "twice a day at noon and midnight" → <code>0 0,12 * * *</code>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <p>💡 Once you have the expression, copy it directly into the <a href="/cron" style="color:#a5b4fc">Cron tool</a> to see a human-readable description and next run times.</p>
+  </div>
+
+  <h2>Regex Pattern Builder</h2>
+
+  <p>Regular expressions are one of the most useful tools in a developer's arsenal — and one of the hardest to write correctly from memory. The AI Regex Builder takes a plain English description and returns a pattern with a breakdown of every component.</p>
+
+  <h3>How to use it</h3>
+  <p>Select <strong>Regex Builder</strong>, describe what you want to match, and click Generate. The result includes the pattern, recommended flags, a token-by-token breakdown, and example strings that match.</p>
+
+  <div class="example-box">
+    <div class="example-label">Example</div>
+    <div class="example-input">Input: "IPv4 addresses"</div>
+    <div class="example-output">
+      <span class="label">Pattern</span>
+      \b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b<br>
+      <span class="label" style="margin-top:10px">Examples that match</span>
+      192.168.1.1 · 10.0.0.255 · 172.16.254.1
+    </div>
+  </div>
+
+  <h3>Good prompts for the regex builder</h3>
+  <p>The more specific you are, the better the pattern. Compare these:</p>
+
+  <div class="example-box">
+    <div class="example-output">
+      ❌ "email"  →  basic pattern, may miss edge cases<br>
+      ✅ "email addresses, allow plus addressing like user+tag@domain.com"<br><br>
+      ❌ "URL"  →  overly broad<br>
+      ✅ "https URLs only, with optional path and query string, no fragments"<br><br>
+      ❌ "phone number"  →  ambiguous<br>
+      ✅ "UK mobile numbers starting with 07, with or without spaces"
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <p>💡 Copy the generated pattern directly into the <a href="/regex" style="color:#a5b4fc">Regex Tester</a> to test it against your own strings immediately.</p>
+  </div>
+
+  <h2>Linux Command Explainer</h2>
+
+  <p>Shell pipelines can be intimidating. A command like <code>find /var/log -name "*.log" -mtime +30 -exec gzip {} \;</code> does something specific and important — but if you didn't write it, it takes real effort to decode. The Command Explainer breaks down any command token by token.</p>
+
+  <h3>How to use it</h3>
+  <p>Select <strong>Command Explainer</strong>, paste any shell command or pipeline, and click Explain. The AI returns a one-sentence summary and a per-token breakdown covering commands, flags, arguments, pipes, and redirects.</p>
+
+  <div class="example-box">
+    <div class="example-label">Example</div>
+    <div class="example-input">Input: ps aux --sort=-%cpu | head -10</div>
+    <div class="example-output">
+      <span class="label">Summary</span>
+      Show the 10 processes currently using the most CPU.<br>
+      <span class="label" style="margin-top:10px">Breakdown</span>
+      <code>ps</code> — list running processes<br>
+      <code>aux</code> — show all processes for all users in BSD format<br>
+      <code>--sort=-%cpu</code> — sort by CPU usage, descending<br>
+      <code>|</code> — pipe output to the next command<br>
+      <code>head -10</code> — show only the first 10 lines
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <p>⚠ The explainer flags dangerous commands. If you paste something like <code>rm -rf /</code> or <code>dd if=/dev/zero of=/dev/sda</code>, it will show a clear warning before you run it.</p>
+  </div>
+
+  <h2>Error Message Decoder</h2>
+
+  <p>Error messages and stack traces are often cryptic — especially for systems you didn't build, languages you're not fluent in, or infrastructure errors that don't tell you what actually went wrong. The Error Decoder takes any error and returns the likely cause plus concrete steps to fix it.</p>
+
+  <h3>How to use it</h3>
+  <p>Select <strong>Error Decoder</strong>, paste your error message or stack trace, and click Decode. You get the error type, what caused it, numbered fix steps, and a prevention tip.</p>
+
+  <div class="example-box">
+    <div class="example-label">Example</div>
+    <div class="example-input">Input: ECONNREFUSED 127.0.0.1:5432</div>
+    <div class="example-output">
+      <span class="label">Cause</span>
+      Your application tried to connect to PostgreSQL on port 5432, but nothing is listening there. Either PostgreSQL isn't running, or it's bound to a different address.<br>
+      <span class="label" style="margin-top:10px">Fix steps</span>
+      1. Check if PostgreSQL is running: systemctl status postgresql<br>
+      2. Start it if not: systemctl start postgresql<br>
+      3. Verify it's listening: ss -tlnp | grep 5432<br>
+      4. Check your app's DB_HOST config matches where Postgres is actually bound
+    </div>
+  </div>
+
+  <h3>What kinds of errors work well</h3>
+  <p>The decoder handles a wide range of errors including:</p>
+  <ul style="color:#94a3b8;margin:0 0 16px 20px;line-height:2">
+    <li>Node.js / Python / Go / Java stack traces</li>
+    <li>Linux system errors (ENOENT, EPERM, EACCES, etc.)</li>
+    <li>Database errors (PostgreSQL, MySQL, Redis)</li>
+    <li>Docker and Kubernetes errors (OOMKilled, CrashLoopBackOff, ImagePullBackOff)</li>
+    <li>SSL/TLS certificate errors</li>
+    <li>HTTP errors and nginx/Apache logs</li>
+    <li>Git errors</li>
+  </ul>
+
+  <h2>Privacy: Your Data Stays on the Server</h2>
+
+  <p>Most AI tools send your input to OpenAI, Anthropic, or another cloud API. That means your shell commands, error messages, internal server names, and stack traces leave your machine and get logged by a third party.</p>
+
+  <p>SysUtil's AI tools are different. The model runs on-premise using <strong>Ollama</strong> and <strong>Mistral 7B</strong> — a fully open-source language model that runs entirely on the server. No data is sent to any external API. Your commands, errors, and prompts never leave this server.</p>
+
+  <div class="tip-box">
+    <p>💡 This makes these tools safe to use with internal error messages, private server details, and proprietary code snippets.</p>
+  </div>
+
+  <h2>Tips for Better Results</h2>
+
+  <h3>Be specific</h3>
+  <p>Vague prompts get vague results. Instead of "match URLs", try "match https URLs with optional query strings but no hash fragments". Instead of "explain this error", paste the full stack trace rather than just the first line.</p>
+
+  <h3>Iterate</h3>
+  <p>If the first result isn't right, refine your description. Add constraints ("but not private IP ranges"), clarify the context ("in a Python f-string"), or specify the format ("for use in JavaScript with the global flag").</p>
+
+  <h3>Validate cron expressions</h3>
+  <p>AI-generated cron expressions are usually correct but always verify them in the <a href="/cron">Cron tool</a> before deploying to production. Edge cases like "last day of month" or "every weekday in February" can trip up the model.</p>
+
+  <h3>Test regex patterns</h3>
+  <p>Generated regex patterns should be tested against real inputs before use. Copy the pattern into the <a href="/regex">Regex Tester</a> and run it against both valid and invalid examples to confirm it behaves as expected.</p>
+
+  <div class="cta-box" style="margin-top:40px">
+    <p>Try all four AI tools — free, private, no login required</p>
+    <a href="/ai" class="cta-btn">Open AI Tools →</a>
+  </div>
+
+  <h2>Related Tools</h2>
+  <div>
+    <a href="/cron" class="related-link">⏰ Cron Expression Builder</a>
+    <a href="/regex" class="related-link">🔍 Regex Tester</a>
+    <a href="/linux-commands" class="related-link">🐧 Linux Command Reference</a>
+    <a href="/dns" class="related-link">🌐 DNS &amp; WHOIS Lookup</a>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a> · <a href="/blog">More guides</a></p>
+  </footer>
+</div>
+</body>
+</html>

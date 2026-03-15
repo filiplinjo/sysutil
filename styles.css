@@ -36,7 +36,7 @@ body {
   display: flex;
   align-items: center;
   height: 52px;
-  gap: 12px;
+  gap: 10px;
 }
 
 .nav-brand {
@@ -70,21 +70,107 @@ body {
   flex-shrink: 0;
 }
 
+.nav-sep-v {
+  width: 1px;
+  height: 18px;
+  background: #2d3148;
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
   gap: 2px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   flex: 1;
 }
 
-.nav-links::-webkit-scrollbar {
-  display: none;
+/* Dropdown groups */
+.nav-group {
+  position: relative;
 }
 
-.nav-links a {
+.nav-group-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.83rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.nav-group-btn:hover,
+.nav-group.open .nav-group-btn {
+  color: #cbd5e1;
+  background: #1a1d2e;
+}
+
+.nav-group-active .nav-group-btn {
+  color: #a5b4fc;
+}
+
+.nav-caret {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+
+.nav-group.open .nav-caret {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #1a1d2e;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 140px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 200;
+}
+
+.nav-group.open .nav-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  animation: fadeUp 0.12s ease both;
+}
+
+.nav-dropdown a {
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+
+.nav-dropdown a:hover {
+  color: #e2e8f0;
+  background: #2d3148;
+}
+
+.nav-dropdown a.active {
+  color: #a5b4fc;
+  background: rgba(99,102,241,0.1);
+}
+
+/* Direct nav links */
+.nav-links > a {
   color: #64748b;
   text-decoration: none;
   font-size: 0.83rem;
@@ -95,14 +181,29 @@ body {
   font-weight: 500;
 }
 
-.nav-links a:hover {
+.nav-links > a:hover {
   color: #cbd5e1;
   background: #1a1d2e;
 }
 
-.nav-links a.active {
+.nav-links > a.active {
   color: #a5b4fc;
   background: #1a1d2e;
+}
+
+/* AI link — slightly highlighted */
+.nav-ai-link {
+  color: #818cf8 !important;
+  font-weight: 600 !important;
+}
+
+.nav-ai-link:hover {
+  color: #a5b4fc !important;
+  background: rgba(99,102,241,0.1) !important;
+}
+
+.nav-ai-link.active {
+  background: rgba(99,102,241,0.12) !important;
 }
 
 /* ── Layout ─────────────────────────────────────────────────── */
