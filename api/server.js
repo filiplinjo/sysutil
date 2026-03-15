@@ -6,10 +6,10 @@ const rateLimit  = require('express-rate-limit');
 const whoiser    = require('whoiser');
 
 const app  = express();
-app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // Trust nginx reverse proxy — required for express-rate-limit to work correctly
+app.set('trust proxy', 1);
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
 const AI_MODEL   = process.env.AI_MODEL   || 'llama3.1:70b';
@@ -124,10 +124,24 @@ app.post('/api/ai/cron', async (req, res) => {
     const result = await ollamaJSON(
       `You are a cron expression expert. Given a schedule description, respond ONLY with a JSON object using this exact structure:
 {"expression":"<5-field cron>","readable":"<plain English of schedule>","fields":{"minute":"<value — explain it>","hour":"<value — explain it>","dom":"<value — explain it>","month":"<value — explain it>","dow":"<value — explain it>"}}
+The expression must have exactly 5 space-separated fields: minute hour day-of-month month day-of-week.
+Valid ranges: minute 0-59, hour 0-23, day-of-month 1-31, month 1-12, day-of-week 0-7.
+If the input is not a valid schedule description, set expression to "invalid" and readable to a clear explanation of what is wrong.
 Do not include any text outside the JSON.`,
       desc
     );
     if (!result?.expression) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
+
+    // Validate the expression has exactly 5 fields with sensible values
+    if (result.expression !== 'invalid') {
+      const parts = result.expression.trim().split(/\s+/);
+      if (parts.length !== 5) {
+        return res.status(422).json({ error: `Invalid cron expression generated (${parts.length} fields instead of 5). Try rephrasing your description.` });
+      }
+    }
+    if (result.expression === 'invalid') {
+      return res.status(422).json({ error: result.readable || 'Invalid schedule description. Please use plain English like "every weekday at 9am".' });
+    }
     setCache(cacheKey, result);
     res.json(result);
   } catch (e) {
