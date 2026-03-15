@@ -81,7 +81,7 @@ function extractJSON(text) {
 
 async function ollamaJSON(system, prompt) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 60000);
+  const timer = setTimeout(() => controller.abort(), 120000);
 
   try {
     const res = await fetch(`${OLLAMA_URL}/api/generate`, {
@@ -98,7 +98,7 @@ async function ollamaJSON(system, prompt) {
           temperature: 0.1,
           top_p:       0.9,
           num_ctx:     512,   // small context = much faster inference
-          num_predict: 300,   // cap output tokens
+          num_predict: 150,   // reduced: faster response, still enough for JSON
           num_thread:  32,    // use all CPU cores
         }
       })
