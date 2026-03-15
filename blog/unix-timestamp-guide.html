@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to Unix timestamps and epoch time. Learn what a Unix timestamp is, how to convert it, use it in code, and avoid common pitfalls with timezones and overflow.">
+<meta name="keywords" content="unix timestamp, epoch time, unix time, timestamp converter, epoch converter, unix timestamp guide, what is unix timestamp, timestamp to date">
+<title>Unix Timestamp Guide: Epoch Time Explained | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .ts-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .ts-table th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  .ts-table td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  .ts-table td:first-child{font-family:monospace;color:#6366f1;font-weight:700;white-space:nowrap}
+  .ts-table tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog" class="active">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header>
+    <div class="meta">SysUtil Blog &bull; Developer Fundamentals</div>
+    <h1>Unix Timestamp: Complete Guide to Epoch Time</h1>
+    <p class="intro">Learn what Unix timestamps are, why every developer needs to understand them, and how to work with epoch time in any programming language.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Convert any Unix timestamp to a human-readable date instantly — or convert dates back to epoch time.</p>
+    <a href="/timestamp" class="cta-btn">Open Timestamp Converter →</a>
+  </div>
+
+  <h2>What is a Unix Timestamp?</h2>
+  <p>A Unix timestamp (also called epoch time or POSIX time) is the number of seconds that have elapsed since <strong>January 1, 1970 at 00:00:00 UTC</strong>. This point in time is known as the Unix Epoch.</p>
+  <p>For example, the timestamp <code>1700000000</code> corresponds to November 14, 2023 at 22:13:20 UTC. It is just a large integer — simple to store, compare, sort and transmit.</p>
+  <p>The Unix timestamp is used in virtually every computer system, programming language, database, and operating system on the planet. Knowing how to work with it is a fundamental developer skill.</p>
+
+  <h2>Why January 1, 1970?</h2>
+  <p>The choice of 1970 was somewhat arbitrary — it was a round number near the time when Unix was being developed at Bell Labs in the late 1960s and early 1970s. The engineers needed a fixed reference point and chose the start of 1970 as a convenient date. It has remained the universal standard ever since.</p>
+
+  <h2>Key Facts About Unix Timestamps</h2>
+  <table class="ts-table">
+    <thead><tr><th>Fact</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Epoch origin</td><td>1970-01-01 00:00:00 UTC</td></tr>
+      <tr><td>Unit</td><td>Seconds (Unix) or milliseconds (JavaScript)</td></tr>
+      <tr><td>Current value (approx)</td><td>~1,750,000,000</td></tr>
+      <tr><td>Max 32-bit signed int</td><td>2,147,483,647 = 2038-01-19</td></tr>
+      <tr><td>Max 64-bit signed int</td><td>~292 billion years from now</td></tr>
+      <tr><td>Negative values</td><td>Valid — represent dates before 1970</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Seconds vs Milliseconds — The Most Common Mistake</h2>
+  <p>Different systems use different resolutions:</p>
+  <ul style="color:#94a3b8;padding-left:20px;margin-bottom:16px;line-height:2">
+    <li><strong style="color:#e2e8f0">Seconds</strong> — Unix/Linux, most server-side languages, databases</li>
+    <li><strong style="color:#e2e8f0">Milliseconds</strong> — JavaScript's <code>Date.now()</code>, Java's <code>System.currentTimeMillis()</code></li>
+    <li><strong style="color:#e2e8f0">Microseconds</strong> — Python's <code>time.time()</code> returns a float with microsecond precision</li>
+    <li><strong style="color:#e2e8f0">Nanoseconds</strong> — Go's <code>time.Now().UnixNano()</code></li>
+  </ul>
+
+  <div class="warn-box">
+    <p>⚠️ <strong>Common bug:</strong> Passing a millisecond timestamp where seconds are expected (or vice versa) produces a date wildly off by 1000x. If you see a date in the year 47000, you are likely passing milliseconds where seconds are expected. If you see 1970-01-01, you are probably passing seconds where milliseconds are expected.</p>
+  </div>
+
+  <h2>Working with Unix Timestamps in Code</h2>
+
+  <h3>JavaScript</h3>
+  <pre><code>// Current timestamp in seconds
+Math.floor(Date.now() / 1000)
+
+// Current timestamp in milliseconds
+Date.now()
+
+// Convert timestamp (seconds) to Date
+new Date(1700000000 * 1000)
+
+// Convert Date to timestamp (seconds)
+Math.floor(new Date('2023-11-14').getTime() / 1000)
+
+// Format a timestamp
+new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'full',
+  timeStyle: 'long',
+  timeZone: 'UTC'
+}).format(new Date(1700000000 * 1000))</code></pre>
+
+  <h3>Python</h3>
+  <pre><code>import time
+from datetime import datetime, timezone
+
+# Current timestamp (float, seconds with microseconds)
+time.time()
+
+# Current timestamp as integer
+int(time.time())
+
+# Convert timestamp to datetime
+datetime.fromtimestamp(1700000000, tz=timezone.utc)
+
+# Convert datetime to timestamp
+datetime(2023, 11, 14, tzinfo=timezone.utc).timestamp()
+
+# Format
+dt = datetime.fromtimestamp(1700000000, tz=timezone.utc)
+dt.strftime('%Y-%m-%d %H:%M:%S %Z')</code></pre>
+
+  <h3>Go</h3>
+  <pre><code>import "time"
+
+// Current timestamp in seconds
+time.Now().Unix()
+
+// Current timestamp in milliseconds
+time.Now().UnixMilli()
+
+// Convert timestamp to time.Time
+t := time.Unix(1700000000, 0).UTC()
+
+// Format
+t.Format(time.RFC3339)  // "2023-11-14T22:13:20Z"
+t.Format("2006-01-02")  // "2023-11-14"</code></pre>
+
+  <h3>Bash / Linux</h3>
+  <pre><code># Current timestamp
+date +%s
+
+# Convert timestamp to readable date
+date -d @1700000000
+
+# Convert readable date to timestamp
+date -d "2023-11-14 22:13:20 UTC" +%s
+
+# macOS (uses BSD date)
+date -r 1700000000
+date -j -f "%Y-%m-%d" "2023-11-14" +%s</code></pre>
+
+  <h3>SQL</h3>
+  <pre><code>-- MySQL / MariaDB
+SELECT FROM_UNIXTIME(1700000000);
+SELECT UNIX_TIMESTAMP('2023-11-14 22:13:20');
+SELECT UNIX_TIMESTAMP(NOW());
+
+-- PostgreSQL
+SELECT TO_TIMESTAMP(1700000000);
+SELECT EXTRACT(EPOCH FROM NOW())::BIGINT;
+SELECT EXTRACT(EPOCH FROM TIMESTAMP '2023-11-14 22:13:20');
+
+-- SQLite
+SELECT datetime(1700000000, 'unixepoch');
+SELECT strftime('%s', 'now');</code></pre>
+
+  <h2>Timezones and UTC</h2>
+  <p>Unix timestamps are always in UTC. They have no timezone — a timestamp is the same number everywhere in the world. The timezone only matters when you convert a timestamp to a human-readable date for display.</p>
+
+  <div class="tip-box">
+    <p>💡 <strong>Best practice:</strong> Store and transmit timestamps as UTC Unix timestamps. Only convert to a local timezone at the very last moment — in the UI layer, when displaying to the user. This avoids an entire class of timezone-related bugs.</p>
+  </div>
+
+  <pre><code># Example: correct way to handle timezones
+# 1. Store the event time as UTC timestamp
+event_ts = 1700000000  # stored in DB as UTC
+
+# 2. Convert to user's timezone only for display
+from datetime import datetime
+import pytz
+
+user_tz = pytz.timezone('America/New_York')
+dt = datetime.fromtimestamp(event_ts, tz=pytz.utc)
+local = dt.astimezone(user_tz)
+print(local.strftime('%Y-%m-%d %I:%M %p %Z'))
+# Output: 2023-11-14 05:13 PM EST</code></pre>
+
+  <h2>The Year 2038 Problem (Y2K38)</h2>
+  <p>On <strong>January 19, 2038 at 03:14:07 UTC</strong>, the Unix timestamp will overflow a 32-bit signed integer (max value: 2,147,483,647). Systems that store timestamps as 32-bit integers will roll over to a negative number, causing dates to be interpreted as 1901.</p>
+  <p>Most modern systems have already migrated to 64-bit timestamps, which won't overflow for approximately 292 billion years. However, legacy embedded systems, older databases, and some file systems may still be affected. Always use 64-bit integers for timestamps in new code.</p>
+
+  <h2>Notable Timestamps</h2>
+  <table class="ts-table">
+    <thead><tr><th>Timestamp</th><th>Date</th><th>Significance</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>1970-01-01 00:00:00 UTC</td><td>Unix Epoch</td></tr>
+      <tr><td>1000000000</td><td>2001-09-08 21:46:40 UTC</td><td>1 billion seconds milestone</td></tr>
+      <tr><td>1111111111</td><td>2005-03-18 01:58:31 UTC</td><td>Repunit milestone</td></tr>
+      <tr><td>1234567890</td><td>2009-02-13 23:31:30 UTC</td><td>Celebrated by developers worldwide</td></tr>
+      <tr><td>2000000000</td><td>2033-05-18 03:33:20 UTC</td><td>2 billion milestone (upcoming)</td></tr>
+      <tr><td>2147483647</td><td>2038-01-19 03:14:07 UTC</td><td>Y2K38 — max 32-bit signed int</td></tr>
+    </tbody>
+  </table>
+
+  <h2>ISO 8601 — The Other Universal Format</h2>
+  <p>While Unix timestamps are great for machines, humans prefer readable dates. The international standard for date strings is ISO 8601, which looks like <code>2023-11-14T22:13:20Z</code>. The <code>Z</code> at the end means UTC (Zulu time).</p>
+  <pre><code># ISO 8601 formats
+2023-11-14                    # date only
+2023-11-14T22:13:20Z          # datetime UTC
+2023-11-14T22:13:20+05:30     # datetime with offset
+2023-11-14T22:13:20.123Z      # with milliseconds</code></pre>
+  <p>ISO 8601 strings are sortable alphabetically, unambiguous across locales, and universally supported. Use them in logs, APIs, and config files.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>What is epoch time?</h3>
+  <p>Epoch time is another name for Unix timestamp — the number of seconds since January 1, 1970. The "epoch" is the reference point (the Unix Epoch).</p>
+
+  <h3>Is Unix timestamp the same everywhere?</h3>
+  <p>Yes. A Unix timestamp represents the same moment in time everywhere in the world. It is always UTC-based. The local time equivalent will vary by timezone, but the timestamp number is universal.</p>
+
+  <h3>How do I get the current timestamp?</h3>
+  <p>In most languages: JavaScript: <code>Math.floor(Date.now()/1000)</code>, Python: <code>int(time.time())</code>, Go: <code>time.Now().Unix()</code>, Bash: <code>date +%s</code>, PHP: <code>time()</code>.</p>
+
+  <h3>Why does JavaScript use milliseconds?</h3>
+  <p>JavaScript's <code>Date</code> object uses milliseconds for higher precision in interactive applications. This is a design decision from the early days of the language. Always divide by 1000 when converting to Unix seconds.</p>
+
+  <div class="cta-box">
+    <p>Need to convert a timestamp right now? Our tool supports all timezones and shows the current time live.</p>
+    <a href="/timestamp" class="cta-btn">Open Timestamp Converter →</a>
+  </div>
+
+  <footer>
+    <p>Free developer tools by <a href="/">SysUtil.dev</a> &mdash; chmod, cron, regex, base64, json, password, diff, timestamp, uuid and more.</p>
+  </footer>
+</div>
+</body>
+</html>

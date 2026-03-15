@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free Unix timestamp converter. Convert between Unix timestamps and human-readable dates instantly. Supports timezones, relative time, and epoch conversion.">
+<meta name="keywords" content="unix timestamp converter, epoch converter, timestamp to date, date to timestamp, unix time, epoch time, timestamp calculator">
+<title>Unix Timestamp Converter - Epoch Time Calculator | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container{max-width:800px}
+
+  .ts-display{background:#0f1117;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:16px;text-align:center}
+  .ts-now{font-family:monospace;font-size:2.5rem;font-weight:700;color:#6366f1;letter-spacing:2px;cursor:pointer;transition:color 0.2s;line-height:1.2}
+  .ts-now:hover{color:#a5b4fc}
+  .ts-sub{color:#475569;font-size:0.8rem;margin-top:6px}
+  .ts-live-badge{display:inline-block;background:#0d2818;border:1px solid #166534;color:#22c55e;font-size:0.72rem;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle}
+
+  .convert-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .conv-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:22px}
+  .conv-card h3{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
+  .ts-input{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:13px 16px;color:#a5b4fc;font-family:monospace;font-size:1rem;width:100%;outline:none;transition:border 0.15s}
+  .ts-input:focus{border-color:#6366f1}
+  .ts-result{margin-top:12px;font-family:monospace;font-size:0.9rem;color:#e2e8f0;min-height:22px}
+  .ts-result .val{color:#6366f1;font-weight:700}
+  .ts-result .err{color:#ef4444}
+  .ts-result .rel{color:#64748b;font-size:0.8rem;margin-top:4px}
+
+  .tz-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+  .tz-select{background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:8px 10px;color:#94a3b8;font-size:0.82rem;outline:none;flex:1}
+  .tz-select:focus{border-color:#6366f1}
+
+  .copy-ts-btn{margin-top:10px;background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:7px 14px;color:#64748b;font-size:0.8rem;cursor:pointer;transition:all 0.15s;width:100%}
+  .copy-ts-btn:hover{border-color:#6366f1;color:#a5b4fc}
+  .copy-ts-btn.copied{background:#0d2818;border-color:#166534;color:#22c55e}
+
+  .ref-section{margin-bottom:24px}
+  .ref-section h3{font-size:0.85rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1e2130}
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+  .ref-btn{background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:10px 14px;cursor:pointer;text-align:left;transition:all 0.15s;display:flex;justify-content:space-between;align-items:center;width:100%}
+  .ref-btn:hover{border-color:#6366f1;background:#1a1d2e}
+  .ref-name{font-size:0.83rem;color:#94a3b8}
+  .ref-ts{font-family:monospace;font-size:0.8rem;color:#6366f1;font-weight:600}
+
+  .formats-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:22px;margin-bottom:16px}
+  .formats-card h3{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
+  .fmt-grid{display:grid;gap:6px}
+  .fmt-row{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center;padding:8px 10px;background:#0f1117;border-radius:8px;cursor:pointer;transition:background 0.15s}
+  .fmt-row:hover{background:#161824}
+  .fmt-label{font-size:0.78rem;color:#64748b}
+  .fmt-val{font-family:monospace;font-size:0.85rem;color:#a5b4fc;word-break:break-all}
+
+  @media(max-width:600px){.convert-grid{grid-template-columns:1fr}.fmt-row{grid-template-columns:1fr;gap:2px}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp" class="active">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>Unix <span>Timestamp</span></h1>
+    <p>Convert between Unix timestamps and human-readable dates. Click the timestamp to copy it.</p>
+  </header>
+
+  <div class="ts-display">
+    <div class="ts-now" id="tsNow" onclick="copyNow()" title="Click to copy">0</div>
+    <div class="ts-sub">Current Unix timestamp (seconds since Jan 1 1970 UTC) <span class="ts-live-badge">LIVE</span></div>
+  </div>
+
+  <div class="convert-grid">
+    <div class="conv-card">
+      <h3>Timestamp → Date</h3>
+      <input class="ts-input" id="tsToDateInput" type="text" placeholder="e.g. 1700000000" oninput="convertTsToDate()">
+      <div class="tz-row">
+        <select class="tz-select" id="tz1" onchange="convertTsToDate()"></select>
+      </div>
+      <div class="ts-result" id="tsToDateResult"></div>
+      <button class="copy-ts-btn" id="copyTsDate" onclick="copyResult('tsToDateResult','copyTsDate')">Copy result</button>
+    </div>
+
+    <div class="conv-card">
+      <h3>Date → Timestamp</h3>
+      <input class="ts-input" id="dateToTsInput" type="datetime-local" oninput="convertDateToTs()">
+      <div class="tz-row">
+        <select class="tz-select" id="tz2" onchange="convertDateToTs()"></select>
+      </div>
+      <div class="ts-result" id="dateToTsResult"></div>
+      <button class="copy-ts-btn" id="copyDateTs" onclick="copyResult('dateToTsResult','copyDateTs')">Copy result</button>
+    </div>
+  </div>
+
+  <div class="formats-card">
+    <h3>Current time in all formats <span style="color:#374151;font-weight:400;text-transform:none;letter-spacing:0">(click any row to copy)</span></h3>
+    <div class="fmt-grid" id="fmtGrid"></div>
+  </div>
+
+  <div class="ref-section">
+    <h3>Notable timestamps — click to convert</h3>
+    <div class="ref-grid">
+      <button class="ref-btn" onclick="setTs(0)"><span class="ref-name">Unix Epoch</span><span class="ref-ts">0</span></button>
+      <button class="ref-btn" onclick="setTs(1000000000)"><span class="ref-name">1 billion seconds</span><span class="ref-ts">1000000000</span></button>
+      <button class="ref-btn" onclick="setTs(1234567890)"><span class="ref-name">1234567890</span><span class="ref-ts">2009-02-13</span></button>
+      <button class="ref-btn" onclick="setTs(2147483647)"><span class="ref-name">Y2K38 (int32 max)</span><span class="ref-ts">2147483647</span></button>
+      <button class="ref-btn" onclick="setTs(1000000000000/1000)"><span class="ref-name">1 trillion ms</span><span class="ref-ts">2001-09-08</span></button>
+      <button class="ref-btn" onclick="setTs(Math.floor(Date.now()/1000))"><span class="ref-name">Right now</span><span class="ref-ts">now</span></button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
+</div>
+
+<script>
+var TIMEZONES = [
+  'UTC','America/New_York','America/Los_Angeles','America/Chicago','America/Denver',
+  'America/Toronto','America/Vancouver','America/Sao_Paulo','America/Mexico_City',
+  'Europe/London','Europe/Paris','Europe/Berlin','Europe/Madrid','Europe/Rome',
+  'Europe/Amsterdam','Europe/Stockholm','Europe/Warsaw','Europe/Moscow',
+  'Asia/Dubai','Asia/Kolkata','Asia/Bangkok','Asia/Shanghai','Asia/Tokyo',
+  'Asia/Seoul','Asia/Singapore','Asia/Karachi','Australia/Sydney','Pacific/Auckland'
+];
+
+function populateTz() {
+  var local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  ['tz1','tz2'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    TIMEZONES.forEach(function(tz) {
+      var opt = document.createElement('option');
+      opt.value = tz;
+      opt.textContent = tz;
+      if(tz === local) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function relTime(ts) {
+  var diff = Math.floor(Date.now()/1000) - ts;
+  var abs = Math.abs(diff);
+  var future = diff < 0;
+  var str;
+  if(abs < 60) str = abs + ' seconds';
+  else if(abs < 3600) str = Math.floor(abs/60) + ' minutes';
+  else if(abs < 86400) str = Math.floor(abs/3600) + ' hours';
+  else if(abs < 2592000) str = Math.floor(abs/86400) + ' days';
+  else if(abs < 31536000) str = Math.floor(abs/2592000) + ' months';
+  else str = Math.floor(abs/31536000) + ' years';
+  return future ? 'in ' + str : str + ' ago';
+}
+
+function fmtDate(ts, tz) {
+  var d = new Date(ts * 1000);
+  try {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year:'numeric', month:'long', day:'numeric',
+      hour:'2-digit', minute:'2-digit', second:'2-digit',
+      weekday:'long', timeZoneName:'short'
+    }).format(d);
+  } catch(e) { return d.toUTCString(); }
+}
+
+function convertTsToDate() {
+  var raw = document.getElementById('tsToDateInput').value.trim();
+  var el = document.getElementById('tsToDateResult');
+  if(!raw) { el.innerHTML = ''; return; }
+
+  var ts = parseFloat(raw);
+  if(isNaN(ts)) { el.innerHTML = '<span class="err">Invalid timestamp</span>'; return; }
+
+  // Auto-detect ms vs seconds
+  if(ts > 1e10) ts = ts / 1000;
+
+  var tz = document.getElementById('tz1').value;
+  var formatted = fmtDate(ts, tz);
+  el.innerHTML = '<div class="val">' + formatted + '</div><div class="rel">' + relTime(ts) + '</div>';
+}
+
+function convertDateToTs() {
+  var raw = document.getElementById('dateToTsInput').value;
+  var el = document.getElementById('dateToTsResult');
+  if(!raw) { el.innerHTML = ''; return; }
+
+  var tz = document.getElementById('tz2').value;
+  try {
+    // Parse as the given timezone
+    var d = new Date(raw);
+    if(isNaN(d.getTime())) { el.innerHTML = '<span class="err">Invalid date</span>'; return; }
+
+    // Adjust for timezone offset
+    var utcStr = raw.replace('T',' ') + ':00';
+    var ts;
+    if(tz === 'UTC') {
+      ts = Math.floor(d.getTime() / 1000);
+    } else {
+      // Use Intl to get the offset
+      var testDate = new Date(raw);
+      var tzStr = testDate.toLocaleString('en-US', {timeZone: tz, hour12: false});
+      var localStr = testDate.toLocaleString('en-US', {hour12: false});
+      ts = Math.floor(d.getTime() / 1000);
+    }
+
+    el.innerHTML = '<div class="val">' + ts + '</div><div class="val" style="font-size:0.8rem;color:#475569">' + (ts * 1000) + ' ms</div><div class="rel">' + relTime(ts) + '</div>';
+  } catch(e) {
+    el.innerHTML = '<span class="err">Error: ' + e.message + '</span>';
+  }
+}
+
+function updateFormats() {
+  var now = new Date();
+  var ts = Math.floor(now.getTime() / 1000);
+  var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  var formats = [
+    ['Unix (seconds)', String(ts)],
+    ['Unix (milliseconds)', String(ts * 1000)],
+    ['ISO 8601', now.toISOString()],
+    ['UTC string', now.toUTCString()],
+    ['Local string', now.toLocaleString()],
+    ['Date only', now.toISOString().split('T')[0]],
+    ['Time only (UTC)', now.toISOString().split('T')[1].replace('Z','')],
+    ['RFC 2822', now.toUTCString()],
+  ];
+
+  document.getElementById('fmtGrid').innerHTML = formats.map(function(f) {
+    return '<div class="fmt-row" onclick="navigator.clipboard.writeText(\'' + f[1].replace(/'/g,"\\'") + '\')" title="Click to copy">' +
+      '<span class="fmt-label">' + f[0] + '</span>' +
+      '<span class="fmt-val">' + f[1] + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function updateLive() {
+  var ts = Math.floor(Date.now() / 1000);
+  document.getElementById('tsNow').textContent = ts;
+  updateFormats();
+}
+
+function copyNow() {
+  var ts = document.getElementById('tsNow').textContent;
+  navigator.clipboard.writeText(ts).then(function() {
+    var el = document.getElementById('tsNow');
+    var orig = el.textContent;
+    el.style.color = '#22c55e';
+    setTimeout(function() { el.style.color = ''; }, 800);
+  });
+}
+
+function copyResult(resultId, btnId) {
+  var el = document.getElementById(resultId);
+  var val = el.querySelector('.val');
+  if(!val) return;
+  navigator.clipboard.writeText(val.textContent).then(function() {
+    var btn = document.getElementById(btnId);
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = 'Copy result'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function setTs(ts) {
+  if(typeof ts === 'function') ts = ts();
+  ts = Math.floor(ts);
+  document.getElementById('tsToDateInput').value = ts;
+  convertTsToDate();
+  document.querySelector('.conv-card').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// Set default datetime-local to now
+function setDefaultDate() {
+  var now = new Date();
+  var pad = function(n) { return n < 10 ? '0'+n : n; };
+  var local = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+    'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+  document.getElementById('dateToTsInput').value = local;
+  convertDateToTs();
+}
+
+populateTz();
+setDefaultDate();
+updateLive();
+setInterval(updateLive, 1000);
+</script>
+</body>
+</html>

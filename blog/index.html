@@ -3,23 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Free Linux and developer guides. Learn chmod, cron expressions, regex, and more with practical examples and free online tools.">
-<meta name="keywords" content="linux guides, chmod guide, cron guide, regex guide, developer tools, linux tutorials">
+<meta name="description" content="Free Linux and developer guides. Learn chmod, cron expressions, regex, Unix timestamps, URL encoding, and more with practical examples and free online tools.">
+<meta name="keywords" content="linux guides, chmod guide, cron guide, regex guide, unix timestamp guide, url encoding guide, developer tools, linux tutorials">
 <title>Guides & Tutorials | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
-  .container{max-width:820px;margin:0 auto}
-  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
-  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
-  .nav-divider{width:1px;background:#2d3148;margin:0 4px}
-
-  header{text-align:center;padding:40px 20px 32px}
-  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
-  header h1 span{color:#6366f1}
-  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
-
   .guides-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px}
 
   .guide-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;text-decoration:none;transition:all 0.2s;display:flex;flex-direction:column;gap:10px}
@@ -32,35 +20,44 @@
   .read-more{color:#6366f1;font-size:0.85rem;font-weight:600;margin-top:4px}
 
   .tools-section{margin-bottom:40px}
-  .tools-section h2{font-size:1rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e2130}
-  .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .tools-section h2{font-size:0.85rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e2130}
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .tool-link{background:#1e2130;border:1px solid #2d3148;border-radius:10px;padding:14px 16px;text-decoration:none;color:#94a3b8;font-size:0.9rem;transition:all 0.15s;text-align:center}
   .tool-link:hover{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
   .tool-link span{display:block;font-size:1.3rem;margin-bottom:4px}
-
-  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130}
-  footer a{color:#6366f1;text-decoration:none}
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog" class="active">guides</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
+  <header class="page-header">
     <h1>Guides <span>&amp; Tutorials</span></h1>
     <p>Practical guides for Linux, sysadmin and developer topics — each one paired with a free interactive tool.</p>
   </header>
-
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/file-size">linux</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-    <div class="nav-divider"></div>
-    <a href="/blog" class="active">guides</a>
-  </nav>
 
   <div class="guides-grid">
     <a href="/blog/chmod-calculator-guide" class="guide-card">
@@ -98,6 +95,30 @@
       </div>
       <div class="read-more">Read guide →</div>
     </a>
+
+    <a href="/blog/unix-timestamp-guide" class="guide-card">
+      <div class="guide-icon">🕐</div>
+      <h2>Unix Timestamp Guide</h2>
+      <p>Learn what epoch time is, how to convert timestamps in any language, understand the Y2K38 problem, and avoid common timezone pitfalls.</p>
+      <div class="guide-meta">
+        <span class="tag">Linux</span>
+        <span class="tag">Timestamps</span>
+        <span class="tag">UTC</span>
+      </div>
+      <div class="read-more">Read guide →</div>
+    </a>
+
+    <a href="/blog/url-encoding-guide" class="guide-card">
+      <div class="guide-icon">🔗</div>
+      <h2>URL Encoding Guide</h2>
+      <p>Understand percent encoding, when to use encodeURI vs encodeURIComponent, form encoding with + for spaces, and how to encode URLs in any language.</p>
+      <div class="guide-meta">
+        <span class="tag">Web</span>
+        <span class="tag">URLs</span>
+        <span class="tag">Encoding</span>
+      </div>
+      <div class="read-more">Read guide →</div>
+    </a>
   </div>
 
   <div class="tools-section">
@@ -111,6 +132,9 @@
       <a href="/json" class="tool-link"><span>📋</span>json</a>
       <a href="/password" class="tool-link"><span>🔑</span>password</a>
       <a href="/diff" class="tool-link"><span>📝</span>diff</a>
+      <a href="/timestamp" class="tool-link"><span>🕐</span>timestamp</a>
+      <a href="/url-encode" class="tool-link"><span>🔗</span>url encode</a>
+      <a href="/uuid" class="tool-link"><span>🆔</span>uuid</a>
     </div>
   </div>
 

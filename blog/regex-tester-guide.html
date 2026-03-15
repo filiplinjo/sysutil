@@ -6,13 +6,9 @@
 <meta name="description" content="Complete guide to regular expressions. Learn regex syntax, common patterns, flags and how to test regex online. Includes email, URL, IP address and more patterns.">
 <meta name="keywords" content="regex tester, regular expression tester, regex syntax, regex patterns, regex online, test regex, regex email, regex url, regex cheatsheet">
 <title>Regex Tester: Complete Guide to Regular Expressions | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.7;padding:20px}
-  .container{max-width:780px;margin:0 auto}
-  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
-  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  .container{max-width:780px}
   header{text-align:center;padding:40px 0 32px}
   header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
   .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
@@ -45,19 +41,32 @@
 </style>
 </head>
 <body>
-<div class="container">
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/linux">linux</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-    <a href="/blog/regex-tester-guide" class="active">guide</a>
-  </nav>
 
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog" class="active">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
   <header>
     <div class="meta">SysUtil Blog &bull; Regular Expressions Guide</div>
     <h1>Regex Tester: Complete Guide to Regular Expressions</h1>
@@ -154,7 +163,7 @@
 (?:https?|ftp)://
 
 # Named capture group
-(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})</code></pre>
+(?P&lt;year&gt;\d{4})-(?P&lt;month&gt;\d{2})-(?P&lt;day&gt;\d{2})</code></pre>
 
   <h2>Flags / Modifiers</h2>
   <table class="regex-table">

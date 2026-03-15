@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free URL encoder and decoder. Encode and decode URLs, query strings and individual components. Supports full URL parsing, percent encoding, and query string builder.">
+<meta name="keywords" content="url encoder, url decoder, percent encoding, url encode online, url decode online, query string encoder, urlencode, urldecode">
+<title>URL Encoder / Decoder - Free Online Tool | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container{max-width:900px}
+
+  .tabs{display:flex;gap:4px;background:#1e2130;border:1px solid #2d3148;border-radius:10px;padding:4px;margin-bottom:16px;width:fit-content}
+  .tab{padding:7px 18px;border-radius:7px;cursor:pointer;font-size:0.85rem;color:#64748b;font-weight:600;transition:all 0.15s;border:none;background:none}
+  .tab.active{background:#6366f1;color:#fff}
+
+  .encode-panel{display:none}
+  .encode-panel.active{display:block}
+
+  .io-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;align-items:start;margin-bottom:16px}
+  .io-box{display:flex;flex-direction:column;gap:6px}
+  .io-label{font-size:0.78rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+  textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.85rem;width:100%;height:160px;resize:vertical;outline:none;transition:border 0.15s;line-height:1.6}
+  textarea:focus{border-color:#6366f1}
+  .arrow-col{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding-top:24px}
+  .arrow-btn{background:#1e2130;border:1px solid #2d3148;color:#6366f1;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1.2rem;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+  .arrow-btn:hover{border-color:#6366f1;background:#1a1d2e}
+
+  .opts-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+  .opt-label{display:flex;align-items:center;gap:6px;font-size:0.83rem;color:#94a3b8;cursor:pointer}
+  .opt-label input{accent-color:#6366f1}
+
+  .action-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
+  .btn-primary{background:#6366f1;color:#fff}
+  .btn-primary:hover{background:#4f46e5}
+  .btn-secondary{background:#1e2130;border:1px solid #2d3148;color:#94a3b8}
+  .btn-secondary:hover{border-color:#6366f1;color:#a5b4fc}
+  .btn.copied{background:#22c55e;color:#fff;border-color:#22c55e}
+
+  /* URL Parser */
+  .url-input-wrap{margin-bottom:16px}
+  .url-parse-input{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:13px 16px;color:#a5b4fc;font-family:monospace;font-size:0.9rem;width:100%;outline:none;transition:border 0.15s}
+  .url-parse-input:focus{border-color:#6366f1}
+  .parse-parts{display:grid;gap:6px;margin-top:12px}
+  .parse-row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:start;background:#0f1117;border-radius:8px;padding:8px 12px}
+  .parse-key{font-size:0.78rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;padding-top:2px}
+  .parse-val{font-family:monospace;font-size:0.85rem;color:#a5b4fc;word-break:break-all}
+  .parse-val.empty{color:#374151;font-style:italic}
+
+  /* Query builder */
+  .qb-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+  .qb-row{display:grid;grid-template-columns:1fr 1fr 36px;gap:6px;align-items:center}
+  .qb-input{background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-family:monospace;font-size:0.83rem;width:100%;outline:none;transition:border 0.15s}
+  .qb-input:focus{border-color:#6366f1}
+  .qb-del{background:#1e2130;border:1px solid #2d3148;color:#64748b;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.15s;flex-shrink:0}
+  .qb-del:hover{border-color:#ef4444;color:#ef4444}
+  .qb-output{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:12px 16px;font-family:monospace;font-size:0.85rem;color:#a5b4fc;min-height:36px;word-break:break-all;margin-top:10px;cursor:pointer;transition:border 0.15s}
+  .qb-output:hover{border-color:#6366f1}
+
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+  .ref-item{background:#0f1117;border:1px solid #2d3148;border-radius:8px;padding:8px 12px;cursor:pointer;transition:all 0.15s}
+  .ref-item:hover{border-color:#6366f1;background:#1a1d2e}
+  .ref-char{font-family:monospace;font-size:1rem;color:#6366f1;font-weight:700}
+  .ref-enc{font-family:monospace;font-size:0.82rem;color:#a5b4fc}
+  .ref-desc{font-size:0.75rem;color:#475569;margin-top:2px}
+
+  @media(max-width:600px){.io-grid{grid-template-columns:1fr}.arrow-col{flex-direction:row;padding-top:0}.qb-row{grid-template-columns:1fr 1fr 36px}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode" class="active">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>URL <span>Encoder / Decoder</span></h1>
+    <p>Encode and decode URLs and query strings. Parse any URL into its components, or build query strings from key-value pairs.</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('encode')">Encode / Decode</button>
+    <button class="tab" onclick="setTab('parse')">Parse URL</button>
+    <button class="tab" onclick="setTab('builder')">Query Builder</button>
+    <button class="tab" onclick="setTab('ref')">Reference</button>
+  </div>
+
+  <!-- Encode/Decode Tab -->
+  <div class="encode-panel active" id="tab-encode">
+    <div class="opts-row">
+      <label class="opt-label"><input type="radio" name="encMode" value="component" checked onchange="runEncode()"> Encode component</label>
+      <label class="opt-label"><input type="radio" name="encMode" value="full" onchange="runEncode()"> Encode full URL</label>
+      <label class="opt-label"><input type="radio" name="encMode" value="plus" onchange="runEncode()"> Form encoding (+ for space)</label>
+    </div>
+    <div class="io-grid">
+      <div class="io-box">
+        <div class="io-label">Plain text / decoded</div>
+        <textarea id="plainText" placeholder="Paste text or URL to encode..." oninput="runEncode()">hello world & foo=bar</textarea>
+      </div>
+      <div class="arrow-col">
+        <button class="arrow-btn" onclick="encToPlain()" title="Decode →">⇐</button>
+        <button class="arrow-btn" onclick="runEncode()" title="Encode →">⇒</button>
+      </div>
+      <div class="io-box">
+        <div class="io-label">Encoded</div>
+        <textarea id="encodedText" placeholder="Paste encoded text to decode..." oninput="runDecode()"></textarea>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="runEncode()">Encode →</button>
+      <button class="btn btn-secondary" onclick="encToPlain()">← Decode</button>
+      <button class="btn btn-secondary" onclick="copyEncoded()">Copy encoded</button>
+      <button class="btn btn-secondary" onclick="swapTexts()">Swap</button>
+      <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Parse URL Tab -->
+  <div class="encode-panel" id="tab-parse">
+    <div class="url-input-wrap">
+      <input class="url-parse-input" id="urlParseInput" placeholder="Paste any URL to parse..." oninput="parseURL()" value="https://example.com:8080/path/to/page?foo=bar&baz=qux#section">
+    </div>
+    <div class="parse-parts" id="parseParts"></div>
+  </div>
+
+  <!-- Query Builder Tab -->
+  <div class="encode-panel" id="tab-builder">
+    <div style="margin-bottom:10px">
+      <input class="url-parse-input" id="baseUrl" placeholder="Base URL (optional, e.g. https://api.example.com/search)" oninput="buildQuery()" style="margin-bottom:8px">
+    </div>
+    <div class="qb-rows" id="qbRows"></div>
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick="addQbRow()">+ Add parameter</button>
+      <button class="btn btn-secondary" onclick="clearQb()">Clear all</button>
+    </div>
+    <div class="io-label" style="margin-bottom:6px">Result — click to copy</div>
+    <div class="qb-output" id="qbOutput" onclick="copyQb()"></div>
+  </div>
+
+  <!-- Reference Tab -->
+  <div class="encode-panel" id="tab-ref">
+    <div class="reference">
+      <h3>Common percent-encoded characters — click to copy encoding</h3>
+      <div class="ref-grid" id="refGrid"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
+</div>
+
+<script>
+var currentTab = 'encode';
+
+function setTab(t) {
+  currentTab = t;
+  document.querySelectorAll('.tab').forEach(function(el,i) {
+    var tabs = ['encode','parse','builder','ref'];
+    el.classList.toggle('active', tabs[i] === t);
+  });
+  document.querySelectorAll('.encode-panel').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='parse') parseURL();
+  if(t==='builder') buildQuery();
+  if(t==='ref') buildRef();
+}
+
+function getMode() {
+  return document.querySelector('input[name="encMode"]:checked').value;
+}
+
+function encodeStr(s) {
+  var mode = getMode();
+  if(mode === 'component') return encodeURIComponent(s);
+  if(mode === 'full') return encodeURI(s);
+  if(mode === 'plus') return encodeURIComponent(s).replace(/%20/g, '+');
+  return encodeURIComponent(s);
+}
+
+function decodeStr(s) {
+  var mode = getMode();
+  try {
+    if(mode === 'plus') s = s.replace(/\+/g, ' ');
+    return decodeURIComponent(s);
+  } catch(e) {
+    try { return unescape(s); } catch(e2) { return s; }
+  }
+}
+
+function runEncode() {
+  var plain = document.getElementById('plainText').value;
+  document.getElementById('encodedText').value = encodeStr(plain);
+}
+
+function runDecode() {
+  var enc = document.getElementById('encodedText').value;
+  document.getElementById('plainText').value = decodeStr(enc);
+}
+
+function encToPlain() {
+  var enc = document.getElementById('encodedText').value;
+  if(!enc) {
+    var plain = document.getElementById('plainText').value;
+    document.getElementById('encodedText').value = encodeStr(plain);
+    document.getElementById('plainText').value = '';
+  } else {
+    document.getElementById('plainText').value = decodeStr(enc);
+  }
+}
+
+function swapTexts() {
+  var a = document.getElementById('plainText').value;
+  var b = document.getElementById('encodedText').value;
+  document.getElementById('plainText').value = b;
+  document.getElementById('encodedText').value = a;
+}
+
+function clearAll() {
+  document.getElementById('plainText').value = '';
+  document.getElementById('encodedText').value = '';
+}
+
+function copyEncoded() {
+  var v = document.getElementById('encodedText').value;
+  if(!v) return;
+  navigator.clipboard.writeText(v);
+}
+
+function parseURL() {
+  var raw = document.getElementById('urlParseInput').value.trim();
+  var el = document.getElementById('parseParts');
+  if(!raw) { el.innerHTML = ''; return; }
+
+  var parts = [];
+  try {
+    var u = new URL(raw);
+    parts = [
+      ['Protocol', u.protocol],
+      ['Host', u.hostname],
+      ['Port', u.port || '(default)'],
+      ['Pathname', u.pathname],
+      ['Search', u.search],
+      ['Hash', u.hash],
+      ['Origin', u.origin],
+      ['Username', u.username || '(none)'],
+      ['Password', u.password ? '***' : '(none)'],
+    ];
+
+    // Parse query params
+    var params = [];
+    u.searchParams.forEach(function(val, key) {
+      params.push(key + ' = ' + val);
+    });
+    if(params.length) parts.push(['Query params', params.join('\n')]);
+    if(u.hostname) {
+      var decoded = decodeURIComponent(u.pathname);
+      if(decoded !== u.pathname) parts.push(['Path (decoded)', decoded]);
+    }
+  } catch(e) {
+    // Try partial parse
+    parts = [['Error', 'Not a valid absolute URL. Try adding https://']];
+  }
+
+  el.innerHTML = parts.map(function(p) {
+    var isEmpty = !p[1] || p[1] === '(none)' || p[1] === '(default)';
+    return '<div class="parse-row">' +
+      '<span class="parse-key">' + p[0] + '</span>' +
+      '<span class="parse-val' + (isEmpty ? ' empty' : '') + '">' + esc(p[1]) + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+// Query builder
+var qbRowCount = 0;
+function addQbRow(key, val) {
+  qbRowCount++;
+  var id = 'qbr' + qbRowCount;
+  var row = document.createElement('div');
+  row.className = 'qb-row';
+  row.id = id;
+  row.innerHTML =
+    '<input class="qb-input" placeholder="key" oninput="buildQuery()" value="' + esc(key||'') + '">' +
+    '<input class="qb-input" placeholder="value" oninput="buildQuery()" value="' + esc(val||'') + '">' +
+    '<button class="qb-del" onclick="removeQbRow(\'' + id + '\')">×</button>';
+  document.getElementById('qbRows').appendChild(row);
+  buildQuery();
+}
+
+function removeQbRow(id) {
+  var el = document.getElementById(id);
+  if(el) el.remove();
+  buildQuery();
+}
+
+function clearQb() {
+  document.getElementById('qbRows').innerHTML = '';
+  document.getElementById('qbOutput').textContent = '';
+  qbRowCount = 0;
+}
+
+function buildQuery() {
+  var base = document.getElementById('baseUrl').value.trim();
+  var rows = document.querySelectorAll('#qbRows .qb-row');
+  var params = [];
+  rows.forEach(function(row) {
+    var inputs = row.querySelectorAll('input');
+    var k = inputs[0].value.trim();
+    var v = inputs[1].value;
+    if(k) params.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
+  });
+  var qs = params.join('&');
+  var result = base ? (base + (qs ? (base.includes('?') ? '&' : '?') + qs : '')) : (qs ? '?' + qs : '');
+  document.getElementById('qbOutput').textContent = result || '(add parameters above)';
+}
+
+function copyQb() {
+  var v = document.getElementById('qbOutput').textContent;
+  if(v && v !== '(add parameters above)') {
+    navigator.clipboard.writeText(v).then(function() {
+      var el = document.getElementById('qbOutput');
+      var orig = el.style.borderColor;
+      el.style.borderColor = '#22c55e';
+      setTimeout(function() { el.style.borderColor = ''; }, 1000);
+    });
+  }
+}
+
+var REF_CHARS = [
+  ['Space', ' ', '%20', 'Separates words in URLs'],
+  ['!', '!', '%21', 'Exclamation mark'],
+  ['"', '"', '%22', 'Double quote'],
+  ['#', '#', '%23', 'Fragment identifier'],
+  ['$', '$', '%24', 'Dollar sign'],
+  ['%', '%', '%25', 'Percent (escape itself)'],
+  ['&', '&', '%26', 'Query param separator'],
+  ["'", "'", '%27', 'Single quote'],
+  ['(', '(', '%28', 'Open parenthesis'],
+  [')', ')', '%29', 'Close parenthesis'],
+  ['+', '+', '%2B', 'Plus (also means space in forms)'],
+  [',', ',', '%2C', 'Comma'],
+  ['/', '/', '%2F', 'Path separator'],
+  [':', ':', '%3A', 'Colon'],
+  [';', ';', '%3B', 'Semicolon'],
+  ['=', '=', '%3D', 'Key-value separator'],
+  ['?', '?', '%3F', 'Query string start'],
+  ['@', '@', '%40', 'At sign'],
+  ['[', '[', '%5B', 'Open bracket'],
+  [']', ']', '%5D', 'Close bracket'],
+  ['{', '{', '%7B', 'Open brace'],
+  ['|', '|', '%7C', 'Pipe'],
+  ['}', '}', '%7D', 'Close brace'],
+  ['~', '~', '%7E', 'Tilde'],
+];
+
+function buildRef() {
+  document.getElementById('refGrid').innerHTML = REF_CHARS.map(function(r) {
+    return '<div class="ref-item" onclick="navigator.clipboard.writeText(\'' + r[2] + '\')" title="Click to copy ' + r[2] + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<span class="ref-char">' + esc(r[1]) + '</span>' +
+        '<span class="ref-enc">' + r[2] + '</span>' +
+      '</div>' +
+      '<div class="ref-desc">' + r[3] + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Init
+addQbRow('q', 'linux tips');
+addQbRow('page', '1');
+runEncode();
+parseURL();
+buildRef();
+</script>
+</body>
+</html>

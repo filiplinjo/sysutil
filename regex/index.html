@@ -6,22 +6,8 @@
 <meta name="description" content="Free online regex tester and debugger. Test regular expressions in real time with match highlighting, capture groups, flags support and common patterns.">
 <meta name="keywords" content="regex tester, regular expression tester, regex debugger, online regex, regex matcher, javascript regex, test regex online">
 <title>Regex Tester - Test Regular Expressions Online | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
-  header{text-align:center;padding:40px 20px 20px}
-  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
-  header h1 span{color:#6366f1}
-  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
-  .container{max-width:820px;margin:0 auto}
-  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
-  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
-  .nav-divider{width:1px;background:#2d3148;margin:0 4px}
-
-  .card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:20px}
-  .card-title{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
-
   /* Regex input row */
   .regex-row{display:flex;align-items:center;background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:6px 14px;gap:6px;margin-bottom:12px;transition:border 0.15s}
   .regex-row:focus-within{border-color:#6366f1}
@@ -34,10 +20,9 @@
   .flag-pill{background:#0f1117;border:1px solid #2d3148;color:#64748b;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-family:monospace;font-weight:600;transition:all 0.15s;user-select:none}
   .flag-pill.on{background:#312e81;border-color:#6366f1;color:#a5b4fc}
 
-  /* Error */
   .regex-error{color:#ef4444;font-size:0.82rem;margin-bottom:8px;min-height:18px;font-family:monospace}
 
-  /* Test area — rendered with highlights */
+  /* Test area */
   .test-wrap{position:relative;margin-bottom:12px}
   .test-backdrop{position:absolute;top:0;left:0;right:0;bottom:0;padding:14px;font-family:monospace;font-size:0.95rem;line-height:1.75;white-space:pre-wrap;word-break:break-all;pointer-events:none;border-radius:10px;overflow:hidden;color:transparent}
   .test-textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.95rem;width:100%;min-height:140px;resize:vertical;outline:none;line-height:1.75;white-space:pre-wrap;word-break:break-all;position:relative;caret-color:#e2e8f0}
@@ -73,28 +58,39 @@
   .cheat-item{background:#0f1117;border-radius:8px;padding:8px 12px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
   .cheat-sym{font-family:monospace;font-weight:700;color:#6366f1;font-size:0.9rem}
   .cheat-desc{font-size:0.77rem;color:#94a3b8}
-
-  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
-  footer a{color:#6366f1;text-decoration:none}
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex" class="active">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
+  <header class="page-header">
     <h1>Regex <span>Tester</span></h1>
     <p>Test regular expressions in real time. Highlights all matches, shows capture groups and index positions.</p>
   </header>
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex" class="active">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/file-size">linux</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-    <a href="/blog">guides</a>
-  </nav>
 
   <!-- Regex input -->
   <div class="card">
@@ -229,7 +225,6 @@ function run() {
 
   var re;
   try {
-    // always add g for matching, keep other flags
     var cleanFlags = flags.replace(/g/g,'');
     re = new RegExp(pattern, cleanFlags + 'g');
   } catch(e) {
@@ -251,7 +246,6 @@ function run() {
     if(!flags.includes('g')) break;
   }
 
-  // Highlight backdrop
   var highlighted = '';
   var last = 0;
   matches.forEach(function(mt) {
@@ -262,7 +256,6 @@ function run() {
   highlighted += esc(text.slice(last));
   backdrop.innerHTML = highlighted;
 
-  // Badge
   if(matches.length > 0) {
     badge.className = 'match-badge ok';
     badge.textContent = matches.length + ' match' + (matches.length !== 1 ? 'es' : '');
@@ -276,7 +269,6 @@ function run() {
     return;
   }
 
-  // Matches table
   var hasGroups = matches[0].groups.some(function(g){ return g !== undefined; });
   var thead = '<th>#</th><th>Match</th><th>Index</th>' + (hasGroups ? '<th>Groups</th>' : '');
   var rows = matches.slice(0,50).map(function(mt,i){
@@ -287,7 +279,6 @@ function run() {
   wrap.innerHTML = '<table class="matches-table"><thead><tr>'+thead+'</tr></thead><tbody>'+rows+more+'</tbody></table>';
 }
 
-// Sync backdrop scroll with textarea
 document.getElementById('tInput').addEventListener('scroll', function(){
   document.getElementById('backdrop').scrollTop = this.scrollTop;
   document.getElementById('backdrop').scrollLeft = this.scrollLeft;

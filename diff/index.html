@@ -6,17 +6,9 @@
 <meta name="description" content="Free online text diff tool. Compare two texts side by side and see exactly what changed. Highlights additions, deletions and modifications instantly.">
 <meta name="keywords" content="text diff, compare text online, text comparison, diff tool, find differences, online diff checker, text compare">
 <title>Text Diff Tool - Compare Two Texts Online | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
-  header{text-align:center;padding:40px 20px 20px}
-  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
-  header h1 span{color:#6366f1}
-  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
-  .container{max-width:1100px;margin:0 auto}
-  nav{text-align:center;margin-bottom:10px}
-  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
-  nav a:hover{text-decoration:underline}
+  .container{max-width:1100px}
 
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
   .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
@@ -31,9 +23,7 @@
 
   .editors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
   .editor-box{display:flex;flex-direction:column;gap:8px}
-  .editor-label{font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
-  .label-orig{color:#64748b}
-  .label-new{color:#64748b}
+  .editor-label{font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;color:#64748b}
   textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.85rem;width:100%;height:300px;resize:vertical;outline:none;transition:border 0.15s;line-height:1.7}
   textarea:focus{border-color:#6366f1}
 
@@ -71,35 +61,45 @@
   .stat-rem{background:#2d1111;color:#ef4444;border:1px solid #7f1d1d}
   .stat-unch{background:#1e2130;color:#64748b;border:1px solid #2d3148}
 
-  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
-  footer a{color:#6366f1;text-decoration:none}
-
   @media(max-width:640px){
     .editors{grid-template-columns:1fr}
     .diff-header,.diff-body{grid-template-columns:1fr}
     .diff-col:first-child{border-bottom:1px solid #2d3148}
     textarea{height:200px}
-    header h1{font-size:1.6rem}
   }
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff" class="active">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
+  <header class="page-header">
     <h1>Text <span>Diff</span></h1>
     <p>Compare two texts and instantly see what changed. Highlights additions, deletions line by line.</p>
   </header>
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/file-size">file-size</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-    <a href="/blog">guides</a>
-  </nav>
 
   <div class="toolbar">
     <button class="btn btn-primary" onclick="runDiff()">Compare</button>
@@ -119,14 +119,14 @@
 
   <div class="editors">
     <div class="editor-box">
-      <div class="editor-label label-orig"><span>Original Text</span></div>
+      <div class="editor-label">Original Text</div>
       <textarea id="textA" placeholder="Paste original text here..." oninput="autoDiff()">The quick brown fox jumps over the lazy dog.
 This is the second line.
 Third line here.
 Same line four.</textarea>
     </div>
     <div class="editor-box">
-      <div class="editor-label label-new"><span>Modified Text</span></div>
+      <div class="editor-label">Modified Text</div>
       <textarea id="textB" placeholder="Paste modified text here..." oninput="autoDiff()">The quick brown fox leaps over the lazy cat.
 This is the second line.
 A brand new third line.

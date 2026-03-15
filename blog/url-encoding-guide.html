@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to URL encoding (percent encoding). Learn what URL encoding is, which characters need encoding, how query strings work, and how to encode URLs in any language.">
+<meta name="keywords" content="url encoding, percent encoding, url encode, url decode, urlencode, query string encoding, url encoding guide, what is url encoding, %20 meaning">
+<title>URL Encoding Guide: Percent Encoding Explained | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .enc-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .enc-table th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  .enc-table td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  .enc-table td:first-child{font-family:monospace;color:#6366f1;font-weight:700;font-size:1rem}
+  .enc-table td:nth-child(2){font-family:monospace;color:#a5b4fc}
+  .enc-table tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog" class="active">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header>
+    <div class="meta">SysUtil Blog &bull; Web Development Fundamentals</div>
+    <h1>URL Encoding: Complete Guide to Percent Encoding</h1>
+    <p class="intro">Learn what URL encoding is, why it exists, which characters need encoding, and how to encode URLs correctly in any programming language.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Encode or decode any URL or query string instantly — supports full URL encoding, component encoding, and form encoding.</p>
+    <a href="/url-encode" class="cta-btn">Open URL Encoder →</a>
+  </div>
+
+  <h2>What is URL Encoding?</h2>
+  <p>URL encoding (also called percent encoding) is a mechanism to represent special characters in a URL using only safe ASCII characters. A URL can only contain a limited set of characters — letters, digits, and a handful of special characters like <code>-</code>, <code>_</code>, <code>.</code>, and <code>~</code>. Any other character must be encoded.</p>
+  <p>Encoding works by replacing the character with a percent sign <code>%</code> followed by two hexadecimal digits representing the character's ASCII (or UTF-8) byte value. A space, for example, becomes <code>%20</code>.</p>
+
+  <h2>Why Does URL Encoding Exist?</h2>
+  <p>URLs were defined by RFC 3986, which specifies that a URL is made up of a limited set of ASCII characters. The reason for this restriction is that URLs must be reliably transmitted over the internet, and older protocols and systems only support ASCII.</p>
+  <p>Additionally, certain characters have special meaning within URLs. For example, <code>&amp;</code> separates query parameters and <code>#</code> marks a fragment. If your data contains these characters, they would be misinterpreted by the browser or server unless encoded.</p>
+
+  <h2>Common Encoded Characters</h2>
+  <table class="enc-table">
+    <thead><tr><th>Character</th><th>Encoded</th><th>Why it needs encoding</th></tr></thead>
+    <tbody>
+      <tr><td>Space</td><td>%20 (or +)</td><td>Spaces are not allowed in URLs</td></tr>
+      <tr><td>&amp;</td><td>%26</td><td>Separates query parameters</td></tr>
+      <tr><td>=</td><td>%3D</td><td>Separates key from value in query string</td></tr>
+      <tr><td>+</td><td>%2B</td><td>Means "space" in form encoding</td></tr>
+      <tr><td>#</td><td>%23</td><td>Marks the start of a fragment</td></tr>
+      <tr><td>?</td><td>%3F</td><td>Marks the start of a query string</td></tr>
+      <tr><td>/</td><td>%2F</td><td>Path separator</td></tr>
+      <tr><td>%</td><td>%25</td><td>Must be escaped when used literally</td></tr>
+      <tr><td>@</td><td>%40</td><td>Used in authority component</td></tr>
+      <tr><td>:</td><td>%3A</td><td>Used to separate host from port</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Safe Characters That Don't Need Encoding</h2>
+  <p>These characters are allowed in URLs without encoding (per RFC 3986 unreserved characters):</p>
+  <pre><code>A-Z  a-z  0-9  -  _  .  ~</code></pre>
+  <p>Additionally, some characters are "reserved" and only need encoding when they appear in a context where they would otherwise be misinterpreted (like <code>/</code> inside a query value).</p>
+
+  <h2>The Anatomy of a URL</h2>
+  <pre><code>https://user:pass@example.com:8080/path/to/page?key=value&amp;foo=bar#section
+│       │    │    │           │    │              │              │
+│       │    │    │           │    │              │              └ fragment
+│       │    │    │           │    │              └ query string
+│       │    │    │           │    └ path
+│       │    │    │           └ port
+│       │    │    └ host
+│       │    └ password
+│       └ username
+└ scheme</code></pre>
+  <p>Each component has its own encoding rules. For example, the path uses <code>%2F</code> to encode a literal slash that is part of a filename, while an actual path separator remains as <code>/</code>.</p>
+
+  <h2>encodeURI vs encodeURIComponent</h2>
+  <p>JavaScript has two encoding functions, and choosing the wrong one is a very common mistake:</p>
+
+  <h3>encodeURI()</h3>
+  <p>Encodes a complete URL. It leaves reserved characters like <code>/</code>, <code>?</code>, <code>&amp;</code>, <code>=</code>, <code>#</code> intact because they have meaning in the URL structure. Use this when you have a complete URL that just needs special characters in the path or hostname encoded.</p>
+  <pre><code>encodeURI('https://example.com/search?q=hello world')
+// → 'https://example.com/search?q=hello%20world'
+
+encodeURI('https://example.com/path?a=1&b=2')
+// → 'https://example.com/path?a=1&b=2' (& not encoded)</code></pre>
+
+  <h3>encodeURIComponent()</h3>
+  <p>Encodes a URL component (like a query parameter value). It encodes everything including <code>/</code>, <code>?</code>, <code>&amp;</code> and <code>=</code>. Use this when encoding a value that goes inside a URL.</p>
+  <pre><code>encodeURIComponent('hello world &amp; foo=bar')
+// → 'hello%20world%20%26%20foo%3Dbar'
+
+// Correct way to build a URL with parameters:
+var base = 'https://example.com/search';
+var query = '?q=' + encodeURIComponent(userInput) + '&lang=en';
+var url = base + query;</code></pre>
+
+  <div class="warn-box">
+    <p>⚠️ <strong>Common mistake:</strong> Never use <code>encodeURI()</code> on individual query parameter values. It will not encode <code>&amp;</code> and <code>=</code>, which will break your query string. Always use <code>encodeURIComponent()</code> for values.</p>
+  </div>
+
+  <h2>Form Encoding — The + for Space</h2>
+  <p>When HTML forms are submitted with <code>method="GET"</code> or <code>Content-Type: application/x-www-form-urlencoded</code>, they use a slightly different encoding: spaces are encoded as <code>+</code> instead of <code>%20</code>. Everything else follows percent encoding.</p>
+  <pre><code># Form encoded query string
+name=John+Doe&message=Hello+World
+
+# Percent encoded equivalent
+name=John%20Doe&message=Hello%20World</code></pre>
+  <p>When decoding form data, <code>+</code> must be decoded as a space. This is why you should use language-specific form parsing functions rather than raw URL decoding.</p>
+
+  <h2>URL Encoding in Code</h2>
+
+  <h3>JavaScript</h3>
+  <pre><code>// Encode a full URL
+encodeURI('https://example.com/path with spaces')
+
+// Encode a component value
+encodeURIComponent('foo &amp; bar = baz')
+
+// Decode
+decodeURIComponent('hello%20world')
+
+// Build query string properly
+var params = new URLSearchParams({ q: 'hello world', page: 1 });
+var url = 'https://example.com/search?' + params.toString();
+// → 'https://example.com/search?q=hello+world&page=1'</code></pre>
+
+  <h3>Python</h3>
+  <pre><code>from urllib.parse import quote, unquote, urlencode, quote_plus
+
+# Encode a path component (/ not encoded)
+quote('/path/to/file with spaces')
+# → '/path/to/file%20with%20spaces'
+
+# Encode a query value (/ encoded)
+quote('foo &amp; bar', safe='')
+# → 'foo%20%26%20bar'
+
+# Form encoding (space → +)
+quote_plus('hello world')
+# → 'hello+world'
+
+# Build query string
+urlencode({'q': 'hello world', 'page': 1})
+# → 'q=hello+world&page=1'
+
+# Decode
+unquote('hello%20world')</code></pre>
+
+  <h3>cURL</h3>
+  <pre><code># curl handles encoding automatically with --data-urlencode
+curl -G 'https://api.example.com/search' \
+  --data-urlencode 'q=hello world &amp; stuff'
+
+# Or encode manually
+curl 'https://api.example.com/search?q=hello%20world%20%26%20stuff'</code></pre>
+
+  <h2>Unicode Characters in URLs</h2>
+  <p>Non-ASCII characters (like accented letters, Chinese characters, emoji) must be encoded as their UTF-8 byte sequence, with each byte percent-encoded:</p>
+  <pre><code># "café" in UTF-8
+c  → 63
+a  → 61
+f  → 66
+é  → C3 A9 (two bytes)
+
+# Encoded
+caf%C3%A9
+
+# In a URL:
+https://example.com/menu/caf%C3%A9</code></pre>
+  <p>Modern browsers display the decoded Unicode in the address bar, but internally the URL uses percent encoding. This is part of the Internationalized Resource Identifiers (IRI) specification.</p>
+
+  <div class="tip-box">
+    <p>💡 <strong>Tip:</strong> Always use your language's built-in URL encoding functions rather than writing your own. Edge cases like Unicode, reserved characters, and form vs. URI encoding are easy to get wrong.</p>
+  </div>
+
+  <h2>Decoding URLs</h2>
+  <p>When you receive a URL or query string, you need to decode it before using the values in your application. Double-encoding (encoding an already-encoded URL) is a common bug to watch out for.</p>
+  <pre><code># Double-encoding bug example
+original = 'hello world'
+encoded = 'hello%20world'
+double_encoded = 'hello%2520world'  # %25 = %, so %2520 = %20
+
+# When you decode once:
+unquote('hello%2520world')  → 'hello%20world'  # still encoded!
+# When you decode again:
+unquote('hello%20world')    → 'hello world'    # correct</code></pre>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>What does %20 mean in a URL?</h3>
+  <p><code>%20</code> is the percent-encoded representation of a space character. The hex code for space in ASCII is 20 (decimal 32). So whenever you see <code>%20</code> in a URL, it's just a space.</p>
+
+  <h3>What is the difference between %20 and + for spaces?</h3>
+  <p>Both represent spaces, but in different contexts. <code>%20</code> is the standard percent encoding used in URL paths. <code>+</code> is used in form-encoded query strings (application/x-www-form-urlencoded). In a path like <code>/hello+world</code>, the <code>+</code> is a literal plus sign, not a space.</p>
+
+  <h3>Why do I see %2F in some URLs?</h3>
+  <p><code>%2F</code> is an encoded forward slash <code>/</code>. It's used when a slash is part of a data value (not a path separator). For example, a file path like <code>2023/report.pdf</code> would be encoded as <code>2023%2Freport.pdf</code> when used as a query parameter value.</p>
+
+  <h3>Should I encode the whole URL or just the parts?</h3>
+  <p>You should encode individual components (query parameter values, path segments) and then assemble the URL. Never encode a fully-assembled URL — it will double-encode characters that are already correct.</p>
+
+  <div class="cta-box">
+    <p>Need to encode or decode a URL? Our tool handles all formats including query strings, components, and form encoding.</p>
+    <a href="/url-encode" class="cta-btn">Open URL Encoder →</a>
+  </div>
+
+  <footer>
+    <p>Free developer tools by <a href="/">SysUtil.dev</a> &mdash; chmod, cron, regex, base64, json, password, diff, timestamp, uuid and more.</p>
+  </footer>
+</div>
+</body>
+</html>

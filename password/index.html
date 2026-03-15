@@ -6,19 +6,9 @@
 <meta name="description" content="Free secure password generator. Generate strong, random passwords with custom length, symbols, numbers and more. No passwords are stored or transmitted.">
 <meta name="keywords" content="password generator, strong password generator, random password, secure password, online password generator, free password generator">
 <title>Password Generator - Free Strong & Secure Passwords | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
-  header{text-align:center;padding:40px 20px 20px}
-  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
-  header h1 span{color:#6366f1}
-  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
-  .container{max-width:680px;margin:0 auto}
-  nav{text-align:center;margin-bottom:10px}
-  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
-  nav a:hover{text-decoration:underline}
-
-  .card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:20px}
+  .container{max-width:680px}
 
   /* Password display */
   .pwd-display{background:#0f1117;border:1px solid #2d3148;border-radius:12px;padding:20px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
@@ -52,44 +42,54 @@
   .bulk-section{margin-top:8px}
   .bulk-list{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:200px;overflow-y:auto;color:#a5b4fc}
 
-  /* Generate btn */
   .gen-btn{width:100%;background:#6366f1;color:#fff;border:none;padding:14px;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:700;transition:background 0.2s;letter-spacing:0.03em}
   .gen-btn:hover{background:#4f46e5}
 
-  .copy-btn{width:100%;background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:12px;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;margin-top:10px}
-  .copy-btn:hover{border-color:#6366f1;color:#a5b4fc}
-  .copy-btn.copied{background:#22c55e;border-color:#22c55e;color:#fff}
+  .pwd-copy-btn{width:100%;background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:12px;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;margin-top:10px}
+  .pwd-copy-btn:hover{border-color:#6366f1;color:#a5b4fc}
+  .pwd-copy-btn.copied{background:#22c55e;border-color:#22c55e;color:#fff}
 
   .privacy-note{text-align:center;color:#374151;font-size:0.8rem;margin-top:12px}
-  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
-  footer a{color:#6366f1;text-decoration:none}
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password" class="active">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
+  <header class="page-header">
     <h1>Password <span>Generator</span></h1>
     <p>Generate strong, secure random passwords instantly. Passwords are generated in your browser and never transmitted.</p>
   </header>
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-    <a href="/blog">guides</a>
-  </nav>
 
   <div class="card">
-    <!-- Password display -->
     <div class="pwd-display">
       <div class="pwd-text" id="pwdText">Click Generate</div>
       <button class="icon-btn" onclick="generate()" title="Regenerate">↻</button>
     </div>
 
-    <!-- Strength -->
     <div class="strength-wrap">
       <div class="strength-label">
         <span style="color:#64748b;font-size:0.8rem">Strength</span>
@@ -98,14 +98,12 @@
       <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
     </div>
 
-    <!-- Length -->
     <div class="length-row">
       <label>Length</label>
       <input type="range" id="lengthSlider" min="6" max="64" value="16" oninput="updateLength();generate()">
       <div class="length-val" id="lengthVal">16</div>
     </div>
 
-    <!-- Options -->
     <div class="options-grid">
       <div class="option-card active" onclick="toggleOpt(this,'uppercase')">
         <input type="checkbox" id="uppercase" checked>
@@ -152,7 +150,7 @@
     </div>
 
     <button class="gen-btn" onclick="generate()">Generate Password</button>
-    <button class="copy-btn" id="copyBtn" onclick="copyPwd()">Copy to Clipboard</button>
+    <button class="pwd-copy-btn" id="copyBtn" onclick="copyPwd()">Copy to Clipboard</button>
     <div class="privacy-note">🔒 Generated locally in your browser. Never stored or sent anywhere.</div>
   </div>
 
@@ -175,7 +173,7 @@
   </div>
 
   <footer>
-    <p>Free tools by <a href="/">SysUtil.dev</a> — chmod, cron, regex, base64, json, password and more.</p>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
   </footer>
 </div>
 

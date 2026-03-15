@@ -6,17 +6,9 @@
 <meta name="description" content="Free online JSON formatter, validator and beautifier. Instantly format, validate, minify and highlight JSON data online.">
 <meta name="keywords" content="json formatter, json validator, json beautifier, json minifier, format json online, validate json, json viewer">
 <title>JSON Formatter & Validator - Free Online JSON Tool | SysUtil</title>
+<link rel="stylesheet" href="/styles.css">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
-  header{text-align:center;padding:40px 20px 20px}
-  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
-  header h1 span{color:#6366f1}
-  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
-  .container{max-width:1000px;margin:0 auto}
-  nav{text-align:center;margin-bottom:10px}
-  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
-  nav a:hover{text-decoration:underline}
+  .container{max-width:1000px}
 
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
   .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
@@ -45,7 +37,7 @@
   .output-box .null{color:#94a3b8}
   .output-box .punct{color:#64748b}
 
-  .status-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .status-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}
   .status{font-size:0.85rem;font-weight:600}
   .status.ok{color:#22c55e}
   .status.err{color:#ef4444}
@@ -58,21 +50,36 @@
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-icon">⚙</span>
+      SysUtil
+    </a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json" class="active">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
+  <header class="page-header">
     <h1>JSON <span>Formatter</span></h1>
     <p>Format, validate, minify and highlight JSON data instantly. Paste your JSON and get a clean, readable result.</p>
   </header>
-  <nav>
-    <a href="/">chmod</a>
-    <a href="/cron">cron</a>
-    <a href="/regex">regex</a>
-    <a href="/base64">base64</a>
-    <a href="/file-size">linux</a>
-    <a href="/json">json</a>
-    <a href="/password">password</a>
-    <a href="/diff">diff</a>
-  </nav>
 
   <div class="toolbar">
     <button class="btn btn-primary" onclick="formatJSON()">Format / Beautify</button>
@@ -103,6 +110,10 @@
     <div class="status" id="statusMsg"></div>
     <div class="stats" id="statsMsg"></div>
   </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
 </div>
 
 <script>
