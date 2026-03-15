@@ -51,12 +51,48 @@ const cache = new Map();
 function getCache(key) {
   const entry = cache.get(key);
   if (!entry) return null;
-  if (Date.now() - entry.ts > 5 * 60 * 1000) { cache.delete(key); return null; }
+  if (Date.now() - entry.ts > 60 * 60 * 1000) { cache.delete(key); return null; } // 1 hour TTL
   return entry.data;
 }
 function setCache(key, data) {
   if (cache.size > 500) cache.clear();
   cache.set(key, { ts: Date.now(), data });
+}
+
+// ── Input sanitization ────────────────────────────────────────────────────────
+function sanitize(str, maxLen) {
+  return str
+    .replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, '') // strip control chars
+    .replace(/<[^>]*>/g, '')                             // strip HTML tags
+    .replace(/\s+/g, ' ')                               // normalize whitespace
+    .trim()
+    .slice(0, maxLen);
+}
+
+// ── Cron field range validator ────────────────────────────────────────────────
+function validateCronField(value, min, max, name) {
+  if (value === '*') return null;
+  // Handle step syntax */n, ranges m-n, lists m,n
+  const simple = value.replace(/\*|\d+/g, '').replace(/[-,/]/g, '');
+  if (simple !== '') return null; // complex expression, skip range check
+  const nums = value.match(/\d+/g) || [];
+  for (const n of nums) {
+    if (+n < min || +n > max) return `${name} value ${n} is out of range (${min}-${max})`;
+  }
+  return null;
+}
+
+function validateCronExpression(expr) {
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length !== 5) return `Expected 5 fields, got ${parts.length}`;
+  const checks = [
+    validateCronField(parts[0], 0, 59, 'minute'),
+    validateCronField(parts[1], 0, 23, 'hour'),
+    validateCronField(parts[2], 1, 31, 'day-of-month'),
+    validateCronField(parts[3], 1, 12, 'month'),
+    validateCronField(parts[4], 0, 7,  'day-of-week'),
+  ];
+  return checks.find(Boolean) || null;
 }
 
 // ── Validation helpers ────────────────────────────────────────────────────────
@@ -113,16 +149,15 @@ async function ollamaJSON(system, prompt) {
 
 // ── AI: Cron expression from description ─────────────────────────────────────
 app.post('/api/ai/cron', async (req, res) => {
-  const desc = (req.body?.description || '').trim().slice(0, 300);
+  const desc = sanitize(req.body?.description || '', 300);
   if (!desc) return res.status(400).json({ error: 'Missing: description' });
 
   const cacheKey = 'ai:cron:' + desc;
   const cached = getCache(cacheKey);
   if (cached) return res.json({ ...cached, cached: true });
 
-  try {
-    const result = await ollamaJSON(
-      `You are a cron expression expert. Convert schedule descriptions to 5-field cron expressions.
+  const CRON_SYSTEM =
+    `You are a cron expression expert. Convert schedule descriptions to 5-field cron expressions.
 
 FORMAT: minute(0-59) hour(0-23) day-of-month(1-31) month(1-12) day-of-week(0-6, 0=Sunday)
 
@@ -142,21 +177,22 @@ EXAMPLES:
 
 Respond ONLY with this JSON:
 {"expression":"<5 fields>","readable":"<plain English>","fields":{"minute":"<val>","hour":"<val>","dom":"<val>","month":"<val>","dow":"<val>"}}
-If not a valid schedule, set expression to "invalid".`,
-      desc
-    );
-    if (!result?.expression) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
+If not a valid schedule, set expression to "invalid".`;
 
-    // Validate the expression has exactly 5 fields with sensible values
-    if (result.expression !== 'invalid') {
-      const parts = result.expression.trim().split(/\s+/);
-      if (parts.length !== 5) {
-        return res.status(422).json({ error: `Invalid cron expression generated (${parts.length} fields instead of 5). Try rephrasing your description.` });
-      }
+  try {
+    let result = await ollamaJSON(CRON_SYSTEM, desc);
+
+    // Retry once if output is missing or invalid
+    if (!result?.expression || validateCronExpression(result.expression) && result.expression !== 'invalid') {
+      result = await ollamaJSON(CRON_SYSTEM, desc);
     }
-    if (result.expression === 'invalid') {
-      return res.status(422).json({ error: result.readable || 'Invalid schedule description. Please use plain English like "every weekday at 9am".' });
-    }
+
+    if (!result?.expression) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
+    if (result.expression === 'invalid') return res.status(422).json({ error: result.readable || 'Invalid schedule description.' });
+
+    const cronErr = validateCronExpression(result.expression);
+    if (cronErr) return res.status(422).json({ error: `Generated expression is invalid: ${cronErr}. Try rephrasing.` });
+
     setCache(cacheKey, result);
     res.json(result);
   } catch (e) {
@@ -167,16 +203,15 @@ If not a valid schedule, set expression to "invalid".`,
 
 // ── AI: Regex from description ────────────────────────────────────────────────
 app.post('/api/ai/regex', async (req, res) => {
-  const desc = (req.body?.description || '').trim().slice(0, 300);
+  const desc = sanitize(req.body?.description || '', 300);
   if (!desc) return res.status(400).json({ error: 'Missing: description' });
 
   const cacheKey = 'ai:regex:' + desc;
   const cached = getCache(cacheKey);
   if (cached) return res.json({ ...cached, cached: true });
 
-  try {
-    const result = await ollamaJSON(
-      `You are a regex expert. Convert a description into a JavaScript regular expression.
+  const REGEX_SYSTEM =
+    `You are a regex expert. Convert a description into a JavaScript regular expression.
 
 RULES:
 - pattern: regex body WITHOUT slashes or flags (e.g. ^[a-z]+$ not /^[a-z]+$/i)
@@ -190,10 +225,21 @@ EXAMPLES:
 "only digits" → pattern:"^\\d+$", flags:"", readable:"Matches strings containing only digits"
 
 Respond ONLY with this JSON:
-{"pattern":"<regex>","flags":"<flags or empty>","readable":"<one sentence>","breakdown":[{"token":"<part>","meaning":"<explanation>"}],"examples":["<match1>","<match2>"]}`,
-      desc
-    );
+{"pattern":"<regex>","flags":"<flags or empty>","readable":"<one sentence>","breakdown":[{"token":"<part>","meaning":"<explanation>"}],"examples":["<match1>","<match2>"]}`;
+
+  try {
+    let result = await ollamaJSON(REGEX_SYSTEM, desc);
+    if (!result?.pattern) result = await ollamaJSON(REGEX_SYSTEM, desc); // retry once
+
     if (!result?.pattern) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
+
+    // Validate the pattern actually compiles
+    try {
+      new RegExp(result.pattern, result.flags || '');
+    } catch {
+      return res.status(422).json({ error: 'Generated pattern is not valid regex. Try rephrasing your description.' });
+    }
+
     setCache(cacheKey, result);
     res.json(result);
   } catch (e) {
@@ -204,16 +250,16 @@ Respond ONLY with this JSON:
 
 // ── AI: Explain a Linux/shell command ────────────────────────────────────────
 app.post('/api/ai/command', async (req, res) => {
-  const command = (req.body?.command || '').trim().slice(0, 500);
+  // Strip leading $ or # that users often paste from terminal prompts
+  const command = sanitize(req.body?.command || '', 500).replace(/^[$#]\s*/, '');
   if (!command) return res.status(400).json({ error: 'Missing: command' });
 
   const cacheKey = 'ai:cmd:' + command;
   const cached = getCache(cacheKey);
   if (cached) return res.json({ ...cached, cached: true });
 
-  try {
-    const result = await ollamaJSON(
-      `You are a Linux and bash expert. Explain a shell command by breaking it into parts.
+  const CMD_SYSTEM =
+    `You are a Linux and bash expert. Explain a shell command by breaking it into parts.
 
 RULES:
 - summary: one clear sentence describing what the entire command does
@@ -227,9 +273,13 @@ EXAMPLES:
 "rm -rf /var/log/*" → danger:"Permanently deletes all files in /var/log — cannot be undone"
 
 Respond ONLY with this JSON:
-{"summary":"<sentence>","parts":[{"token":"<part>","type":"<type>","description":"<explanation>"}],"danger":<string or null>,"tip":<string or null>}`,
-      command
-    );
+{"summary":"<sentence>","parts":[{"token":"<part>","type":"<type>","description":"<explanation>"}],"danger":<string or null>,"tip":<string or null>}`;
+
+  try {
+    let result = await ollamaJSON(CMD_SYSTEM, command);
+    if (!result?.summary) {
+      result = await ollamaJSON(CMD_SYSTEM, command); // retry once
+    }
     if (!result?.summary) return res.status(502).json({ error: 'Model returned unexpected output.' });
     setCache(cacheKey, result);
     res.json(result);
@@ -241,16 +291,15 @@ Respond ONLY with this JSON:
 
 // ── AI: Explain an error message or stack trace ───────────────────────────────
 app.post('/api/ai/error', async (req, res) => {
-  const error = (req.body?.error || '').trim().slice(0, 2000);
+  const error = sanitize(req.body?.error || '', 2000);
   if (!error) return res.status(400).json({ error: 'Missing: error' });
 
   const cacheKey = 'ai:err:' + error.slice(0, 200);
   const cached = getCache(cacheKey);
   if (cached) return res.json({ ...cached, cached: true });
 
-  try {
-    const result = await ollamaJSON(
-      `You are a software debugging expert. Analyse an error message or stack trace and explain it clearly.
+  const ERROR_SYSTEM =
+    `You are a software debugging expert. Analyse an error message or stack trace and explain it clearly.
 
 RULES:
 - title: short name for the error type (e.g. "NullPointerException", "ECONNREFUSED", "SyntaxError")
@@ -263,9 +312,12 @@ EXAMPLES:
 "Cannot read properties of undefined (reading 'map')" → title:"TypeError: undefined.map()", cause:"Calling .map() on a variable that is undefined instead of an array — the data likely hasn't loaded yet"
 
 Respond ONLY with this JSON:
-{"title":"<name>","cause":"<explanation>","solutions":["<fix1>","<fix2>","<fix3>"],"prevention":<string or null>}`,
-      error
-    );
+{"title":"<name>","cause":"<explanation>","solutions":["<fix1>","<fix2>","<fix3>"],"prevention":<string or null>}`;
+
+  try {
+    let result = await ollamaJSON(ERROR_SYSTEM, error);
+    if (!result?.cause) result = await ollamaJSON(ERROR_SYSTEM, error); // retry once
+
     if (!result?.cause) return res.status(502).json({ error: 'Model returned unexpected output.' });
     setCache(cacheKey, result);
     res.json(result);
