@@ -32,29 +32,28 @@ body {
 .nav-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  height: 52px;
-  gap: 4px;
+  justify-content: space-between;
+  height: 60px;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   text-decoration: none;
   color: #e2e8f0;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   flex-shrink: 0;
-  letter-spacing: -0.01em;
-  margin-right: 8px;
+  letter-spacing: -0.02em;
 }
 
 .nav-brand-icon {
   color: #6366f1;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   line-height: 1;
   display: inline-block;
   transition: transform 0.5s ease;
@@ -67,29 +66,28 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2px;
-  flex: 1;
+  gap: 4px;
 }
 
 /* Top-level nav links */
 .nav-links > a {
-  color: #64748b;
+  color: #94a3b8;
   text-decoration: none;
-  font-size: 0.85rem;
-  padding: 5px 11px;
-  border-radius: 7px;
+  font-size: 0.88rem;
+  padding: 7px 14px;
+  border-radius: 8px;
   transition: all 0.15s;
   white-space: nowrap;
   font-weight: 500;
 }
 
-.nav-links > a:hover  { color: #cbd5e1; background: #1a1d2e; }
+.nav-links > a:hover  { color: #e2e8f0; background: #1a1d2e; }
 .nav-links > a.active { color: #a5b4fc; background: #1a1d2e; }
 
 /* AI link */
 .nav-ai-link { color: #818cf8 !important; font-weight: 600 !important; }
-.nav-ai-link:hover  { color: #a5b4fc !important; background: rgba(99,102,241,0.10) !important; }
-.nav-ai-link.active { color: #a5b4fc !important; background: rgba(99,102,241,0.12) !important; }
+.nav-ai-link:hover  { color: #a5b4fc !important; background: rgba(99,102,241,0.12) !important; }
+.nav-ai-link.active { color: #a5b4fc !important; background: rgba(99,102,241,0.15) !important; }
 
 /* ── Tools dropdown ──────────────────────────────────────────── */
 
@@ -103,10 +101,10 @@ body {
   gap: 5px;
   background: transparent;
   border: none;
-  color: #64748b;
-  font-size: 0.85rem;
-  padding: 5px 11px;
-  border-radius: 7px;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  padding: 7px 14px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -115,10 +113,10 @@ body {
 }
 
 .nav-tools-btn:hover,
-.nav-tools-btn.open { color: #cbd5e1; background: #1a1d2e; }
+.nav-tools-btn.open { color: #e2e8f0; background: #1a1d2e; }
 
 .nav-tools-btn.active       { color: #a5b4fc; background: #1a1d2e; }
-.nav-tools-btn.active.open  { color: #cbd5e1; }
+.nav-tools-btn.active.open  { color: #e2e8f0; }
 
 .nav-tools-arrow {
   font-size: 0.65rem;
@@ -525,13 +523,9 @@ select:focus {
 
   /* Dropdown: full-width on mobile */
   .nav-dropdown-panel {
-    min-width: calc(100vw - 24px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .nav-dropdown-panel.open {
-    display: block;
+    min-width: 0;
+    width: calc(100vw - 24px);
+    left: -12px;
     animation: none;
   }
 
