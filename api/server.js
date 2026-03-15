@@ -48,15 +48,18 @@ app.use('/api/ai/', aiLimiter);
 
 // ── In-memory cache (5 min TTL) ───────────────────────────────────────────────
 const cache = new Map();
+const DNS_TTL = 5 * 60 * 1000;   // DNS records can change — 5 min
+const AI_TTL  = 60 * 60 * 1000;  // AI responses are stable — 1 hour
+
 function getCache(key) {
   const entry = cache.get(key);
   if (!entry) return null;
-  if (Date.now() - entry.ts > 60 * 60 * 1000) { cache.delete(key); return null; } // 1 hour TTL
+  if (Date.now() - entry.ts > entry.ttl) { cache.delete(key); return null; }
   return entry.data;
 }
-function setCache(key, data) {
-  if (cache.size > 500) cache.clear();
-  cache.set(key, { ts: Date.now(), data });
+function setCache(key, data, ttl = AI_TTL) {
+  if (cache.size >= 500) cache.delete(cache.keys().next().value); // evict oldest
+  cache.set(key, { ts: Date.now(), ttl, data });
 }
 
 // ── Input sanitization ────────────────────────────────────────────────────────
@@ -183,8 +186,8 @@ If not a valid schedule, set expression to "invalid".`;
   try {
     let result = await ollamaJSON(CRON_SYSTEM, desc);
 
-    // Retry once if output is missing or invalid
-    if (!result?.expression || validateCronExpression(result.expression) && result.expression !== 'invalid') {
+    // Retry once if output is missing or has invalid ranges
+    if (!result?.expression || (validateCronExpression(result.expression) && result.expression !== 'invalid')) {
       result = await ollamaJSON(CRON_SYSTEM, desc);
     }
 
@@ -357,7 +360,7 @@ app.get('/api/dns', async (req, res) => {
   }
 
   const result = { query: q, isIP: isIP(q), records, ts: Date.now() };
-  setCache(cacheKey, result);
+  setCache(cacheKey, result, DNS_TTL);
   res.json(result);
 });
 
@@ -419,11 +422,11 @@ app.get('/api/whois', async (req, res) => {
     }
 
     const result = { query: q, parsed, server: best, ts: Date.now() };
-    setCache(cacheKey, result);
+    setCache(cacheKey, result, DNS_TTL);
     res.json(result);
   } catch (err) {
     console.error('WHOIS error:', err.message);
-    res.status(502).json({ error: 'WHOIS lookup failed: ' + err.message });
+    res.status(502).json({ error: 'WHOIS lookup failed. The domain may not exist or the WHOIS server is unavailable.' });
   }
 });
 
@@ -440,7 +443,7 @@ app.listen(PORT, () => {
     fetch(`${OLLAMA_URL}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: AI_MODEL, prompt: 'hi', stream: false, options: { num_predict: 1, num_thread: 32 } })
+      body: JSON.stringify({ model: AI_MODEL, prompt: 'hi', stream: false, keep_alive: -1, options: { num_predict: 1, num_thread: 6 } })
     }).then(() => console.log('Model warmed up')).catch(() => {});
   }, 2000);
 });
