@@ -94,7 +94,13 @@ async function ollamaJSON(system, prompt) {
         prompt,
         stream:  false,
         format:  'json',
-        options: { temperature: 0.1, top_p: 0.9 }
+        options: {
+          temperature: 0.1,
+          top_p:       0.9,
+          num_ctx:     512,   // small context = much faster inference
+          num_predict: 300,   // cap output tokens
+          num_thread:  32,    // use all CPU cores
+        }
       })
     });
     if (!res.ok) throw new Error(`Ollama returned ${res.status}`);
@@ -311,4 +317,14 @@ app.get('/api/health', (_, res) => res.json({ ok: true, model: AI_MODEL, uptime:
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_, res) => res.status(404).json({ error: 'Not found' }));
 
-app.listen(PORT, () => console.log(`SysUtil API listening on :${PORT}  model=${AI_MODEL}`));
+app.listen(PORT, () => {
+  console.log(`SysUtil API listening on :${PORT}  model=${AI_MODEL}`);
+  // Warm up the model so first real request isn't slow
+  setTimeout(() => {
+    fetch(`${OLLAMA_URL}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: AI_MODEL, prompt: 'hi', stream: false, options: { num_predict: 1, num_thread: 32 } })
+    }).then(() => console.log('Model warmed up')).catch(() => {});
+  }, 2000);
+});
