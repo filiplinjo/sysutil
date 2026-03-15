@@ -10,11 +10,13 @@
 }
 
 /* Base */
+html { overflow-x: hidden; }
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: #0f1117;
   color: #e2e8f0;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ── Navigation ─────────────────────────────────────────────── */
@@ -35,8 +37,8 @@ body {
   padding: 0 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 60px;
+  gap: 4px;
 }
 
 .nav-brand {
@@ -49,6 +51,7 @@ body {
   font-size: 1rem;
   flex-shrink: 0;
   letter-spacing: -0.02em;
+  margin-right: 16px;
 }
 
 .nav-brand-icon {
@@ -185,6 +188,53 @@ body {
 
 .nav-cat a:hover  { color: #e2e8f0; background: #1e2130; }
 .nav-cat a.active { color: #a5b4fc; background: #1e2130; }
+
+/* ── Tool strip ──────────────────────────────────────────────── */
+
+.tool-strip {
+  border-bottom: 1px solid #1a1d2e;
+  background: rgba(15, 17, 23, 0.97);
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+}
+
+.tool-strip-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  gap: 1px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tool-strip-inner::-webkit-scrollbar { display: none; }
+
+.ts-link {
+  color: #374151;
+  font-size: 0.78rem;
+  padding: 3px 8px;
+  border-radius: 5px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.ts-link:hover  { color: #94a3b8; background: #1a1d2e; }
+.ts-link.active { color: #818cf8; background: rgba(99,102,241,0.08); }
+
+.ts-sep {
+  width: 1px;
+  height: 11px;
+  background: #1e2130;
+  flex-shrink: 0;
+  margin: 0 5px;
+}
 
 /* ── Layout ─────────────────────────────────────────────────── */
 

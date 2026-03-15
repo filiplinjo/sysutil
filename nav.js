@@ -78,11 +78,41 @@
       '</div>' +
     '</div></nav>';
 
+  // ── Tool strip ──────────────────────────────────────────────
+  function tsLink(href, label) {
+    var cls = active(href) ? ' active' : '';
+    return '<a href="' + href + '" class="ts-link' + cls + '">' + label + '</a>';
+  }
+
+  var strip =
+    '<div class="tool-strip"><div class="tool-strip-inner">' +
+      tsLink('/', 'chmod') +
+      tsLink('/cron', 'cron') +
+      tsLink('/file-size', 'file size') +
+      tsLink('/linux-commands', 'commands') +
+      '<span class="ts-sep"></span>' +
+      tsLink('/json', 'json') +
+      tsLink('/regex', 'regex') +
+      tsLink('/diff', 'diff') +
+      tsLink('/password', 'password') +
+      '<span class="ts-sep"></span>' +
+      tsLink('/base64', 'base64') +
+      tsLink('/url-encode', 'url encode') +
+      tsLink('/uuid', 'uuid') +
+      tsLink('/jwt', 'jwt') +
+      '<span class="ts-sep"></span>' +
+      tsLink('/http-status', 'http status') +
+      tsLink('/timestamp', 'timestamp') +
+      tsLink('/dns', 'dns') +
+    '</div></div>';
+
   var script = document.currentScript;
   var tmp    = document.createElement('div');
-  tmp.innerHTML = nav;
-  var navEl = tmp.firstChild;
-  script.parentNode.insertBefore(navEl, script);
+  tmp.innerHTML = nav + strip;
+  var navEl   = tmp.children[0];
+  var stripEl = tmp.children[1];
+  script.parentNode.insertBefore(stripEl, script);
+  script.parentNode.insertBefore(navEl, stripEl);
 
   // ── Dropdown behaviour ──────────────────────────────────────
   var btn   = navEl.querySelector('.nav-tools-btn');
