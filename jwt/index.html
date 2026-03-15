@@ -190,15 +190,41 @@
   .expiry-badge.expired { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
   .expiry-badge.none    { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
 
-  .sig-notice {
-    background: rgba(251,191,36,0.08);
-    border: 1px solid rgba(251,191,36,0.2);
-    color: #fbbf24;
-    border-radius: 10px;
-    padding: 10px 16px;
-    font-size: 0.82rem;
-    margin-top: 10px;
+  .sig-verify {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
+  .sig-verify-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .sig-key-input {
+    width: 100%;
+    background: #0a0c12;
+    border: 1px solid #2d3148;
+    color: #e2e8f0;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    resize: vertical;
+    min-height: 52px;
+    outline: none;
+    transition: border 0.2s;
+    word-break: break-all;
+    box-sizing: border-box;
+  }
+  .sig-key-input:focus { border-color: #6366f1; }
+  .sig-key-input::placeholder { color: #374151; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .sig-result-valid   { background: rgba(34,197,94,0.12);  border: 1px solid rgba(34,197,94,0.3);  color: #4ade80; border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; font-weight: 600; }
+  .sig-result-invalid { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: #f87171; border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; font-weight: 600; }
+  .sig-result-warn    { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); color: #fbbf24; border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; }
+  .sig-hint { font-size: 0.75rem; color: #475569; }
 
   .error-panel {
     background: rgba(239,68,68,0.08);
@@ -282,6 +308,7 @@
       <a href="/linux-commands">commands</a>
       <a href="/jwt" class="active">jwt</a>
       <a href="/http-status">http</a>
+      <a href="/dns">dns</a>
       <a href="/blog">guides</a>
     </div>
   </div>
@@ -327,7 +354,13 @@
       <div class="panel">
         <div class="panel-label">Signature</div>
         <div class="json-display" id="sigDisplay" style="color:#94a3b8;font-size:0.78rem;word-break:break-all;"></div>
-        <div class="sig-notice">⚠ Signature is not verified — decoding only. To verify, provide the secret or public key server-side.</div>
+        <div class="sig-verify" id="sigVerify">
+          <div class="sig-verify-label" id="sigVerifyLabel">Verify signature</div>
+          <textarea class="sig-key-input" id="sigKeyInput" placeholder="Paste secret or public key…" oninput="document.getElementById('sigResult').innerHTML=''"></textarea>
+          <div class="sig-hint" id="sigHint"></div>
+          <button class="btn-primary" style="align-self:flex-start" onclick="verifySignature()">Verify</button>
+          <div id="sigResult"></div>
+        </div>
       </div>
     </div>
 
@@ -358,6 +391,9 @@
 </div>
 
 <script>
+var currentAlgo = '';
+var currentParts = [];
+
 function base64urlDecode(str) {
   str = str.replace(/-/g, '+').replace(/_/g, '/');
   while (str.length % 4) str += '=';
@@ -468,7 +504,28 @@ function decodeToken(raw) {
   document.getElementById('payloadJson').innerHTML = syntaxHighlight(JSON.stringify(payload, null, 2));
 
   // Signature panel
+  currentAlgo = algo;
+  currentParts = parts;
   document.getElementById('sigDisplay').textContent = parts[2];
+  document.getElementById('sigResult').innerHTML = '';
+  document.getElementById('sigKeyInput').value = '';
+
+  // Update hint/label based on algorithm family
+  var hint = '', placeholder = 'Paste secret or public key…';
+  if (algo.startsWith('HS')) {
+    hint = 'HMAC secret — the plain-text string used to sign this token.';
+    placeholder = 'your-secret-key';
+  } else if (algo.startsWith('RS') || algo.startsWith('PS')) {
+    hint = 'RSA public key — PEM format (begins with -----BEGIN PUBLIC KEY-----)';
+    placeholder = '-----BEGIN PUBLIC KEY-----\n…\n-----END PUBLIC KEY-----';
+  } else if (algo.startsWith('ES')) {
+    hint = 'EC public key — PEM (-----BEGIN PUBLIC KEY-----) or JWK JSON object.';
+    placeholder = '-----BEGIN PUBLIC KEY-----\n…\n-----END PUBLIC KEY-----';
+  } else {
+    hint = 'Client-side verification is not supported for algorithm "' + escHTML(algo) + '".';
+  }
+  document.getElementById('sigHint').textContent = hint;
+  document.getElementById('sigKeyInput').placeholder = placeholder;
 
   // Expiry
   var now = Date.now();
@@ -506,6 +563,96 @@ function escHTML(s) {
 function clearToken() {
   document.getElementById('tokenInput').value = '';
   decodeToken('');
+}
+
+function base64urlToBytes(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  var bin = atob(str);
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+function pemToBytes(pem) {
+  var b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '');
+  var bin = atob(b64);
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+async function verifySignature() {
+  var algo = currentAlgo;
+  var parts = currentParts;
+  var resultEl = document.getElementById('sigResult');
+
+  if (!parts || parts.length !== 3) {
+    resultEl.innerHTML = '<div class="sig-result-warn">Decode a token first.</div>';
+    return;
+  }
+
+  var keyInput = document.getElementById('sigKeyInput').value.trim();
+  if (!keyInput) {
+    resultEl.innerHTML = '<div class="sig-result-warn">Please enter a secret or public key.</div>';
+    return;
+  }
+
+  try {
+    var dataBytes = new TextEncoder().encode(parts[0] + '.' + parts[1]);
+    var sigBytes  = base64urlToBytes(parts[2]);
+    var valid;
+
+    if (algo === 'HS256' || algo === 'HS384' || algo === 'HS512') {
+      var hashName = algo === 'HS256' ? 'SHA-256' : algo === 'HS384' ? 'SHA-384' : 'SHA-512';
+      var secretBytes = new TextEncoder().encode(keyInput);
+      var key = await crypto.subtle.importKey(
+        'raw', secretBytes, { name: 'HMAC', hash: hashName }, false, ['verify']
+      );
+      valid = await crypto.subtle.verify('HMAC', key, sigBytes, dataBytes);
+
+    } else if (algo === 'RS256' || algo === 'RS384' || algo === 'RS512') {
+      var hashName = algo === 'RS256' ? 'SHA-256' : algo === 'RS384' ? 'SHA-384' : 'SHA-512';
+      var keyBytes = pemToBytes(keyInput);
+      var key = await crypto.subtle.importKey(
+        'spki', keyBytes, { name: 'RSASSA-PKCS1-v1_5', hash: hashName }, false, ['verify']
+      );
+      valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, sigBytes, dataBytes);
+
+    } else if (algo === 'PS256' || algo === 'PS384' || algo === 'PS512') {
+      var hashName = algo === 'PS256' ? 'SHA-256' : algo === 'PS384' ? 'SHA-384' : 'SHA-512';
+      var saltLen  = algo === 'PS256' ? 32 : algo === 'PS384' ? 48 : 64;
+      var keyBytes = pemToBytes(keyInput);
+      var key = await crypto.subtle.importKey(
+        'spki', keyBytes, { name: 'RSA-PSS', hash: hashName }, false, ['verify']
+      );
+      valid = await crypto.subtle.verify({ name: 'RSA-PSS', saltLength: saltLen }, key, sigBytes, dataBytes);
+
+    } else if (algo === 'ES256' || algo === 'ES384' || algo === 'ES512') {
+      var curve    = algo === 'ES256' ? 'P-256' : algo === 'ES384' ? 'P-384' : 'P-521';
+      var hashName = algo === 'ES256' ? 'SHA-256' : algo === 'ES384' ? 'SHA-384' : 'SHA-512';
+      var key;
+      if (keyInput.trim().startsWith('{')) {
+        var jwk = JSON.parse(keyInput);
+        key = await crypto.subtle.importKey('jwk', jwk, { name: 'ECDSA', namedCurve: curve }, false, ['verify']);
+      } else {
+        var keyBytes = pemToBytes(keyInput);
+        key = await crypto.subtle.importKey('spki', keyBytes, { name: 'ECDSA', namedCurve: curve }, false, ['verify']);
+      }
+      valid = await crypto.subtle.verify({ name: 'ECDSA', hash: hashName }, key, sigBytes, dataBytes);
+
+    } else {
+      resultEl.innerHTML = '<div class="sig-result-warn">Algorithm "' + escHTML(algo) + '" is not supported for client-side verification.</div>';
+      return;
+    }
+
+    resultEl.innerHTML = valid
+      ? '<div class="sig-result-valid">✓ Signature valid — token is authentic and untampered.</div>'
+      : '<div class="sig-result-invalid">✗ Signature invalid — token may be tampered with or the wrong key was used.</div>';
+
+  } catch(e) {
+    resultEl.innerHTML = '<div class="sig-result-warn">⚠ ' + escHTML(e.message) + '</div>';
+  }
 }
 
 function loadSample() {
