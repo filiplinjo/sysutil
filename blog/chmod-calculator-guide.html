@@ -6,6 +6,14 @@
 <meta name="description" content="Complete guide to Linux chmod calculator and file permissions. Learn how to use chmod, understand octal notation, and set the right permissions for your files and directories.">
 <meta name="keywords" content="chmod calculator, linux file permissions, chmod command, octal permissions, chmod 755, chmod 644, linux chmod guide">
 <title>chmod Calculator: Complete Guide to Linux File Permissions | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="chmod Calculator: Complete Guide to Linux File Permissions | SysUtil">
+<meta property="og:description" content="Complete guide to Linux chmod calculator and file permissions. Learn how to use chmod, understand octal notation, and set the right permissions for your files and directories.">
+<meta property="og:url" content="https://sysutil.dev/blog/chmod-calculator-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="chmod Calculator: Complete Guide to Linux File Permissions | SysUtil">
+<meta name="twitter:description" content="Complete guide to Linux chmod calculator and file permissions. Learn how to use chmod, understand octal notation, and set the right permissions for your files and directories.">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .container{max-width:780px}
@@ -35,6 +43,46 @@
   footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
   footer a{color:#6366f1;text-decoration:none}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is chmod 777?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "chmod 777 gives read, write and execute permission to everyone — owner, group and other. This is rarely a good idea in production as it means any user on the system can modify the file. Only use it temporarily for debugging."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is chmod 755?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "chmod 755 gives the owner full permissions (rwx) and everyone else read and execute (r-x). This is the standard permission for web directories and executable scripts — others can read and run but not modify."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is chmod 644?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "chmod 644 gives the owner read and write (rw-) and everyone else read only (r--). This is the standard for web files like HTML, CSS and JavaScript — the web server can read them but not modify them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does chmod work recursively?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, use the -R flag: chmod -R 755 /var/www. Be careful as this applies the same permission to both files and directories, which is usually not what you want. Use find with -type f and -type d to set different permissions for files and directories."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

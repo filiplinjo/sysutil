@@ -6,6 +6,14 @@
 <meta name="description" content="Complete guide to regular expressions. Learn regex syntax, common patterns, flags and how to test regex online. Includes email, URL, IP address and more patterns.">
 <meta name="keywords" content="regex tester, regular expression tester, regex syntax, regex patterns, regex online, test regex, regex email, regex url, regex cheatsheet">
 <title>Regex Tester: Complete Guide to Regular Expressions | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="Regex Tester: Complete Guide to Regular Expressions | SysUtil">
+<meta property="og:description" content="Complete guide to regular expressions. Learn regex syntax, common patterns, flags and how to test regex online. Includes email, URL, IP address and more patterns.">
+<meta property="og:url" content="https://sysutil.dev/blog/regex-tester-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Regex Tester: Complete Guide to Regular Expressions | SysUtil">
+<meta name="twitter:description" content="Complete guide to regular expressions. Learn regex syntax, common patterns, flags and how to test regex online. Includes email, URL, IP address and more patterns.">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .container{max-width:780px}
@@ -39,6 +47,54 @@
   footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
   footer a{color:#6366f1;text-decoration:none}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does .* mean in regex?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The dot matches any character and * means zero or more times, so .* matches any sequence of characters including an empty string. It is greedy by default — use .*? for lazy matching."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between + and * in regex?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "* matches zero or more occurrences, so the pattern can match even if the character is absent. + requires at least one match. For example \\d* matches an empty string while \\d+ requires at least one digit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I match a literal dot in regex?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Escape it with a backslash: \\. Without the backslash, . matches any character. So to match an IP address dot use \\d+\\.\\d+\\.\\d+\\.\\d+"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a capture group in regex?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Parentheses () create a capture group. Whatever is matched inside them is saved and can be referenced later with $1, \\1 or named references. Use (?:) to group without capturing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does my regex match too much?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You are probably seeing greedy matching. Add ? after your quantifier to make it lazy: change .* to .*?. Or use anchors ^ and $ to pin the match to the start and end of the string."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

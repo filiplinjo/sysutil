@@ -6,6 +6,14 @@
 <meta name="description" content="Complete guide to cron expressions and cron job scheduling in Linux. Learn cron syntax, common examples, and use our free cron expression generator.">
 <meta name="keywords" content="cron expression generator, cron syntax, cron job, crontab, linux cron, cron schedule, cron examples, cron every 5 minutes">
 <title>Cron Expression Generator: Complete Guide to Cron Job Scheduling | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="Cron Expression Generator: Complete Guide to Cron Job Scheduling | SysUtil">
+<meta property="og:description" content="Complete guide to cron expressions and cron job scheduling in Linux. Learn cron syntax, common examples, and use our free cron expression generator.">
+<meta property="og:url" content="https://sysutil.dev/blog/cron-expression-generator">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cron Expression Generator: Complete Guide to Cron Job Scheduling | SysUtil">
+<meta name="twitter:description" content="Complete guide to cron expressions and cron job scheduling in Linux. Learn cron syntax, common examples, and use our free cron expression generator.">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .container{max-width:780px}
@@ -41,6 +49,46 @@
   footer a{color:#6366f1;text-decoration:none}
   @media(max-width:580px){.syntax-row{grid-template-columns:1fr;gap:2px}}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I run a cron job every 5 minutes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the step operator: */5 * * * * /path/to/script.sh. The */5 in the minute field means every 5 minutes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I run a cron job every hour?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use 0 * * * * /path/to/script.sh — the 0 in the minute field means it runs at the start of every hour."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between crontab and cron?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "cron is the daemon (background service) that executes scheduled tasks. crontab is both the file that stores the schedule and the command used to edit it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can cron run a job every 30 seconds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not directly — cron has a minimum resolution of 1 minute. To run every 30 seconds, schedule the job every minute and use sleep: * * * * * /path/script.sh; sleep 30; /path/script.sh"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

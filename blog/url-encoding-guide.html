@@ -6,6 +6,14 @@
 <meta name="description" content="Complete guide to URL encoding (percent encoding). Learn what URL encoding is, which characters need encoding, how query strings work, and how to encode URLs in any language.">
 <meta name="keywords" content="url encoding, percent encoding, url encode, url decode, urlencode, query string encoding, url encoding guide, what is url encoding, %20 meaning">
 <title>URL Encoding Guide: Percent Encoding Explained | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="URL Encoding Guide: Percent Encoding Explained | SysUtil">
+<meta property="og:description" content="Complete guide to URL encoding (percent encoding). Learn what URL encoding is, which characters need encoding, how query strings work, and how to encode URLs in any language.">
+<meta property="og:url" content="https://sysutil.dev/blog/url-encoding-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="URL Encoding Guide: Percent Encoding Explained | SysUtil">
+<meta name="twitter:description" content="Complete guide to URL encoding (percent encoding). Learn what URL encoding is, which characters need encoding, how query strings work, and how to encode URLs in any language.">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .container{max-width:780px}
@@ -36,6 +44,46 @@
   footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
   footer a{color:#6366f1;text-decoration:none}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does %20 mean in a URL?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "%20 is the percent-encoded representation of a space character. The hex code for space in ASCII is 20 (decimal 32). Whenever you see %20 in a URL, it represents a space."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between %20 and + for spaces in URLs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both represent spaces but in different contexts. %20 is the standard percent encoding used in URL paths. + is used in form-encoded query strings (application/x-www-form-urlencoded). In a path like /hello+world, the + is a literal plus sign, not a space."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I see %2F in some URLs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "%2F is an encoded forward slash /. It is used when a slash is part of a data value rather than a path separator. For example, a file path like 2023/report.pdf would be encoded as 2023%2Freport.pdf when used as a query parameter value."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I encode the whole URL or just individual parts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Encode individual components such as query parameter values and path segments, then assemble the URL. Never encode a fully-assembled URL as it will double-encode characters that are already correct."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

@@ -6,6 +6,14 @@
 <meta name="description" content="Complete guide to Unix timestamps and epoch time. Learn what a Unix timestamp is, how to convert it, use it in code, and avoid common pitfalls with timezones and overflow.">
 <meta name="keywords" content="unix timestamp, epoch time, unix time, timestamp converter, epoch converter, unix timestamp guide, what is unix timestamp, timestamp to date">
 <title>Unix Timestamp Guide: Epoch Time Explained | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="Unix Timestamp Guide: Epoch Time Explained | SysUtil">
+<meta property="og:description" content="Complete guide to Unix timestamps and epoch time. Learn what a Unix timestamp is, how to convert it, use it in code, and avoid common pitfalls with timezones and overflow.">
+<meta property="og:url" content="https://sysutil.dev/blog/unix-timestamp-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unix Timestamp Guide: Epoch Time Explained | SysUtil">
+<meta name="twitter:description" content="Complete guide to Unix timestamps and epoch time. Learn what a Unix timestamp is, how to convert it, use it in code, and avoid common pitfalls with timezones and overflow.">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .container{max-width:780px}
@@ -35,6 +43,46 @@
   footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
   footer a{color:#6366f1;text-decoration:none}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is epoch time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Epoch time is another name for Unix timestamp — the number of seconds since January 1, 1970 at 00:00:00 UTC. The epoch is the reference point known as the Unix Epoch."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Unix timestamp the same everywhere in the world?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. A Unix timestamp represents the same moment in time everywhere in the world. It is always UTC-based. The local time equivalent will vary by timezone, but the timestamp number itself is universal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get the current Unix timestamp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In JavaScript: Math.floor(Date.now()/1000). In Python: int(time.time()). In Go: time.Now().Unix(). In Bash: date +%s. In PHP: time()."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does JavaScript use milliseconds instead of seconds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "JavaScript's Date object uses milliseconds for higher precision in interactive applications. This is a design decision from the early days of the language. Always divide by 1000 when converting to Unix seconds."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
