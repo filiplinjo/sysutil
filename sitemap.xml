@@ -15,6 +15,7 @@
 <url><loc>https://sysutil.dev/jwt/</loc><lastmod>2026-03-15</lastmod><priority>0.9</priority></url>
 <url><loc>https://sysutil.dev/http-status/</loc><lastmod>2026-03-15</lastmod><priority>0.9</priority></url>
 <url><loc>https://sysutil.dev/dns/</loc><lastmod>2026-03-15</lastmod><priority>0.9</priority></url>
+<url><loc>https://sysutil.dev/ai/</loc><lastmod>2026-03-15</lastmod><priority>1.0</priority></url>
 <url><loc>https://sysutil.dev/blog</loc><lastmod>2026-03-15</lastmod><priority>0.8</priority></url>
 <url><loc>https://sysutil.dev/blog/chmod-calculator-guide</loc><lastmod>2026-03-15</lastmod><priority>0.8</priority></url>
 <url><loc>https://sysutil.dev/blog/cron-expression-generator</loc><lastmod>2026-03-15</lastmod><priority>0.8</priority></url>

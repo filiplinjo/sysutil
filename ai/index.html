@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI-powered developer tools. Generate cron expressions, regex patterns, explain Linux commands and decode error messages — all in plain English. Runs on-premise, no data sent to third parties.">
+<meta name="keywords" content="ai cron generator, ai regex generator, explain linux command, explain error message, ai developer tools">
+<title>AI Developer Tools — Cron, Regex, Command Explainer | SysUtil</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="AI Developer Tools — Cron, Regex, Command Explainer | SysUtil">
+<meta property="og:description" content="Generate cron expressions, regex patterns, explain Linux commands and decode errors in plain English. On-premise AI, no data sent to third parties.">
+<meta property="og:url" content="https://sysutil.dev/ai">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AI Developer Tools — Cron, Regex, Command Explainer | SysUtil">
+<meta name="twitter:description" content="Generate cron expressions, regex patterns, explain Linux commands and decode errors in plain English.">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container { max-width: 820px; }
+
+  /* Tool tabs */
+  .tool-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 640px) { .tool-tabs { grid-template-columns: repeat(2,1fr); } }
+
+  .tool-tab {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 12px;
+    padding: 14px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  .tool-tab:hover { border-color: #6366f1; }
+  .tool-tab.active { border-color: #6366f1; background: rgba(99,102,241,0.08); }
+  .tool-tab-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+  .tool-tab-name { font-size: 0.82rem; font-weight: 600; color: #94a3b8; }
+  .tool-tab.active .tool-tab-name { color: #a5b4fc; }
+
+  /* Tool panes */
+  .tool-pane { display: none; }
+  .tool-pane.active { display: block; }
+
+  /* Input area */
+  .tool-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .tool-card-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .tool-input {
+    width: 100%;
+    background: #0f1117;
+    border: 1px solid #2d3148;
+    color: #e2e8f0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    outline: none;
+    transition: border 0.2s;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+  .tool-input:focus { border-color: #6366f1; }
+  .tool-input::placeholder { color: #374151; }
+
+  .tool-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-generate {
+    background: #6366f1;
+    border: none;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-generate:hover:not(:disabled) { background: #4f46e5; }
+  .btn-generate:disabled { background: #2d3148; color: #475569; cursor: default; }
+
+  .examples-hint { font-size: 0.78rem; color: #475569; }
+  .ex-chip {
+    display: inline-block;
+    background: #0f1117;
+    border: 1px solid #2d3148;
+    color: #64748b;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin: 2px;
+    transition: all 0.15s;
+  }
+  .ex-chip:hover { border-color: #6366f1; color: #a5b4fc; }
+
+  /* Result */
+  .result-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.2s ease both;
+  }
+
+  .result-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 14px;
+  }
+
+  /* Cron result */
+  .cron-expression {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #a5b4fc;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .cron-readable {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+  }
+  .cron-fields {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 560px) { .cron-fields { grid-template-columns: repeat(2,1fr); } }
+  .cron-field {
+    background: #0f1117;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  .cron-field-name { color: #475569; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .cron-field-val { color: #a5b4fc; font-family: monospace; font-weight: 700; margin-bottom: 4px; }
+  .cron-field-desc { color: #64748b; font-size: 0.75rem; line-height: 1.4; }
+  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-action {
+    background: #0f1117;
+    border: 1px solid #2d3148;
+    color: #94a3b8;
+    padding: 6px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-action:hover { border-color: #6366f1; color: #a5b4fc; }
+
+  /* Regex result */
+  .regex-pattern {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 1.4rem;
+    color: #86efac;
+    background: #0a0c12;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    word-break: break-all;
+  }
+  .regex-flags { color: #fde68a; font-size: 1rem; }
+  .regex-readable { color: #64748b; font-size: 0.88rem; margin-bottom: 16px; }
+  .breakdown-list { list-style: none; margin-bottom: 16px; }
+  .breakdown-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px solid #1a1d2e;
+    font-size: 0.85rem;
+  }
+  .breakdown-list li:last-child { border-bottom: none; }
+  .bd-token { font-family: monospace; color: #a5b4fc; min-width: 80px; word-break: break-all; }
+  .bd-meaning { color: #64748b; }
+  .examples-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .example-match {
+    background: rgba(134,239,172,0.08);
+    border: 1px solid rgba(134,239,172,0.2);
+    color: #86efac;
+    font-family: monospace;
+    font-size: 0.82rem;
+    padding: 3px 12px;
+    border-radius: 6px;
+  }
+
+  /* Command explainer result */
+  .cmd-summary {
+    font-size: 1rem;
+    color: #e2e8f0;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #2d3148;
+  }
+  .parts-list { list-style: none; margin-bottom: 16px; }
+  .parts-list li {
+    display: grid;
+    grid-template-columns: 160px 80px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1d2e;
+    font-size: 0.85rem;
+  }
+  @media (max-width:560px) { .parts-list li { grid-template-columns: 1fr; } }
+  .parts-list li:last-child { border-bottom: none; }
+  .part-token { font-family: monospace; color: #a5b4fc; font-weight: 700; word-break: break-all; }
+  .part-type { color: #475569; font-size: 0.75rem; text-transform: uppercase; }
+  .part-desc { color: #64748b; }
+  .danger-box {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  .tip-box {
+    background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.2);
+    color: #a5b4fc;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  /* Error explainer result */
+  .error-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f87171;
+    margin-bottom: 12px;
+  }
+  .error-cause {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #2d3148;
+  }
+  .solutions-list {
+    list-style: none;
+    margin-bottom: 16px;
+  }
+  .solutions-list li {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1d2e;
+    font-size: 0.88rem;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+  .solutions-list li:last-child { border-bottom: none; }
+  .solution-num {
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Loading */
+  .loading-state {
+    text-align: center;
+    padding: 40px 24px;
+    color: #475569;
+  }
+  .spinner {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border: 2px solid #2d3148;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-sub { font-size: 0.8rem; color: #374151; margin-top: 6px; }
+
+  /* Error state */
+  .error-state {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #fca5a5;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+  }
+
+  /* Copy success flash */
+  .copied-flash { color: #4ade80 !important; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/linux-commands">commands</a>
+      <a href="/jwt">jwt</a>
+      <a href="/http-status">http</a>
+      <a href="/dns">dns</a>
+      <a href="/ai" class="active">ai</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>AI <span>Dev Tools</span></h1>
+    <p>Describe what you want in plain English. Powered by Llama running on-premise — your input never leaves this server.</p>
+  </header>
+
+  <div class="tool-tabs">
+    <div class="tool-tab active" onclick="switchTool('cron',this)">
+      <span class="tool-tab-icon">⏰</span>
+      <span class="tool-tab-name">Cron Builder</span>
+    </div>
+    <div class="tool-tab" onclick="switchTool('regex',this)">
+      <span class="tool-tab-icon">🔍</span>
+      <span class="tool-tab-name">Regex Builder</span>
+    </div>
+    <div class="tool-tab" onclick="switchTool('command',this)">
+      <span class="tool-tab-icon">🐧</span>
+      <span class="tool-tab-name">Command Explainer</span>
+    </div>
+    <div class="tool-tab" onclick="switchTool('error',this)">
+      <span class="tool-tab-icon">🔥</span>
+      <span class="tool-tab-name">Error Decoder</span>
+    </div>
+  </div>
+
+  <!-- ── Cron Builder ──────────────────────────────────────────────── -->
+  <div class="tool-pane active" id="pane-cron">
+    <div class="tool-card">
+      <div class="tool-card-label">Describe the schedule in plain English</div>
+      <textarea class="tool-input" id="cron-input" rows="2"
+        placeholder="e.g. every weekday at 9am, first day of each month at midnight, every 15 minutes between 8am and 6pm…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();runTool('cron')}"></textarea>
+      <div class="tool-row">
+        <button class="btn-generate" id="cron-btn" onclick="runTool('cron')">
+          <span>Generate</span>
+        </button>
+        <span class="examples-hint">Try:
+          <span class="ex-chip" onclick="setEx('cron','every weekday at 9am')">every weekday at 9am</span>
+          <span class="ex-chip" onclick="setEx('cron','every 15 minutes')">every 15 minutes</span>
+          <span class="ex-chip" onclick="setEx('cron','first day of month at midnight')">first day of month</span>
+          <span class="ex-chip" onclick="setEx('cron','every Sunday at 2am')">every Sunday at 2am</span>
+        </span>
+      </div>
+    </div>
+    <div id="cron-result"></div>
+  </div>
+
+  <!-- ── Regex Builder ─────────────────────────────────────────────── -->
+  <div class="tool-pane" id="pane-regex">
+    <div class="tool-card">
+      <div class="tool-card-label">Describe what you want to match</div>
+      <textarea class="tool-input" id="regex-input" rows="2"
+        placeholder="e.g. email addresses, IPv4 but not private ranges, UK phone numbers, ISO 8601 dates…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();runTool('regex')}"></textarea>
+      <div class="tool-row">
+        <button class="btn-generate" id="regex-btn" onclick="runTool('regex')">
+          <span>Generate</span>
+        </button>
+        <span class="examples-hint">Try:
+          <span class="ex-chip" onclick="setEx('regex','email addresses')">email addresses</span>
+          <span class="ex-chip" onclick="setEx('regex','IPv4 addresses')">IPv4 addresses</span>
+          <span class="ex-chip" onclick="setEx('regex','semantic version numbers like 1.2.3')">semver</span>
+          <span class="ex-chip" onclick="setEx('regex','hex colour codes with or without #')">hex colours</span>
+        </span>
+      </div>
+    </div>
+    <div id="regex-result"></div>
+  </div>
+
+  <!-- ── Command Explainer ─────────────────────────────────────────── -->
+  <div class="tool-pane" id="pane-command">
+    <div class="tool-card">
+      <div class="tool-card-label">Paste any Linux / shell command</div>
+      <textarea class="tool-input" id="command-input" rows="3"
+        placeholder="e.g. find /var/log -name '*.log' -mtime +30 -exec rm {} \;&#10;awk -F':' '{print $1,$3}' /etc/passwd | sort -t' ' -k2 -n"
+        onkeydown="if(event.key==='Enter'&&event.ctrlKey){runTool('command')}"></textarea>
+      <div class="tool-row">
+        <button class="btn-generate" id="command-btn" onclick="runTool('command')">
+          <span>Explain</span>
+        </button>
+        <span class="examples-hint">Try:
+          <span class="ex-chip" onclick="setEx('command','find /var/log -name \'*.log\' -mtime +30 -delete')">find + delete</span>
+          <span class="ex-chip" onclick="setEx('command','ss -tulnp | grep LISTEN')">ss listen ports</span>
+          <span class="ex-chip" onclick="setEx('command','tar -czf backup.tar.gz /etc/nginx')">tar backup</span>
+          <span class="ex-chip" onclick="setEx('command','awk \'{sum+=$1} END{print sum}\' numbers.txt')">awk sum</span>
+        </span>
+      </div>
+    </div>
+    <div id="command-result"></div>
+  </div>
+
+  <!-- ── Error Decoder ─────────────────────────────────────────────── -->
+  <div class="tool-pane" id="pane-error">
+    <div class="tool-card">
+      <div class="tool-card-label">Paste an error message or stack trace</div>
+      <textarea class="tool-input" id="error-input" rows="5"
+        placeholder="Paste any error message, exception, or stack trace here…"></textarea>
+      <div class="tool-row">
+        <button class="btn-generate" id="error-btn" onclick="runTool('error')">
+          <span>Decode</span>
+        </button>
+        <span class="examples-hint">Try:
+          <span class="ex-chip" onclick="setEx('error','ECONNREFUSED 127.0.0.1:5432')">ECONNREFUSED</span>
+          <span class="ex-chip" onclick="setEx('error','OOMKilled: container exceeded memory limit')">OOMKilled</span>
+          <span class="ex-chip" onclick="setEx('error','FATAL: role &quot;app&quot; does not exist')">PG role error</span>
+          <span class="ex-chip" onclick="setEx('error','certificate has expired or is not yet valid')">TLS cert error</span>
+        </span>
+      </div>
+    </div>
+    <div id="error-result"></div>
+  </div>
+
+  <footer><p>Free tools by <a href="/">SysUtil.dev</a> · AI runs on-premise via <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a></p></footer>
+</div>
+
+<script>
+const API = '/api';
+
+function switchTool(name, el) {
+  document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tool-pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-' + name).classList.add('active');
+}
+
+function setEx(tool, val) {
+  document.getElementById(tool + '-input').value = val;
+  runTool(tool);
+}
+
+async function runTool(tool) {
+  const inputEl  = document.getElementById(tool + '-input');
+  const resultEl = document.getElementById(tool + '-result');
+  const btn      = document.getElementById(tool + '-btn');
+  const val      = inputEl.value.trim();
+
+  if (!val) return;
+
+  btn.disabled = true;
+  resultEl.innerHTML = `<div class="loading-state">
+    <div class="spinner"></div>
+    <div>Thinking…</div>
+    <div class="loading-sub">First request may take longer while the model loads</div>
+  </div>`;
+
+  const bodyKey = tool === 'cron' ? 'description' : tool === 'regex' ? 'description' : tool === 'command' ? 'command' : 'error';
+
+  try {
+    const res  = await fetch(`${API}/ai/${tool}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [bodyKey]: val })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      resultEl.innerHTML = `<div class="error-state"><strong>Error</strong> — ${esc(data.error || 'Unknown error')}</div>`;
+      return;
+    }
+    resultEl.innerHTML = renderResult(tool, data);
+    wireActions(tool, data);
+  } catch(e) {
+    resultEl.innerHTML = `<div class="error-state"><strong>Network error</strong> — ${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function renderResult(tool, d) {
+  if (tool === 'cron')    return renderCron(d);
+  if (tool === 'regex')   return renderRegex(d);
+  if (tool === 'command') return renderCommand(d);
+  if (tool === 'error')   return renderError(d);
+  return '';
+}
+
+function renderCron(d) {
+  const fields = d.fields || {};
+  const fieldNames = ['minute','hour','dom','month','dow'];
+  const fieldLabels = ['Minute','Hour','Day of Month','Month','Day of Week'];
+  let fieldsHtml = fieldNames.map((f, i) => {
+    const val = fields[f] || (d.expression ? d.expression.split(' ')[i] : '*');
+    return `<div class="cron-field">
+      <div class="cron-field-name">${fieldLabels[i]}</div>
+      <div class="cron-field-val">${esc(val || '*')}</div>
+      <div class="cron-field-desc">${esc(fields[f] || '')}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="result-card">
+    <div class="result-label">Generated Expression</div>
+    <div class="cron-expression">
+      <span id="cronExpr">${esc(d.expression)}</span>
+    </div>
+    <div class="cron-readable">${esc(d.readable || '')}</div>
+    <div class="cron-fields">${fieldsHtml}</div>
+    <div class="action-row">
+      <button class="btn-action" id="cronCopyBtn" onclick="copyText('${esc(d.expression)}','cronCopyBtn')">Copy expression</button>
+      <a class="btn-action" href="/cron" style="text-decoration:none">Open in Cron tool →</a>
+    </div>
+  </div>`;
+}
+
+function renderRegex(d) {
+  const fullPattern = d.flags ? `/${d.pattern}/${d.flags}` : `/${d.pattern}/`;
+  const breakdown   = (d.breakdown || []).map(b =>
+    `<li><span class="bd-token">${esc(b.token)}</span><span class="bd-meaning">${esc(b.meaning)}</span></li>`
+  ).join('');
+  const examples = (d.examples || []).map(e =>
+    `<span class="example-match">${esc(e)}</span>`
+  ).join('');
+
+  return `<div class="result-card">
+    <div class="result-label">Generated Pattern</div>
+    <div class="regex-pattern">
+      <span>/${esc(d.pattern)}/</span>
+      ${d.flags ? `<span class="regex-flags">${esc(d.flags)}</span>` : ''}
+    </div>
+    <div class="regex-readable">${esc(d.readable || '')}</div>
+    ${breakdown ? `<div class="result-label" style="margin-top:14px">Breakdown</div><ul class="breakdown-list">${breakdown}</ul>` : ''}
+    ${examples  ? `<div class="result-label" style="margin-top:14px">Example matches</div><div class="examples-row">${examples}</div>` : ''}
+    <div class="action-row">
+      <button class="btn-action" id="regexCopyBtn" onclick="copyText(${JSON.stringify(d.pattern)},'regexCopyBtn')">Copy pattern</button>
+      <button class="btn-action" id="regexCopyFull" onclick="copyText(${JSON.stringify(fullPattern)},'regexCopyFull')">Copy with flags</button>
+      <a class="btn-action" href="/regex" style="text-decoration:none">Test in Regex tool →</a>
+    </div>
+  </div>`;
+}
+
+function renderCommand(d) {
+  const parts = (d.parts || []).map(p =>
+    `<li>
+      <span class="part-token">${esc(p.token)}</span>
+      <span class="part-type">${esc(p.type || '')}</span>
+      <span class="part-desc">${esc(p.description)}</span>
+    </li>`
+  ).join('');
+
+  return `<div class="result-card">
+    <div class="result-label">Explanation</div>
+    <div class="cmd-summary">${esc(d.summary)}</div>
+    ${d.danger ? `<div class="danger-box">⚠ <strong>Warning:</strong> ${esc(d.danger)}</div>` : ''}
+    ${parts    ? `<div class="result-label" style="margin-top:2px">Command breakdown</div><ul class="parts-list">${parts}</ul>` : ''}
+    ${d.tip    ? `<div class="tip-box">💡 ${esc(d.tip)}</div>` : ''}
+  </div>`;
+}
+
+function renderError(d) {
+  const solutions = (d.solutions || []).map((s, i) =>
+    `<li><span class="solution-num">${i+1}</span><span>${esc(s)}</span></li>`
+  ).join('');
+
+  return `<div class="result-card">
+    <div class="error-title">${esc(d.title || 'Error')}</div>
+    <div class="error-cause">${esc(d.cause)}</div>
+    ${solutions ? `<div class="result-label">How to fix it</div><ul class="solutions-list">${solutions}</ul>` : ''}
+    ${d.prevention ? `<div class="tip-box">🛡 <strong>Prevention:</strong> ${esc(d.prevention)}</div>` : ''}
+  </div>`;
+}
+
+function wireActions() { /* buttons use inline onclick */ }
+
+async function copyText(text, btnId) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied-flash');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied-flash'); }, 1500);
+    }
+  } catch {}
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Handle ?tool= URL param
+(function() {
+  const p = new URLSearchParams(location.search);
+  const tool = p.get('tool');
+  const q    = p.get('q');
+  if (tool) {
+    const tab = document.querySelector(`.tool-tab[onclick*="'${tool}'"]`);
+    if (tab) switchTool(tool, tab);
+    if (q) {
+      const inp = document.getElementById(tool + '-input');
+      if (inp) { inp.value = q; runTool(tool); }
+    }
+  }
+})();
+</script>
+</body>
+</html>

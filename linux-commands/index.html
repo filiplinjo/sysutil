@@ -155,6 +155,44 @@
     grid-column: 1 / -1;
   }
   .no-results strong { display: block; font-size: 1.3rem; color: #374151; margin-bottom: 8px; }
+
+  .cmd-explain-btn {
+    background: none;
+    border: 1px solid #2d3148;
+    color: #475569;
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .cmd-explain-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+  .cmd-explain-btn.loading { border-color: #6366f1; color: #6366f1; }
+
+  .cmd-ai-panel {
+    margin-top: 10px;
+    background: #0a0c12;
+    border: 1px solid #2d3148;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.83rem;
+    display: none;
+    animation: fadeUp 0.2s ease both;
+  }
+  .cmd-ai-panel.show { display: block; }
+  .ai-summary { color: #94a3b8; line-height: 1.6; margin-bottom: 10px; }
+  .ai-parts { border-top: 1px solid #1a1d2e; padding-top: 10px; }
+  .ai-part-row { display: flex; gap: 10px; padding: 5px 0; font-size: 0.8rem; }
+  .ai-part-token { font-family: monospace; color: #a5b4fc; min-width: 90px; word-break: break-all; }
+  .ai-part-desc { color: #64748b; }
+  .ai-danger { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; border-radius: 7px; padding: 7px 12px; margin-top: 8px; font-size: 0.8rem; }
+  .ai-tip { background: rgba(99,102,241,0.07); border: 1px solid rgba(99,102,241,0.15); color: #a5b4fc; border-radius: 7px; padding: 7px 12px; margin-top: 8px; font-size: 0.8rem; }
+  .ai-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #2d3148; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -179,6 +217,7 @@
       <a href="/jwt">jwt</a>
       <a href="/http-status">http</a>
       <a href="/dns">dns</a>
+      <a href="/ai">ai</a>
       <a href="/blog">guides</a>
     </div>
   </div>
@@ -376,8 +415,9 @@ function filterCmds() {
   }
 
   var html = '';
-  results.forEach(function(c) {
-    html += '<div class="cmd-card">' +
+  results.forEach(function(c, idx) {
+    var cardId = 'cmd-' + idx;
+    html += '<div class="cmd-card" id="' + cardId + '">' +
       '<div class="cmd-name">' + escHTML(c.name) + '</div>' +
       '<div class="cmd-desc">' + escHTML(c.desc) + '</div>' +
       '<div class="cmd-flags">' + escHTML(c.flags) + '</div>' +
@@ -385,6 +425,8 @@ function filterCmds() {
         '<span class="cmd-ex-text">' + escHTML(c.example) + '</span>' +
         '<button class="cmd-copy" data-cmd="' + escHTML(c.example) + '">Copy</button>' +
       '</div>' +
+      '<button class="cmd-explain-btn" data-example="' + escHTML(c.example) + '" data-panel="ai-' + cardId + '">✦ Explain with AI</button>' +
+      '<div class="cmd-ai-panel" id="ai-' + cardId + '"></div>' +
     '</div>';
   });
   grid.innerHTML = html;
@@ -399,6 +441,66 @@ function filterCmds() {
       });
     });
   });
+
+  grid.querySelectorAll('.cmd-explain-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { explainCommand(btn); });
+  });
+}
+
+async function explainCommand(btn) {
+  var command  = btn.getAttribute('data-example');
+  var panelId  = btn.getAttribute('data-panel');
+  var panel    = document.getElementById(panelId);
+
+  // Toggle off if already showing
+  if (panel.classList.contains('show')) {
+    panel.classList.remove('show');
+    btn.textContent = '✦ Explain with AI';
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.textContent = 'Loading…';
+  panel.classList.add('show');
+  panel.innerHTML = '<span class="ai-spinner"></span> Asking AI…';
+
+  try {
+    var res  = await fetch('/api/ai/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command: command })
+    });
+    var data = await res.json();
+
+    if (!res.ok || data.error) {
+      panel.innerHTML = '<span style="color:#f87171">Error: ' + escHTML(data.error || 'Failed') + '</span>';
+      btn.textContent = '✦ Explain with AI';
+      btn.classList.remove('loading');
+      return;
+    }
+
+    var partsHtml = '';
+    if (data.parts && data.parts.length) {
+      partsHtml = '<div class="ai-parts">' +
+        data.parts.map(function(p) {
+          return '<div class="ai-part-row"><span class="ai-part-token">' + escHTML(p.token) + '</span><span class="ai-part-desc">' + escHTML(p.description) + '</span></div>';
+        }).join('') +
+      '</div>';
+    }
+
+    panel.innerHTML =
+      '<div class="ai-summary">' + escHTML(data.summary) + '</div>' +
+      partsHtml +
+      (data.danger ? '<div class="ai-danger">⚠ ' + escHTML(data.danger) + '</div>' : '') +
+      (data.tip    ? '<div class="ai-tip">💡 ' + escHTML(data.tip) + '</div>'       : '');
+
+    btn.textContent = '✦ Hide explanation';
+    btn.classList.remove('loading');
+  } catch(e) {
+    panel.innerHTML = '<span style="color:#f87171">Network error — is the API server running?</span>';
+    btn.textContent = '✦ Explain with AI';
+    btn.classList.remove('loading');
+  }
 }
 
 // Init from URL hash
