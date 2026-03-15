@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online JWT decoder. Paste any JSON Web Token and instantly decode the header, payload, expiry and all claims. No data leaves your browser.">
+<meta name="keywords" content="jwt decoder, json web token, jwt parser, decode jwt, jwt claims, jwt expiry">
+<title>JWT Decoder - Decode JSON Web Tokens Online | SysUtil</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="JWT Decoder - Decode JSON Web Tokens Online | SysUtil">
+<meta property="og:description" content="Free online JWT decoder. Paste any JSON Web Token and instantly decode the header, payload, expiry and all claims. No data leaves your browser.">
+<meta property="og:url" content="https://sysutil.dev/jwt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JWT Decoder - Decode JSON Web Tokens Online | SysUtil">
+<meta name="twitter:description" content="Free online JWT decoder. Paste any JSON Web Token and instantly decode the header, payload, expiry and all claims. No data leaves your browser.">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container { max-width: 860px; }
+
+  .input-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .input-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .input-card-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .input-btn-row {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-secondary {
+    background: #0f1117;
+    border: 1px solid #2d3148;
+    color: #94a3b8;
+    padding: 6px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: #6366f1; color: #a5b4fc; }
+  .btn-primary {
+    background: #6366f1;
+    border: none;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #4f46e5; }
+
+  .token-input {
+    width: 100%;
+    background: #0f1117;
+    border: 1px solid #2d3148;
+    color: #e2e8f0;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    min-height: 100px;
+    resize: vertical;
+    outline: none;
+    transition: border 0.2s;
+    line-break: anywhere;
+    word-break: break-all;
+  }
+  .token-input:focus { border-color: #6366f1; }
+  .token-input::placeholder { color: #374151; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+  .token-anatomy {
+    word-break: break-all;
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    background: #0f1117;
+    border: 1px solid #1a1d2e;
+    border-radius: 10px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+  }
+  .part-header { color: #a5b4fc; }
+  .part-payload { color: #86efac; }
+  .part-sig { color: #94a3b8; }
+  .part-dot { color: #374151; font-weight: 700; }
+
+  .panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 680px) {
+    .panels-grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .panel-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .algo-badge {
+    display: inline-block;
+    border: 1px solid #6366f1;
+    color: #a5b4fc;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.72rem;
+    padding: 1px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .json-display {
+    background: #0a0c12;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    max-height: 300px;
+    overflow: auto;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .json-key    { color: #a5b4fc; }
+  .json-str    { color: #86efac; }
+  .json-num    { color: #fde68a; }
+  .json-bool   { color: #fdba74; }
+  .json-null   { color: #94a3b8; }
+  .json-punct  { color: #64748b; }
+
+  .expiry-section {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .expiry-info { display: flex; flex-direction: column; gap: 6px; }
+  .expiry-row  { font-size: 0.85rem; color: #64748b; display: flex; gap: 10px; }
+  .expiry-row strong { color: #94a3b8; min-width: 85px; }
+
+  .expiry-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .expiry-badge.valid   { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .expiry-badge.expired { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .expiry-badge.none    { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+
+  .sig-notice {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    color: #fbbf24;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    margin-top: 10px;
+  }
+
+  .error-panel {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #fca5a5;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+    display: none;
+  }
+  .error-panel.show { display: block; }
+
+  .decoded-area { display: none; }
+  .decoded-area.show { display: block; }
+
+  .claims-ref {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 40px;
+  }
+  .claims-ref h3 {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+  }
+  .claims-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .claims-table th {
+    text-align: left;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 8px 14px;
+    border-bottom: 1px solid #2d3148;
+  }
+  .claims-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1a1d2e;
+    vertical-align: top;
+  }
+  .claims-table tr:last-child td { border-bottom: none; }
+  .claim-name {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    color: #a5b4fc;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .claim-full { color: #94a3b8; }
+  .claim-desc { color: #64748b; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/linux-commands">commands</a>
+      <a href="/jwt" class="active">jwt</a>
+      <a href="/http-status">http</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>JWT <span>Decoder</span></h1>
+    <p>Paste any JSON Web Token to instantly decode the header, payload, and claims. Fully client-side — no data leaves your browser.</p>
+  </header>
+
+  <div class="input-card">
+    <div class="input-card-header">
+      <span class="input-card-label">Paste JWT Token</span>
+      <div class="input-btn-row">
+        <button class="btn-secondary" id="sampleBtn" onclick="loadSample()">Load Sample</button>
+        <button class="btn-secondary" id="clearBtn" onclick="clearToken()">Clear</button>
+      </div>
+    </div>
+    <textarea class="token-input" id="tokenInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" oninput="decodeToken(this.value)" onpaste="setTimeout(function(){ decodeToken(document.getElementById('tokenInput').value); }, 0)"></textarea>
+  </div>
+
+  <div class="error-panel" id="errorPanel"></div>
+
+  <div class="decoded-area" id="decodedArea">
+
+    <div class="token-anatomy" id="tokenAnatomy"></div>
+
+    <div class="expiry-section" id="expirySection">
+      <div class="expiry-info" id="expiryInfo"></div>
+      <div id="expiryBadge"></div>
+    </div>
+
+    <div class="panels-grid">
+      <div class="panel" id="headerPanel">
+        <div class="panel-label" id="headerLabel">Header</div>
+        <div class="json-display" id="headerJson"></div>
+      </div>
+      <div class="panel" id="payloadPanel">
+        <div class="panel-label">Payload</div>
+        <div class="json-display" id="payloadJson"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Signature</div>
+        <div class="json-display" id="sigDisplay" style="color:#94a3b8;font-size:0.78rem;word-break:break-all;"></div>
+        <div class="sig-notice">⚠ Signature is not verified — decoding only. To verify, provide the secret or public key server-side.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="claims-ref">
+    <h3>Standard JWT Claims Reference</h3>
+    <table class="claims-table">
+      <thead>
+        <tr><th>Claim</th><th>Full Name</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="claim-name">iss</td><td class="claim-full">Issuer</td><td class="claim-desc">Identifies the principal that issued the JWT.</td></tr>
+        <tr><td class="claim-name">sub</td><td class="claim-full">Subject</td><td class="claim-desc">Identifies the principal that is the subject of the JWT, typically the user ID.</td></tr>
+        <tr><td class="claim-name">aud</td><td class="claim-full">Audience</td><td class="claim-desc">Identifies the recipients that the JWT is intended for. Must be validated by the recipient.</td></tr>
+        <tr><td class="claim-name">exp</td><td class="claim-full">Expiration Time</td><td class="claim-desc">Unix timestamp after which the JWT must not be accepted. Used to limit token lifetime.</td></tr>
+        <tr><td class="claim-name">iat</td><td class="claim-full">Issued At</td><td class="claim-desc">Unix timestamp at which the JWT was issued. Used to determine the age of the token.</td></tr>
+        <tr><td class="claim-name">nbf</td><td class="claim-full">Not Before</td><td class="claim-desc">Unix timestamp before which the JWT must not be accepted. Token is not yet valid.</td></tr>
+        <tr><td class="claim-name">jti</td><td class="claim-full">JWT ID</td><td class="claim-desc">Unique identifier for the token, used to prevent replay attacks.</td></tr>
+        <tr><td class="claim-name">name</td><td class="claim-full">Full Name</td><td class="claim-desc">End-user's full name. Defined in OpenID Connect.</td></tr>
+        <tr><td class="claim-name">email</td><td class="claim-full">Email</td><td class="claim-desc">End-user's preferred e-mail address. Defined in OpenID Connect.</td></tr>
+        <tr><td class="claim-name">roles</td><td class="claim-full">Roles</td><td class="claim-desc">Application-specific claim listing the user's roles or permissions.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer><p>Free tools by <a href="/">SysUtil.dev</a></p></footer>
+</div>
+
+<script>
+function base64urlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return decodeURIComponent(atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+
+function syntaxHighlight(json) {
+  if (typeof json !== 'string') json = JSON.stringify(json, null, 2);
+  return json
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+      var cls = 'json-num';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'json-key';
+          match = match.replace(/:$/, '');
+          return '<span class="' + cls + '">' + match + '</span><span class="json-punct">:</span>';
+        } else {
+          cls = 'json-str';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
+function formatRelTime(ms) {
+  var s = Math.abs(ms) / 1000;
+  if (s < 60) return Math.round(s) + 's';
+  var m = s / 60;
+  if (m < 60) return Math.round(m) + 'm';
+  var h = m / 60;
+  if (h < 24) return Math.round(h) + 'h ' + Math.round(m % 60) + 'm';
+  var d = h / 24;
+  if (d < 30) return Math.round(d) + ' day' + (Math.round(d) !== 1 ? 's' : '');
+  var mo = d / 30;
+  return Math.round(mo) + ' month' + (Math.round(mo) !== 1 ? 's' : '');
+}
+
+function formatDate(ts) {
+  return new Date(ts * 1000).toLocaleString(undefined, {
+    year:'numeric', month:'short', day:'numeric',
+    hour:'2-digit', minute:'2-digit', second:'2-digit',
+    timeZoneName:'short'
+  });
+}
+
+function decodeToken(raw) {
+  raw = (raw || '').trim();
+  var errorPanel = document.getElementById('errorPanel');
+  var decodedArea = document.getElementById('decodedArea');
+
+  if (!raw) {
+    errorPanel.classList.remove('show');
+    decodedArea.classList.remove('show');
+    return;
+  }
+
+  var parts = raw.split('.');
+  if (parts.length !== 3) {
+    errorPanel.innerHTML = '<strong>Invalid JWT format</strong> — A JWT must have exactly three dot-separated parts (header.payload.signature).';
+    errorPanel.classList.add('show');
+    decodedArea.classList.remove('show');
+    return;
+  }
+
+  var header, payload;
+  try {
+    header = JSON.parse(base64urlDecode(parts[0]));
+  } catch(e) {
+    errorPanel.innerHTML = '<strong>Could not decode header</strong> — The header segment is not valid base64url JSON: ' + e.message;
+    errorPanel.classList.add('show');
+    decodedArea.classList.remove('show');
+    return;
+  }
+  try {
+    payload = JSON.parse(base64urlDecode(parts[1]));
+  } catch(e) {
+    errorPanel.innerHTML = '<strong>Could not decode payload</strong> — The payload segment is not valid base64url JSON: ' + e.message;
+    errorPanel.classList.add('show');
+    decodedArea.classList.remove('show');
+    return;
+  }
+
+  errorPanel.classList.remove('show');
+  decodedArea.classList.add('show');
+
+  // Token anatomy
+  document.getElementById('tokenAnatomy').innerHTML =
+    '<span class="part-header">' + escHTML(parts[0]) + '</span>' +
+    '<span class="part-dot">.</span>' +
+    '<span class="part-payload">' + escHTML(parts[1]) + '</span>' +
+    '<span class="part-dot">.</span>' +
+    '<span class="part-sig">' + escHTML(parts[2]) + '</span>';
+
+  // Header panel
+  var algo = header.alg || '';
+  document.getElementById('headerLabel').innerHTML =
+    'Header' + (algo ? ' <span class="algo-badge">' + escHTML(algo) + '</span>' : '');
+  document.getElementById('headerJson').innerHTML = syntaxHighlight(JSON.stringify(header, null, 2));
+
+  // Payload panel
+  document.getElementById('payloadJson').innerHTML = syntaxHighlight(JSON.stringify(payload, null, 2));
+
+  // Signature panel
+  document.getElementById('sigDisplay').textContent = parts[2];
+
+  // Expiry
+  var now = Date.now();
+  var infoHTML = '';
+  var badgeHTML = '';
+
+  if (payload.iat) {
+    infoHTML += '<div class="expiry-row"><strong>Issued at</strong> ' + escHTML(formatDate(payload.iat)) + '</div>';
+  }
+  if (payload.nbf) {
+    infoHTML += '<div class="expiry-row"><strong>Not before</strong> ' + escHTML(formatDate(payload.nbf)) + '</div>';
+  }
+  if (payload.exp) {
+    infoHTML += '<div class="expiry-row"><strong>Expires at</strong> ' + escHTML(formatDate(payload.exp)) + '</div>';
+    var expMs = payload.exp * 1000;
+    var diff = expMs - now;
+    if (diff > 0) {
+      badgeHTML = '<div class="expiry-badge valid">✓ Valid — expires in ' + formatRelTime(diff) + '</div>';
+    } else {
+      badgeHTML = '<div class="expiry-badge expired">✗ Expired ' + formatRelTime(diff) + ' ago</div>';
+    }
+  } else {
+    if (!infoHTML) infoHTML = '<div class="expiry-row" style="color:#64748b">No time claims present in this token.</div>';
+    badgeHTML = '<div class="expiry-badge none">No expiry set</div>';
+  }
+
+  document.getElementById('expiryInfo').innerHTML = infoHTML;
+  document.getElementById('expiryBadge').innerHTML = badgeHTML;
+}
+
+function escHTML(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function clearToken() {
+  document.getElementById('tokenInput').value = '';
+  decodeToken('');
+}
+
+function loadSample() {
+  // Build a realistic sample JWT (not cryptographically valid — for decoding demo only)
+  var now = Math.floor(Date.now() / 1000);
+  var headerObj  = { alg: 'HS256', typ: 'JWT' };
+  var payloadObj = {
+    iss: 'https://auth.sysutil.dev',
+    sub: 'usr_0hJ3kP9mXqR7vL2',
+    aud: 'https://api.sysutil.dev',
+    iat: now - 300,
+    nbf: now - 300,
+    exp: now + 3300,
+    jti: 'f8c3de3d-1fea-4d7c-a8aa-e1a93b7ef785',
+    name: 'Alice Developer',
+    email: 'alice@example.com',
+    roles: ['user', 'admin'],
+    plan: 'pro'
+  };
+  var h = btoa(JSON.stringify(headerObj)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  var p = btoa(unescape(encodeURIComponent(JSON.stringify(payloadObj)))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  var sig = 'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+  var token = h + '.' + p + '.' + sig;
+  document.getElementById('tokenInput').value = token;
+  decodeToken(token);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Searchable Linux command reference with 100+ commands. Filter by category, search by name, and copy examples instantly.">
+<meta name="keywords" content="linux commands, linux cheat sheet, bash commands, terminal commands, linux reference">
+<title>Linux Command Reference - Searchable Cheat Sheet | SysUtil</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="Linux Command Reference - Searchable Cheat Sheet | SysUtil">
+<meta property="og:description" content="Searchable Linux command reference with 100+ commands. Filter by category, search by name, and copy examples instantly.">
+<meta property="og:url" content="https://sysutil.dev/linux-commands">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux Command Reference - Searchable Cheat Sheet | SysUtil">
+<meta name="twitter:description" content="Searchable Linux command reference with 100+ commands. Filter by category, search by name, and copy examples instantly.">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container { max-width: 1100px; }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .search-input {
+    flex: 1;
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    color: #e2e8f0;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.97rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .search-input:focus { border-color: #6366f1; }
+  .search-input::placeholder { color: #374151; }
+
+  .count-badge {
+    white-space: nowrap;
+    font-size: 0.82rem;
+    color: #64748b;
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    padding: 6px 14px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .count-badge strong { color: #a5b4fc; }
+
+  .cat-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .cat-pill {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    color: #64748b;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: all 0.15s;
+  }
+  .cat-pill:hover { border-color: #6366f1; color: #a5b4fc; }
+  .cat-pill.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .cmd-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: border-color 0.15s;
+  }
+  .cmd-card:hover { border-color: #6366f1; }
+
+  .cmd-name {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 1.2rem;
+    color: #a5b4fc;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .cmd-desc {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    margin: 4px 0 8px;
+    line-height: 1.5;
+  }
+
+  .cmd-flags {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  .cmd-example {
+    display: flex;
+    align-items: center;
+    background: #0f1117;
+    border-radius: 8px;
+    padding: 8px 12px;
+    gap: 8px;
+    border: 1px solid #1a1d2e;
+  }
+
+  .cmd-ex-text {
+    flex: 1;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    word-break: break-all;
+  }
+
+  .cmd-copy {
+    background: transparent;
+    border: 1px solid #2d3148;
+    color: #64748b;
+    border-radius: 6px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .cmd-copy:hover { border-color: #6366f1; color: #a5b4fc; }
+  .cmd-copy.copied { border-color: #22c55e; color: #22c55e; }
+
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+    font-size: 1rem;
+    grid-column: 1 / -1;
+  }
+  .no-results strong { display: block; font-size: 1.3rem; color: #374151; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/linux-commands" class="active">commands</a>
+      <a href="/jwt">jwt</a>
+      <a href="/http-status">http</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>Linux Command <span>Reference</span></h1>
+    <p>Searchable cheat sheet for 100+ essential Linux commands. Filter by category, search by name or description, and copy examples instantly.</p>
+  </header>
+
+  <div class="search-row">
+    <input type="search" class="search-input" id="searchInput" placeholder="Search commands, descriptions, examples…" oninput="filterCmds()" autocomplete="off" spellcheck="false">
+    <div class="count-badge" id="countBadge">Showing <strong id="countShown">0</strong> of <strong id="countTotal">0</strong> commands</div>
+  </div>
+
+  <div class="cat-pills" id="catPills"></div>
+
+  <div class="cmd-grid" id="cmdGrid"></div>
+
+  <footer><p>Free tools by <a href="/">SysUtil.dev</a></p></footer>
+</div>
+
+<script>
+var CMDS = [
+  /* ── File & Directory ─────────────────────────────────────────── */
+  { cat:'File & Directory', name:'ls', desc:'List directory contents.', flags:'-l (long format) · -a (include hidden) · -h (human-readable sizes) · -R (recursive) · -t (sort by time)', example:'ls -lah /var/log' },
+  { cat:'File & Directory', name:'cd', desc:'Change the current working directory.', flags:'.. (parent) · - (previous dir) · ~ (home dir)', example:'cd /var/www/html' },
+  { cat:'File & Directory', name:'pwd', desc:'Print the full path of the current working directory.', flags:'(no common flags)', example:'pwd' },
+  { cat:'File & Directory', name:'mkdir', desc:'Create one or more new directories.', flags:'-p (create parents) · -v (verbose) · -m (set permissions)', example:'mkdir -p /srv/app/{logs,tmp,data}' },
+  { cat:'File & Directory', name:'rm', desc:'Remove files or directories permanently.', flags:'-r (recursive) · -f (force, no prompt) · -i (interactive) · -v (verbose)', example:'rm -rf /tmp/build_cache' },
+  { cat:'File & Directory', name:'cp', desc:'Copy files or directories to a destination.', flags:'-r (recursive) · -p (preserve attributes) · -u (update only newer) · -v (verbose)', example:'cp -rp /etc/nginx /etc/nginx.bak' },
+  { cat:'File & Directory', name:'mv', desc:'Move or rename files and directories.', flags:'-i (interactive, confirm overwrite) · -n (no clobber) · -v (verbose)', example:'mv /tmp/report.txt /home/user/docs/' },
+  { cat:'File & Directory', name:'touch', desc:'Create an empty file or update a file\'s timestamps.', flags:'-a (access time only) · -m (modify time only) · -t (set specific timestamp)', example:'touch /var/run/app.lock' },
+  { cat:'File & Directory', name:'find', desc:'Search for files and directories matching given criteria.', flags:'-name (by name) · -type (f/d) · -mtime (modified days) · -exec (run command)', example:'find /var/log -name "*.log" -mtime +30 -exec rm {} \\;' },
+  { cat:'File & Directory', name:'ln', desc:'Create hard or symbolic links between files.', flags:'-s (symbolic link) · -f (force) · -v (verbose)', example:'ln -s /usr/local/bin/python3 /usr/local/bin/python' },
+  { cat:'File & Directory', name:'stat', desc:'Display detailed metadata about a file or filesystem.', flags:'-c (custom format) · -f (filesystem info) · -L (follow symlinks)', example:'stat /etc/passwd' },
+  { cat:'File & Directory', name:'file', desc:'Determine the type of a file by inspecting its content.', flags:'-b (brief, no filename) · -i (MIME type) · -z (look inside compressed)', example:'file /usr/bin/python3' },
+  { cat:'File & Directory', name:'which', desc:'Show the full path of a shell command.', flags:'-a (show all matches in PATH)', example:'which python3' },
+  { cat:'File & Directory', name:'whereis', desc:'Locate the binary, source, and manual page for a command.', flags:'-b (binary only) · -m (manual only) · -s (source only)', example:'whereis nginx' },
+  { cat:'File & Directory', name:'realpath', desc:'Resolve all symlinks and print the canonical absolute path.', flags:'-m (no check if exists) · -q (quiet) · --relative-to', example:'realpath ./../../etc/passwd' },
+  { cat:'File & Directory', name:'tree', desc:'Display directory structure as a tree.', flags:'-L (max depth) · -a (hidden files) · -d (dirs only) · -h (human sizes)', example:'tree -L 2 /etc/nginx' },
+
+  /* ── Text Processing ──────────────────────────────────────────── */
+  { cat:'Text Processing', name:'cat', desc:'Concatenate and print file contents to stdout.', flags:'-n (number lines) · -A (show all chars) · -s (squeeze blank lines)', example:'cat -n /etc/hosts' },
+  { cat:'Text Processing', name:'less', desc:'View file contents one page at a time with scrolling.', flags:'-N (line numbers) · -S (no wrap) · -i (case-insensitive search)', example:'less +G /var/log/syslog' },
+  { cat:'Text Processing', name:'head', desc:'Print the first N lines of a file.', flags:'-n (number of lines) · -c (number of bytes) · -q (quiet, no header)', example:'head -n 50 /var/log/auth.log' },
+  { cat:'Text Processing', name:'tail', desc:'Print the last N lines of a file; follow live updates with -f.', flags:'-n (lines) · -f (follow) · -F (follow with reopen) · -c (bytes)', example:'tail -f -n 100 /var/log/nginx/error.log' },
+  { cat:'Text Processing', name:'grep', desc:'Search for patterns in files using regular expressions.', flags:'-i (case-insensitive) · -r (recursive) · -n (line numbers) · -v (invert) · -E (extended regex)', example:'grep -rn "ERROR" /var/log/app/ --include="*.log"' },
+  { cat:'Text Processing', name:'awk', desc:'Pattern scanning and text processing language.', flags:'-F (field separator) · -v (assign variable) · -f (script file)', example:"awk -F':' '{print $1, $3}' /etc/passwd" },
+  { cat:'Text Processing', name:'sed', desc:'Stream editor for filtering and transforming text.', flags:"-i (in-place) · -n (suppress output) · -e (add expression) · 's/find/replace/g'", example:"sed -i 's/localhost/0.0.0.0/g' /etc/app/config.conf" },
+  { cat:'Text Processing', name:'sort', desc:'Sort lines of text files alphabetically or numerically.', flags:'-n (numeric) · -r (reverse) · -k (sort by field) · -u (unique) · -t (delimiter)', example:'sort -t: -k3 -n /etc/passwd' },
+  { cat:'Text Processing', name:'uniq', desc:'Filter or report adjacent duplicate lines.', flags:'-c (count occurrences) · -d (only duplicates) · -u (only unique) · -i (ignore case)', example:'sort access.log | uniq -c | sort -rn | head -20' },
+  { cat:'Text Processing', name:'wc', desc:'Count lines, words, and bytes in files.', flags:'-l (lines) · -w (words) · -c (bytes) · -m (characters)', example:'wc -l /var/log/auth.log' },
+  { cat:'Text Processing', name:'cut', desc:'Extract sections from each line of files.', flags:'-d (delimiter) · -f (fields) · -c (characters) · -b (bytes)', example:"cut -d',' -f1,3 data.csv" },
+  { cat:'Text Processing', name:'tr', desc:'Translate, squeeze, or delete characters from input.', flags:'-d (delete chars) · -s (squeeze repeats) · -c (complement)', example:"tr '[:lower:]' '[:upper:]' < input.txt" },
+  { cat:'Text Processing', name:'tee', desc:'Read from stdin and write to stdout and files simultaneously.', flags:'-a (append) · -i (ignore interrupts)', example:'make 2>&1 | tee build.log' },
+  { cat:'Text Processing', name:'xargs', desc:'Build and execute command lines from standard input.', flags:'-n (max args per call) · -P (parallel) · -I (replace string) · -0 (null delimiter)', example:'find . -name "*.tmp" -print0 | xargs -0 rm -f' },
+  { cat:'Text Processing', name:'diff', desc:'Compare files line by line and show differences.', flags:'-u (unified format) · -r (recursive) · -i (ignore case) · --color', example:'diff -u original.conf modified.conf' },
+  { cat:'Text Processing', name:'strings', desc:'Extract printable character sequences from binary files.', flags:'-n (minimum length) · -a (scan whole file) · -t (print offset)', example:'strings /usr/bin/ssh | grep -i version' },
+
+  /* ── Process Management ───────────────────────────────────────── */
+  { cat:'Process Management', name:'ps', desc:'Report a snapshot of current running processes.', flags:'-e (all processes) · -f (full format) · -u (by user) · aux (BSD style)', example:'ps aux --sort=-%cpu | head -15' },
+  { cat:'Process Management', name:'top', desc:'Interactive real-time view of running processes and system stats.', flags:'-d (delay interval) · -u (filter user) · -p (specific PID) · -n (iterations)', example:'top -d 1 -u www-data' },
+  { cat:'Process Management', name:'kill', desc:'Send a signal to a process by PID.', flags:'-9 (SIGKILL, force) · -15 (SIGTERM, graceful) · -l (list signals) · -HUP (reload)', example:'kill -15 $(pidof nginx)' },
+  { cat:'Process Management', name:'killall', desc:'Kill all processes with a given name.', flags:'-9 (force) · -u (by user) · -I (ignore case) · -q (quiet)', example:'killall -9 hung_process' },
+  { cat:'Process Management', name:'pkill', desc:'Send signals to processes matching a pattern.', flags:'-f (match full command) · -u (by user) · -9 (force kill)', example:'pkill -f "python app.py"' },
+  { cat:'Process Management', name:'nohup', desc:'Run a command immune to hangup signals (keeps running after logout).', flags:'(append & to run in background)', example:'nohup python3 server.py > server.log 2>&1 &' },
+  { cat:'Process Management', name:'bg', desc:'Resume a stopped job and run it in the background.', flags:'%N (job number)', example:'bg %1' },
+  { cat:'Process Management', name:'fg', desc:'Bring a background or stopped job to the foreground.', flags:'%N (job number)', example:'fg %2' },
+  { cat:'Process Management', name:'jobs', desc:'List active jobs in the current shell session.', flags:'-l (show PID) · -p (PID only) · -r (running only) · -s (stopped only)', example:'jobs -l' },
+  { cat:'Process Management', name:'nice', desc:'Start a process with a specified scheduling priority (niceness).', flags:'-n (niceness value, -20 to 19)', example:'nice -n 10 tar -czf archive.tar.gz /data' },
+  { cat:'Process Management', name:'renice', desc:'Change the scheduling priority of an already-running process.', flags:'-n (priority) · -p (by PID) · -u (by user) · -g (by group)', example:'renice -n 5 -p 1234' },
+  { cat:'Process Management', name:'watch', desc:'Run a command repeatedly and display its output.', flags:'-n (interval seconds) · -d (highlight differences) · -e (stop on error)', example:'watch -n 2 -d "df -h && free -h"' },
+  { cat:'Process Management', name:'lsof', desc:'List open files and the processes that opened them.', flags:'-p (by PID) · -u (by user) · -i (network connections) · -c (by command)', example:'lsof -i :8080' },
+  { cat:'Process Management', name:'pstree', desc:'Display running processes as a tree showing parent-child relationships.', flags:'-p (show PIDs) · -u (show user) · -a (show arguments)', example:'pstree -pu $(whoami)' },
+  { cat:'Process Management', name:'systemctl', desc:'Control the systemd system and service manager.', flags:'start · stop · restart · enable · disable · status · is-active', example:'systemctl status nginx && systemctl reload nginx' },
+  { cat:'Process Management', name:'journalctl', desc:'Query the systemd journal for log entries.', flags:'-u (unit) · -f (follow) · -n (lines) · --since · -p (priority)', example:'journalctl -u nginx -f -n 50' },
+
+  /* ── Network ──────────────────────────────────────────────────── */
+  { cat:'Network', name:'ping', desc:'Send ICMP echo requests to test network connectivity.', flags:'-c (count) · -i (interval) · -t (ttl) · -s (packet size) · -q (quiet)', example:'ping -c 4 google.com' },
+  { cat:'Network', name:'curl', desc:'Transfer data with URLs supporting dozens of protocols.', flags:'-X (method) · -H (header) · -d (data) · -o (output) · -L (follow redirects) · -k (insecure)', example:'curl -X POST -H "Content-Type: application/json" -d \'{"key":"val"}\' https://api.example.com/v1/data' },
+  { cat:'Network', name:'wget', desc:'Non-interactive download of files from the web.', flags:'-O (output file) · -q (quiet) · -r (recursive) · --no-check-certificate', example:'wget -q -O /tmp/latest.tar.gz https://example.com/release.tar.gz' },
+  { cat:'Network', name:'ssh', desc:'Open an encrypted remote shell session.', flags:'-i (identity file) · -p (port) · -L (local forward) · -R (remote forward) · -N (no command)', example:'ssh -i ~/.ssh/id_ed25519 -p 2222 user@192.168.1.10' },
+  { cat:'Network', name:'scp', desc:'Securely copy files between hosts over SSH.', flags:'-r (recursive) · -P (port) · -i (identity) · -C (compress) · -q (quiet)', example:'scp -r ./dist user@server:/var/www/html' },
+  { cat:'Network', name:'rsync', desc:'Fast, incremental file transfer and synchronization.', flags:'-a (archive) · -v (verbose) · -z (compress) · --delete · --exclude · -n (dry run)', example:'rsync -avz --delete --exclude ".git" ./src/ user@server:/app/src/' },
+  { cat:'Network', name:'netstat', desc:'Display network connections, routing tables, and interface statistics.', flags:'-t (TCP) · -u (UDP) · -l (listening) · -n (numeric) · -p (show PID)', example:'netstat -tlnp | grep :80' },
+  { cat:'Network', name:'ss', desc:'Utility to investigate sockets (faster modern replacement for netstat).', flags:'-t (TCP) · -u (UDP) · -l (listening) · -n (numeric) · -p (process)', example:'ss -tlnp | grep LISTEN' },
+  { cat:'Network', name:'ip', desc:'Show and manipulate routing, devices, and tunnels.', flags:'addr · route · link · neigh · -s (statistics)', example:'ip addr show eth0 && ip route show' },
+  { cat:'Network', name:'nmap', desc:'Network exploration tool and security/port scanner.', flags:'-p (ports) · -sV (service version) · -O (OS detect) · -A (aggressive) · -sn (ping scan)', example:'nmap -sV -p 1-1024 192.168.1.0/24' },
+  { cat:'Network', name:'traceroute', desc:'Print the network path packets take to a destination.', flags:'-n (numeric, no DNS) · -m (max hops) · -w (wait time) · -q (queries per hop)', example:'traceroute -n google.com' },
+  { cat:'Network', name:'dig', desc:'DNS lookup utility — query DNS servers for records.', flags:'+short · +trace · -x (reverse) · @server (use specific server) · MX/A/TXT/NS', example:'dig @8.8.8.8 example.com MX +short' },
+  { cat:'Network', name:'host', desc:'Simple DNS lookup tool for hostname-to-IP and reverse lookups.', flags:'-t (type: A/MX/NS/TXT) · -v (verbose) · -a (all records)', example:'host -t TXT example.com' },
+  { cat:'Network', name:'nc', desc:'Netcat — read/write data over TCP/UDP connections.', flags:'-l (listen) · -p (port) · -v (verbose) · -z (port scan) · -u (UDP)', example:'nc -zv 192.168.1.1 80 443 8080' },
+  { cat:'Network', name:'ufw', desc:'Uncomplicated Firewall — manage iptables firewall rules.', flags:'allow · deny · status · enable · disable · numbered', example:'ufw allow from 10.0.0.0/8 to any port 22 && ufw status verbose' },
+
+  /* ── System Info ──────────────────────────────────────────────── */
+  { cat:'System Info', name:'uname', desc:'Print system information including kernel name and version.', flags:'-a (all) · -r (kernel release) · -m (machine hardware) · -n (hostname)', example:'uname -a' },
+  { cat:'System Info', name:'hostname', desc:'Show or set the system hostname.', flags:'-I (all IP addresses) · -f (FQDN) · -s (short name)', example:'hostname -I' },
+  { cat:'System Info', name:'uptime', desc:'Show how long the system has been running and load average.', flags:'-p (pretty format) · -s (since when)', example:'uptime -p' },
+  { cat:'System Info', name:'date', desc:'Display or set the system date and time.', flags:'-u (UTC) · -d (parse string) · +FORMAT (custom output)', example:"date '+%Y-%m-%d %H:%M:%S %Z'" },
+  { cat:'System Info', name:'df', desc:'Report disk space usage of filesystems.', flags:'-h (human-readable) · -T (filesystem type) · -i (inodes) · --total', example:'df -hT --total' },
+  { cat:'System Info', name:'du', desc:'Estimate file space usage in directories.', flags:'-h (human-readable) · -s (summary) · -d (max depth) · --max-depth', example:'du -sh /var/log/* | sort -rh | head -10' },
+  { cat:'System Info', name:'free', desc:'Display amount of free and used memory in the system.', flags:'-h (human-readable) · -m (megabytes) · -g (gigabytes) · -t (total) · -s (repeat)', example:'free -h' },
+  { cat:'System Info', name:'vmstat', desc:'Report virtual memory, swap, I/O, and CPU activity.', flags:'-s (table summary) · -d (disk) · -S (unit) · interval count', example:'vmstat 2 5' },
+  { cat:'System Info', name:'iostat', desc:'Report CPU statistics and I/O statistics for devices.', flags:'-x (extended) · -h (human) · -d (device only) · -c (CPU only)', example:'iostat -xhd 2 3' },
+  { cat:'System Info', name:'lscpu', desc:'Display information about the CPU architecture.', flags:'-e (extended) · -p (parse) · -J (JSON)', example:'lscpu' },
+  { cat:'System Info', name:'lsblk', desc:'List information about block devices in a tree layout.', flags:'-f (filesystem info) · -o (output columns) · -m (permissions) · -J (JSON)', example:'lsblk -f' },
+  { cat:'System Info', name:'dmesg', desc:'Print or control the kernel ring buffer (boot and hardware messages).', flags:'-T (human timestamps) · -l (level filter) · -f (facility) · --follow', example:'dmesg -T | grep -i error' },
+  { cat:'System Info', name:'env', desc:'Print environment variables or run a program in a modified environment.', flags:'-i (empty environment) · -u (unset var) · VAR=val (set inline)', example:'env | grep -i path | sort' },
+  { cat:'System Info', name:'export', desc:'Mark shell variables for export to child processes.', flags:'-p (list exported) · -n (unexport) · -f (function)', example:'export DATABASE_URL="postgres://user:pass@localhost/db"' },
+  { cat:'System Info', name:'history', desc:'Display or manipulate the command history list.', flags:'-c (clear) · -d (delete entry) · -w (write to file) · N (show last N)', example:'history | grep "docker run" | tail -20' },
+
+  /* ── Users & Permissions ──────────────────────────────────────── */
+  { cat:'Users & Permissions', name:'sudo', desc:'Execute a command as another user (typically root).', flags:'-u (run as user) · -i (interactive root shell) · -l (list allowed commands) · -k (reset timestamp)', example:'sudo -u postgres psql -c "SELECT version();"' },
+  { cat:'Users & Permissions', name:'su', desc:'Switch user or become superuser.', flags:'- (login shell) · -c (run command) · -s (specify shell)', example:'su - deploy -c "cd /app && git pull"' },
+  { cat:'Users & Permissions', name:'useradd', desc:'Create a new user account.', flags:'-m (create home) · -s (shell) · -G (groups) · -u (UID) · -d (home dir)', example:'useradd -m -s /bin/bash -G sudo,docker deploy' },
+  { cat:'Users & Permissions', name:'userdel', desc:'Delete a user account from the system.', flags:'-r (remove home and mail) · -f (force)', example:'userdel -r olduser' },
+  { cat:'Users & Permissions', name:'usermod', desc:'Modify an existing user account.', flags:'-aG (append to group) · -s (change shell) · -l (rename) · -L (lock) · -U (unlock)', example:'usermod -aG docker,sudo alice' },
+  { cat:'Users & Permissions', name:'passwd', desc:'Update a user\'s authentication password.', flags:'-l (lock account) · -u (unlock) · -e (expire) · -d (delete password)', example:'passwd alice' },
+  { cat:'Users & Permissions', name:'groups', desc:'Print the groups a user belongs to.', flags:'(provide username as argument)', example:'groups alice' },
+  { cat:'Users & Permissions', name:'id', desc:'Print real and effective user and group IDs.', flags:'-u (UID only) · -g (GID only) · -G (all GIDs) · -n (name not number)', example:'id alice' },
+  { cat:'Users & Permissions', name:'who', desc:'Show who is currently logged in to the system.', flags:'-a (all info) · -b (last boot) · -H (column headers) · -q (quick)', example:'who -aH' },
+  { cat:'Users & Permissions', name:'last', desc:'Show a listing of last logged-in users.', flags:'-n (number of lines) · -a (hostname last col) · -F (full dates)', example:'last -n 20 -F' },
+  { cat:'Users & Permissions', name:'visudo', desc:'Safely edit the sudoers file with syntax checking.', flags:'-f (specify file) · -c (check only) · -s (strict mode)', example:'visudo -f /etc/sudoers.d/developers' },
+  { cat:'Users & Permissions', name:'chmod', desc:'Change file mode (permission) bits.', flags:'-R (recursive) · u/g/o/a (who) · +/-/= (operator) · r/w/x (permission)', example:'chmod -R 750 /var/www/html' },
+  { cat:'Users & Permissions', name:'chown', desc:'Change file owner and group.', flags:'-R (recursive) · --from (only change if matches) · -v (verbose)', example:'chown -R www-data:www-data /var/www/html' },
+
+  /* ── Archive & Compression ────────────────────────────────────── */
+  { cat:'Archive & Compression', name:'tar', desc:'Create, extract, or list tape archive files.', flags:'-c (create) · -x (extract) · -z (gzip) · -j (bzip2) · -v (verbose) · -f (file) · -t (list)', example:'tar -czvf backup-$(date +%Y%m%d).tar.gz /var/www/html' },
+  { cat:'Archive & Compression', name:'gzip', desc:'Compress or decompress files using the DEFLATE algorithm.', flags:'-d (decompress) · -k (keep original) · -9 (best compression) · -l (list info)', example:'gzip -9 -k large_dump.sql' },
+  { cat:'Archive & Compression', name:'gunzip', desc:'Decompress files compressed with gzip.', flags:'-k (keep original) · -v (verbose) · -c (stdout) · -l (list info)', example:'gunzip -k archive.gz' },
+  { cat:'Archive & Compression', name:'bzip2', desc:'Compress or decompress files using the Burrows-Wheeler algorithm.', flags:'-d (decompress) · -k (keep) · -9 (best) · -v (verbose)', example:'bzip2 -9 -k database_backup.sql' },
+  { cat:'Archive & Compression', name:'xz', desc:'Compress or decompress files using the LZMA2 algorithm (best compression ratio).', flags:'-d (decompress) · -k (keep) · -9 (best) · -T (threads) · -v (verbose)', example:'xz -9 -T4 -k large_file.tar' },
+  { cat:'Archive & Compression', name:'zip', desc:'Package and compress files into a ZIP archive.', flags:'-r (recursive) · -e (encrypt) · -9 (best compression) · -x (exclude)', example:'zip -r -9 release.zip ./dist -x "*.DS_Store"' },
+  { cat:'Archive & Compression', name:'unzip', desc:'Extract files from a ZIP archive.', flags:'-l (list contents) · -d (destination dir) · -o (overwrite) · -q (quiet)', example:'unzip -q release.zip -d /var/www/html' },
+  { cat:'Archive & Compression', name:'dd', desc:'Convert and copy raw data at block level.', flags:'if= (input) · of= (output) · bs= (block size) · count= · status=progress', example:'dd if=/dev/zero of=/swapfile bs=1M count=2048 status=progress' },
+
+  /* ── Disk & Filesystem ────────────────────────────────────────── */
+  { cat:'Disk & Filesystem', name:'mount', desc:'Mount a filesystem or show mounted filesystems.', flags:'-t (filesystem type) · -o (options) · -a (all from fstab) · -r (read-only)', example:'mount -t ext4 /dev/sdb1 /mnt/data' },
+  { cat:'Disk & Filesystem', name:'umount', desc:'Unmount a mounted filesystem.', flags:'-f (force) · -l (lazy) · -R (recursive)', example:'umount -l /mnt/data' },
+  { cat:'Disk & Filesystem', name:'fdisk', desc:'Partition table manipulator for MBR disks.', flags:'-l (list partitions) · -u (sectors) · device', example:'fdisk -l /dev/sdb' },
+  { cat:'Disk & Filesystem', name:'mkfs', desc:'Build a Linux filesystem on a partition or device.', flags:'-t (type: ext4/xfs/vfat) · -L (label) · -n (dry run)', example:'mkfs -t ext4 -L data_vol /dev/sdb1' },
+  { cat:'Disk & Filesystem', name:'fsck', desc:'Check and repair a Linux filesystem.', flags:'-t (type) · -a (auto-repair) · -n (no changes) · -y (yes to all)', example:'fsck -t ext4 -n /dev/sdb1' },
+  { cat:'Disk & Filesystem', name:'blkid', desc:'Print block device attributes including UUIDs and filesystem types.', flags:'-o (output format) · -s (tag) · -t (search by tag) · -L (by label)', example:'blkid -o list' },
+  { cat:'Disk & Filesystem', name:'fstrim', desc:'Discard unused blocks on a mounted SSD filesystem (TRIM).', flags:'-a (all mounted) · -v (verbose) · -n (dry run)', example:'fstrim -av' }
+];
+
+var activeCat = 'All';
+var CATS = ['All','File & Directory','Text Processing','Process Management','Network','System Info','Users & Permissions','Archive & Compression','Disk & Filesystem'];
+
+function buildPills() {
+  var wrap = document.getElementById('catPills');
+  wrap.innerHTML = '';
+  CATS.forEach(function(cat) {
+    var btn = document.createElement('button');
+    btn.className = 'cat-pill' + (cat === activeCat ? ' active' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', function() {
+      activeCat = cat;
+      if (history.replaceState) {
+        history.replaceState(null, '', cat === 'All' ? '#' : '#' + encodeURIComponent(cat));
+      }
+      document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      filterCmds();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function escHTML(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function filterCmds() {
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  var grid = document.getElementById('cmdGrid');
+  var results = CMDS.filter(function(c) {
+    var catOk = activeCat === 'All' || c.cat === activeCat;
+    if (!catOk) return false;
+    if (!q) return true;
+    return c.name.toLowerCase().includes(q) ||
+           c.desc.toLowerCase().includes(q) ||
+           c.example.toLowerCase().includes(q) ||
+           c.flags.toLowerCase().includes(q);
+  });
+
+  document.getElementById('countShown').textContent = results.length;
+  document.getElementById('countTotal').textContent = CMDS.length;
+
+  if (results.length === 0) {
+    grid.innerHTML = '<div class="no-results"><strong>No commands found</strong>Try a different search or select "All" categories.</div>';
+    return;
+  }
+
+  var html = '';
+  results.forEach(function(c) {
+    html += '<div class="cmd-card">' +
+      '<div class="cmd-name">' + escHTML(c.name) + '</div>' +
+      '<div class="cmd-desc">' + escHTML(c.desc) + '</div>' +
+      '<div class="cmd-flags">' + escHTML(c.flags) + '</div>' +
+      '<div class="cmd-example">' +
+        '<span class="cmd-ex-text">' + escHTML(c.example) + '</span>' +
+        '<button class="cmd-copy" data-cmd="' + escHTML(c.example) + '">Copy</button>' +
+      '</div>' +
+    '</div>';
+  });
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.cmd-copy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var text = btn.getAttribute('data-cmd');
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+      });
+    });
+  });
+}
+
+// Init from URL hash
+(function() {
+  var hash = decodeURIComponent(location.hash.slice(1));
+  if (hash && CATS.includes(hash)) activeCat = hash;
+  buildPills();
+  document.getElementById('countTotal').textContent = CMDS.length;
+  filterCmds();
+})();
+</script>
+</body>
+</html>

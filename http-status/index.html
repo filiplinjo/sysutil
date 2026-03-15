@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete HTTP status code reference. All 1xx, 2xx, 3xx, 4xx and 5xx codes explained with descriptions, use cases and common causes.">
+<meta name="keywords" content="http status codes, http error codes, 404 not found, 500 internal server error, http reference">
+<title>HTTP Status Codes - Complete Reference | SysUtil</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="HTTP Status Codes - Complete Reference | SysUtil">
+<meta property="og:description" content="Complete HTTP status code reference. All 1xx, 2xx, 3xx, 4xx and 5xx codes explained with descriptions, use cases and common causes.">
+<meta property="og:url" content="https://sysutil.dev/http-status">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP Status Codes - Complete Reference | SysUtil">
+<meta name="twitter:description" content="Complete HTTP status code reference. All 1xx, 2xx, 3xx, 4xx and 5xx codes explained with descriptions, use cases and common causes.">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .container { max-width: 1060px; }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .search-input {
+    flex: 1;
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    color: #e2e8f0;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.97rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .search-input:focus { border-color: #6366f1; }
+  .search-input::placeholder { color: #374151; }
+
+  .count-badge {
+    white-space: nowrap;
+    font-size: 0.82rem;
+    color: #64748b;
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    padding: 6px 14px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .count-badge strong { color: #a5b4fc; }
+
+  .cat-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .cat-pill {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    color: #64748b;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: all 0.15s;
+  }
+  .cat-pill:hover     { border-color: #6366f1; color: #a5b4fc; }
+  .cat-pill.active    { background: #6366f1; border-color: #6366f1; color: #fff; }
+
+  /* Category color vars */
+  :root {
+    --c1: #60a5fa;
+    --c2: #22c55e;
+    --c3: #fbbf24;
+    --c4: #f97316;
+    --c5: #ef4444;
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .status-card {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    border-left: 4px solid var(--cat-color, #2d3148);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+  .status-card:hover { background: #252840; }
+  .status-card.expanded { border-left-color: var(--cat-color, #6366f1); background: #252840; }
+
+  .status-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .status-card-main { flex: 1; min-width: 0; }
+
+  .status-code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--cat-color, #a5b4fc);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .status-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+  }
+  .status-short {
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .copy-code-btn {
+    background: transparent;
+    border: 1px solid #2d3148;
+    color: #64748b;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-top: 2px;
+  }
+  .copy-code-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+  .copy-code-btn.copied { border-color: #22c55e; color: #22c55e; }
+
+  .expand-icon {
+    font-size: 0.72rem;
+    color: #374151;
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    transition: transform 0.2s;
+    user-select: none;
+  }
+  .status-card.expanded .expand-icon { transform: rotate(180deg); }
+
+  .status-detail {
+    display: none;
+    border-top: 1px solid #2d3148;
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+  .status-card.expanded .status-detail { display: block; }
+
+  .detail-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .use-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+  .use-text {
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.55;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+    font-size: 1rem;
+    grid-column: 1 / -1;
+  }
+  .no-results strong { display: block; font-size: 1.3rem; color: #374151; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>
+    <div class="nav-sep"></div>
+    <div class="nav-links">
+      <a href="/">chmod</a>
+      <a href="/cron">cron</a>
+      <a href="/regex">regex</a>
+      <a href="/base64">base64</a>
+      <a href="/file-size">linux</a>
+      <a href="/json">json</a>
+      <a href="/password">password</a>
+      <a href="/diff">diff</a>
+      <a href="/timestamp">timestamp</a>
+      <a href="/url-encode">url</a>
+      <a href="/uuid">uuid</a>
+      <a href="/linux-commands">commands</a>
+      <a href="/jwt">jwt</a>
+      <a href="/http-status" class="active">http</a>
+      <a href="/blog">guides</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="page-header">
+    <h1>HTTP Status <span>Codes</span></h1>
+    <p>Complete reference for all HTTP response status codes. Click any card to expand details, use cases, and common causes.</p>
+  </header>
+
+  <div class="search-row">
+    <input type="search" class="search-input" id="searchInput" placeholder="Search by code, name, or description…" oninput="filterCodes()" autocomplete="off" spellcheck="false">
+    <div class="count-badge">Showing <strong id="countShown">0</strong> codes</div>
+  </div>
+
+  <div class="cat-pills" id="catPills"></div>
+
+  <div class="status-grid" id="statusGrid"></div>
+
+  <footer><p>Free tools by <a href="/">SysUtil.dev</a></p></footer>
+</div>
+
+<script>
+var CODES = [
+  /* 1xx */
+  { code:100, name:'Continue', cat:'1xx',
+    short:'The server received the request headers; client should proceed.',
+    detail:'Indicates that the initial part of a request has been received and the client should continue with the request. If the request is already complete, the client can ignore this response.',
+    use:'Used with Expect: 100-continue header to check if the server will accept a large request body before actually sending it.' },
+  { code:101, name:'Switching Protocols', cat:'1xx',
+    short:'Server is switching to a different protocol as requested.',
+    detail:'The server is complying with the client\'s request to switch protocols. Commonly used when upgrading from HTTP to WebSocket.',
+    use:'Returned after a client sends an Upgrade header requesting a protocol switch, such as from HTTP/1.1 to WebSocket.' },
+  { code:102, name:'Processing', cat:'1xx',
+    short:'Server received and is processing the request, no response yet.',
+    detail:'A WebDAV status code indicating the server has received and is processing the request, but no response is available yet. Prevents the client from timing out.',
+    use:'Used in WebDAV operations that take a long time to complete, such as COPY or MOVE operations on large collections.' },
+  { code:103, name:'Early Hints', cat:'1xx',
+    short:'Returns response headers before the final response.',
+    detail:'Allows the server to send preliminary response headers before the final HTTP message. Typically used to pre-load resources before the main response is ready.',
+    use:'Send Link headers for resources that should be preloaded, letting the browser start fetching them while the server prepares the full response.' },
+
+  /* 2xx */
+  { code:200, name:'OK', cat:'2xx',
+    short:'The request succeeded.',
+    detail:'The standard response for successful HTTP requests. The actual meaning depends on the request method: GET returns the requested resource, POST returns the result of the action.',
+    use:'Return for successful GET, POST, PUT, or PATCH requests where the response includes the requested or modified resource.' },
+  { code:201, name:'Created', cat:'2xx',
+    short:'The request succeeded and a new resource was created.',
+    detail:'The request was fulfilled and resulted in one or more new resources being created. The Location header should point to the new resource.',
+    use:'Return after a successful POST that creates a new resource, such as a new user record or a new database entry.' },
+  { code:202, name:'Accepted', cat:'2xx',
+    short:'Request accepted for processing, but processing not yet complete.',
+    detail:'The request has been received but not yet acted upon. It may be processed asynchronously or delayed. There is no guarantee the request will be processed.',
+    use:'Use when triggering long-running background jobs, batch processing, or any async operation where the result is not immediately available.' },
+  { code:203, name:'Non-Authoritative Information', cat:'2xx',
+    short:'The returned metadata is not from the origin server.',
+    detail:'The request was successful but the enclosed payload has been modified by a transforming proxy from a 200 OK response. The information is from a local or a third-party copy.',
+    use:'Returned by a caching proxy when it serves a cached response that may differ slightly from the original server\'s response.' },
+  { code:204, name:'No Content', cat:'2xx',
+    short:'The request succeeded with no content to return.',
+    detail:'The server successfully processed the request but is not returning any content. The browser should not navigate away from the current page.',
+    use:'Return after a successful DELETE request, or after updating a resource with PUT/PATCH when there is nothing useful to return to the client.' },
+  { code:205, name:'Reset Content', cat:'2xx',
+    short:'Request succeeded; client should reset the document view.',
+    detail:'The server has fulfilled the request and wants the user agent to reset the document view. Similar to 204 but additionally instructs the client to reset the form.',
+    use:'Use after a form submission where you want to clear the form inputs so the user can easily make another submission.' },
+  { code:206, name:'Partial Content', cat:'2xx',
+    short:'Partial content delivered in response to a Range request.',
+    detail:'The server is delivering only part of the resource due to a Range header sent by the client. Used in video streaming and resumable downloads.',
+    use:'Return when a client sends a Range header to request a specific byte range of a file, enabling resumable downloads and video seeking.' },
+  { code:207, name:'Multi-Status', cat:'2xx',
+    short:'Multiple statuses for multiple operations (WebDAV).',
+    detail:'A WebDAV response that conveys information about multiple resources in situations where multiple status codes might be appropriate.',
+    use:'Used in WebDAV PROPFIND, PROPPATCH, COPY, MOVE, and LOCK requests that affect multiple resources simultaneously.' },
+  { code:208, name:'Already Reported', cat:'2xx',
+    short:'Members of a DAV binding already reported (WebDAV).',
+    detail:'A WebDAV status used inside a 207 Multi-Status to avoid repeatedly enumerating the internal members of multiple bindings to the same collection.',
+    use:'Used in WebDAV to prevent infinite loops in responses when a resource has multiple bindings pointing to the same collection.' },
+  { code:226, name:'IM Used', cat:'2xx',
+    short:'Server fulfilled a GET request and the response is a result of instance manipulations.',
+    detail:'The server has fulfilled a GET request and the response is a representation of the result of one or more instance-manipulations applied to the current instance.',
+    use:'Used with the HTTP Delta encoding extension (RFC 3229) to indicate that delta encoding was applied to the response.' },
+
+  /* 3xx */
+  { code:300, name:'Multiple Choices', cat:'3xx',
+    short:'Multiple options for the requested resource exist.',
+    detail:'The request has more than one possible response. The user-agent or user should choose one of them, and the server may indicate a preferred choice.',
+    use:'Use when a resource is available in multiple formats (e.g., different languages or content types) and the client should select one.' },
+  { code:301, name:'Moved Permanently', cat:'3xx',
+    short:'The resource has permanently moved to a new URL.',
+    detail:'The target resource has been assigned a new permanent URI and any future references should use one of the returned URIs. Search engines update their links.',
+    use:'Use when permanently redirecting old URLs after site restructuring, domain changes, or when consolidating duplicate content for SEO.' },
+  { code:302, name:'Found', cat:'3xx',
+    short:'The resource is temporarily at a different URI.',
+    detail:'The target resource resides temporarily under a different URI. The user-agent should continue to use the original URI for future requests.',
+    use:'Use for temporary redirects, such as redirecting to a maintenance page or login page, where the original URL will be restored later.' },
+  { code:303, name:'See Other', cat:'3xx',
+    short:'See another URI using GET to find the result.',
+    detail:'The server is redirecting the user agent to a different resource that can provide an indirect response to the original request using GET.',
+    use:'Use after a POST form submission to redirect the user to a results or confirmation page, following the Post/Redirect/Get pattern to prevent double submission.' },
+  { code:304, name:'Not Modified', cat:'3xx',
+    short:'Resource has not changed since last request (use cache).',
+    detail:'The client\'s cached version of the resource is still valid. The server tells the client to use its cached copy, saving bandwidth and reducing latency.',
+    use:'Return when a client sends conditional headers (If-None-Match or If-Modified-Since) and the resource has not changed since the cached version.' },
+  { code:307, name:'Temporary Redirect', cat:'3xx',
+    short:'Resource temporarily at another URI; method must not change.',
+    detail:'Same as 302 but the user agent must not change the request method. A POST request will be redirected to a POST request at the new URI.',
+    use:'Use when temporarily redirecting POST or PUT requests where the HTTP method must be preserved, unlike 302 which browsers often downgrade to GET.' },
+  { code:308, name:'Permanent Redirect', cat:'3xx',
+    short:'Resource permanently moved; method must not change.',
+    detail:'Same as 301 but the user agent must not change the request method. A POST redirect stays a POST at the new permanent URI.',
+    use:'Use for permanent redirects of non-GET requests (e.g., APIs) where you need to preserve the HTTP method and indicate the change is permanent.' },
+
+  /* 4xx */
+  { code:400, name:'Bad Request', cat:'4xx',
+    short:'The server cannot process the request due to a client error.',
+    detail:'The server cannot or will not process the request due to something that is perceived to be a client error, such as malformed syntax, invalid parameters, or deceptive routing.',
+    use:'Return for invalid JSON bodies, missing required fields, invalid query parameters, or any request that fails basic input validation.' },
+  { code:401, name:'Unauthorized', cat:'4xx',
+    short:'Authentication is required and has failed or not been provided.',
+    detail:'The request lacks valid authentication credentials. The client must authenticate itself to get the requested response. The response must include a WWW-Authenticate header.',
+    use:'Return when a request requires authentication (via API key, JWT, session cookie) but none was provided or the credentials are invalid or expired.' },
+  { code:402, name:'Payment Required', cat:'4xx',
+    short:'Payment is required to access this resource.',
+    detail:'Reserved for future use. Originally intended for digital payment systems, it is now used by some APIs when a subscription or payment is required to access a resource.',
+    use:'Used by SaaS and API providers when a user\'s subscription has lapsed or they are attempting to use a paid feature without an active plan.' },
+  { code:403, name:'Forbidden', cat:'4xx',
+    short:'The server understood the request but refuses to authorize it.',
+    detail:'The client does not have access rights to the content. Unlike 401, the client\'s identity is known to the server but it does not have the required permissions.',
+    use:'Return when a user is authenticated but lacks the permissions to perform an action, such as a regular user trying to access an admin endpoint.' },
+  { code:404, name:'Not Found', cat:'4xx',
+    short:'The server cannot find the requested resource.',
+    detail:'The server cannot find the requested resource. In browsers, this means the URL is not recognized. In APIs, the endpoint can exist but the resource is not found.',
+    use:'Return when a requested entity does not exist (e.g., GET /users/999 where user 999 is not in the database), or to hide the existence of a forbidden resource.' },
+  { code:405, name:'Method Not Allowed', cat:'4xx',
+    short:'The request method is not allowed for this resource.',
+    detail:'The request method is known by the server but is not supported for the target resource. The Allow header must list the supported methods.',
+    use:'Return when a client sends a DELETE to a read-only endpoint, or a PUT to a collection endpoint that only supports GET and POST.' },
+  { code:406, name:'Not Acceptable', cat:'4xx',
+    short:'No content matching the Accept headers is available.',
+    detail:'The server cannot produce a response matching the list of acceptable values defined in the request\'s proactive content negotiation headers.',
+    use:'Return when the client requests content via the Accept header in a format the server cannot provide, such as requesting XML from an API that only returns JSON.' },
+  { code:407, name:'Proxy Authentication Required', cat:'4xx',
+    short:'Authentication with a proxy server is required.',
+    detail:'Similar to 401 but authentication must be performed by a proxy. The proxy must return a Proxy-Authenticate header with the required authentication scheme.',
+    use:'Returned by corporate or network proxies that require clients to authenticate before allowing internet access.' },
+  { code:408, name:'Request Timeout', cat:'4xx',
+    short:'The server timed out waiting for the request.',
+    detail:'The server timed out waiting for the request. The client may repeat the request without modifications at any later time.',
+    use:'Occurs when a client sends the HTTP request too slowly or the connection is established but no data is received within the server\'s timeout period.' },
+  { code:409, name:'Conflict', cat:'4xx',
+    short:'The request conflicts with the current state of the resource.',
+    detail:'The request could not be completed due to a conflict with the current state of the target resource. The client should resolve the conflict and resubmit.',
+    use:'Return when a POST tries to create a duplicate resource (e.g., username already taken), or when PUT data conflicts with another simultaneous update (optimistic locking).' },
+  { code:410, name:'Gone', cat:'4xx',
+    short:'The resource has been permanently removed with no forwarding address.',
+    detail:'The target resource is no longer available at the origin server and this condition is likely to be permanent. Unlike 404, it indicates intentional removal.',
+    use:'Use when you have intentionally deleted a resource and want to communicate it is permanently gone, helping search engines remove it from their index.' },
+  { code:411, name:'Length Required', cat:'4xx',
+    short:'The request did not include a Content-Length header.',
+    detail:'The server refuses to accept the request without a defined Content-Length header. The client must send the body size in advance.',
+    use:'Some older servers and APIs require the Content-Length header for POST and PUT requests and return this status if it is missing.' },
+  { code:412, name:'Precondition Failed', cat:'4xx',
+    short:'A precondition in the request headers evaluated to false.',
+    detail:'The server does not meet one of the preconditions specified in the request header fields, such as If-Match or If-Unmodified-Since.',
+    use:'Return when optimistic concurrency control fails — the client\'s ETag or Last-Modified precondition no longer matches the current resource state.' },
+  { code:413, name:'Payload Too Large', cat:'4xx',
+    short:'The request body is larger than the server is willing to process.',
+    detail:'The request entity is larger than limits defined by the server. The server may close the connection or return a Retry-After header if the condition is temporary.',
+    use:'Occurs when a client uploads a file exceeding the server\'s size limit, or sends a JSON body larger than the configured maximum request size.' },
+  { code:414, name:'URI Too Long', cat:'4xx',
+    short:'The URI requested by the client is longer than the server can interpret.',
+    detail:'The URI provided was too long for the server to process. Often caused by excessive query strings or when POST data is accidentally sent in the URL.',
+    use:'Occurs when URL query strings are excessively long, often from deeply nested URL parameters or encoding large amounts of data in the URL.' },
+  { code:415, name:'Unsupported Media Type', cat:'4xx',
+    short:'The media format is not supported by the server.',
+    detail:'The origin server refuses to service the request because the payload is in a format not supported for this method on the target resource.',
+    use:'Return when a client sends a request body with the wrong Content-Type, such as sending text/xml to an endpoint that only accepts application/json.' },
+  { code:416, name:'Range Not Satisfiable', cat:'4xx',
+    short:'The range specified in the Range header cannot be fulfilled.',
+    detail:'The ranges specified in the Range header of the request cannot be fulfilled. It\'s possible the range is outside the size of the target resource.',
+    use:'Returned when a client requests a byte range (e.g., bytes=500-600) that does not exist in a file smaller than the requested range.' },
+  { code:417, name:'Expectation Failed', cat:'4xx',
+    short:'The server cannot meet the expectations in the Expect header.',
+    detail:'The expectation indicated by the Expect request-header field could not be met by this server.',
+    use:'Returned when a client sends Expect: 100-continue but the server determines it will reject the request body.' },
+  { code:418, name:"I'm a teapot", cat:'4xx',
+    short:'The server refuses to brew coffee because it is a teapot.',
+    detail:'Any attempt to brew coffee with a teapot should result in the error code 418. This code was defined in RFC 2324 as an April Fools\' joke but has since been adopted semi-seriously.',
+    use:'A fun easter egg response used by some developers for special routes or to indicate that a request is obviously wrong. Not intended for production use.' },
+  { code:422, name:'Unprocessable Entity', cat:'4xx',
+    short:'The request was well-formed but contains semantic errors.',
+    detail:'The server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions.',
+    use:'Return when validation fails on a well-formed request body — e.g., the JSON is valid but a required field has an invalid value or fails business logic validation.' },
+  { code:423, name:'Locked', cat:'4xx',
+    short:'The resource is locked (WebDAV).',
+    detail:'The source or destination resource of a method is locked. A WebDAV response indicating the resource is currently locked by another user.',
+    use:'Used in WebDAV when a resource has an active write lock and another user attempts to modify it.' },
+  { code:424, name:'Failed Dependency', cat:'4xx',
+    short:'The request failed due to failure of a previous request (WebDAV).',
+    detail:'The method could not be performed on the resource because the requested action depended on another action that failed.',
+    use:'Used in WebDAV batch operations when one action in a chain fails and subsequent dependent actions cannot be performed.' },
+  { code:425, name:'Too Early', cat:'4xx',
+    short:'The server is unwilling to process an early data request.',
+    detail:'Indicates that the server is unwilling to risk processing a request that might be replayed, defined for use with TLS 1.3 early data (0-RTT).',
+    use:'Returned when a request is sent using TLS 1.3 0-RTT and the server considers it a replay risk. The client should retry without early data.' },
+  { code:426, name:'Upgrade Required', cat:'4xx',
+    short:'The client should switch to a different protocol.',
+    detail:'The server refuses to perform the request using the current protocol but might be willing to do so after the client upgrades to a different protocol.',
+    use:'Return to require the client to upgrade to HTTPS or WebSocket before the server will process the request.' },
+  { code:428, name:'Precondition Required', cat:'4xx',
+    short:'The server requires the request to be conditional.',
+    detail:'The origin server requires the request to be conditional. Intended to prevent the "lost update" problem where a client GETs a resource then PUTs it back with stale data.',
+    use:'Return to enforce optimistic locking — require clients to include an If-Match header when updating a resource to prevent blind overwrites.' },
+  { code:429, name:'Too Many Requests', cat:'4xx',
+    short:'The user has sent too many requests in a given amount of time.',
+    detail:'The user has sent too many requests in a given amount of time (rate limiting). The response should include a Retry-After header.',
+    use:'Return when enforcing API rate limits. Include Retry-After and X-RateLimit-* headers to help clients understand when they can resume requests.' },
+  { code:431, name:'Request Header Fields Too Large', cat:'4xx',
+    short:'The server is unwilling to process request with overly large headers.',
+    detail:'The server is unwilling to process the request because its header fields are too large. The request may be resubmitted after reducing the size of the request header fields.',
+    use:'Occurs when cookies, authorization tokens, or custom headers accumulate beyond the server\'s limit. Common cause is excessively large session or JWT cookies.' },
+  { code:451, name:'Unavailable For Legal Reasons', cat:'4xx',
+    short:'The resource is unavailable due to legal demands.',
+    detail:'The server is denying access to the resource as a consequence of a legal demand, such as a court order, government restriction, or copyright takedown notice.',
+    use:'Return when content is restricted by law in the user\'s region, such as GDPR compliance blocks, government censorship, or DMCA takedown requests.' },
+
+  /* 5xx */
+  { code:500, name:'Internal Server Error', cat:'5xx',
+    short:'The server encountered an unexpected error.',
+    detail:'A generic error message returned when the server encounters an unexpected condition that prevented it from fulfilling the request. This is a catch-all for server-side errors.',
+    use:'Common causes: unhandled exceptions, null pointer errors, database connection failures, misconfigured environment variables, or fatal application errors.' },
+  { code:501, name:'Not Implemented', cat:'5xx',
+    short:'The server does not support the functionality required.',
+    detail:'The server either does not recognize the request method, or lacks the ability to fulfill the request. This implies future availability.',
+    use:'Common causes: the server does not recognize a non-standard HTTP method, or a planned feature endpoint has been declared but not yet implemented.' },
+  { code:502, name:'Bad Gateway', cat:'5xx',
+    short:'The server received an invalid response from an upstream server.',
+    detail:'The server, while acting as a gateway or proxy, received an invalid response from an inbound server it accessed in attempting to fulfill the request.',
+    use:'Common causes: upstream application server crashed or returned invalid data, a container pod is restarting, or a reverse proxy cannot reach the backend service.' },
+  { code:503, name:'Service Unavailable', cat:'5xx',
+    short:'The server is temporarily unable to handle the request.',
+    detail:'The server is not ready to handle the request. Common causes include a server that is down for maintenance or that is overloaded. A Retry-After header should be included.',
+    use:'Common causes: server is under heavy load, deliberately taken offline for maintenance, a health check is failing, or a circuit breaker has tripped.' },
+  { code:504, name:'Gateway Timeout', cat:'5xx',
+    short:'The upstream server failed to respond in time.',
+    detail:'The server, while acting as a gateway or proxy, did not receive a timely response from an upstream server specified by the URI. The upstream server is too slow or unresponsive.',
+    use:'Common causes: slow database queries, long-running external API calls, high CPU load causing processing delays, or network issues between proxy and backend.' },
+  { code:505, name:'HTTP Version Not Supported', cat:'5xx',
+    short:'The HTTP version used in the request is not supported.',
+    detail:'The server does not support, or refuses to support, the major version of HTTP that was used in the request message.',
+    use:'Common causes: connecting to a server with the wrong HTTP version, or a client requesting HTTP/2 on a server that only supports HTTP/1.1.' },
+  { code:506, name:'Variant Also Negotiates', cat:'5xx',
+    short:'Transparent content negotiation resulted in a circular reference.',
+    detail:'The server has an internal configuration error: the chosen variant resource is configured to engage in transparent content negotiation itself and is therefore not a proper endpoint in the negotiation process.',
+    use:'Common causes: misconfigured content negotiation on the server resulting in a negotiation loop.' },
+  { code:507, name:'Insufficient Storage', cat:'5xx',
+    short:'The server is unable to store the data needed to complete the request.',
+    detail:'The method could not be performed on the resource because the server is unable to store the representation needed to successfully complete the request (WebDAV).',
+    use:'Common causes: disk is full, storage quota exceeded, or a WebDAV server cannot allocate enough space to process the operation.' },
+  { code:508, name:'Loop Detected', cat:'5xx',
+    short:'The server detected an infinite loop while processing the request.',
+    detail:'The server terminated an operation because it encountered an infinite loop while processing a request with "Depth: infinity" (WebDAV).',
+    use:'Common causes: WebDAV COPY or MOVE operations that would create a circular reference, or recursive DAV bindings causing infinite traversal.' },
+  { code:510, name:'Not Extended', cat:'5xx',
+    short:'Further extensions to the request are required.',
+    detail:'Further extensions to the request are required for the server to fulfil it.',
+    use:'Common causes: the server requires a mandatory extension that was not declared in the request (RFC 2774 HTTP Extension Framework).' },
+  { code:511, name:'Network Authentication Required', cat:'5xx',
+    short:'The client needs to authenticate to gain network access.',
+    detail:'The client needs to authenticate to gain network access. Intended for use by intercepting proxies used to control access to a network (captive portals).',
+    use:'Common causes: Wi-Fi captive portals (hotel, airport, coffee shop Wi-Fi) intercepting requests and redirecting to a login page.' }
+];
+
+var CAT_COLORS = { '1xx':'#60a5fa', '2xx':'#22c55e', '3xx':'#fbbf24', '4xx':'#f97316', '5xx':'#ef4444' };
+var CATS = ['All','1xx Info','2xx Success','3xx Redirect','4xx Client Error','5xx Server Error'];
+var CAT_KEYS = { 'All':null, '1xx Info':'1xx', '2xx Success':'2xx', '3xx Redirect':'3xx', '4xx Client Error':'4xx', '5xx Server Error':'5xx' };
+var activeCat = 'All';
+
+function buildPills() {
+  var wrap = document.getElementById('catPills');
+  wrap.innerHTML = '';
+  CATS.forEach(function(cat) {
+    var btn = document.createElement('button');
+    btn.className = 'cat-pill' + (cat === activeCat ? ' active' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', function() {
+      activeCat = cat;
+      document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      filterCodes();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function escHTML(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function filterCodes() {
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  var catKey = CAT_KEYS[activeCat];
+  var grid = document.getElementById('statusGrid');
+  var results = CODES.filter(function(c) {
+    var catOk = !catKey || c.cat === catKey;
+    if (!catOk) return false;
+    if (!q) return true;
+    return String(c.code).includes(q) ||
+           c.name.toLowerCase().includes(q) ||
+           c.short.toLowerCase().includes(q) ||
+           c.detail.toLowerCase().includes(q);
+  });
+
+  document.getElementById('countShown').textContent = results.length;
+
+  if (results.length === 0) {
+    grid.innerHTML = '<div class="no-results"><strong>No status codes found</strong>Try a different search term or select "All".</div>';
+    return;
+  }
+
+  var html = '';
+  results.forEach(function(c) {
+    var color = CAT_COLORS[c.cat] || '#6366f1';
+    var useLabel = c.cat === '5xx' ? 'Common Causes' : 'When to Use';
+    html += '<div class="status-card" style="--cat-color:' + color + '">' +
+      '<div class="status-card-top">' +
+        '<div class="status-card-main">' +
+          '<div class="status-code">' + c.code + '</div>' +
+          '<div class="status-name">' + escHTML(c.name) + '</div>' +
+          '<div class="status-short">' + escHTML(c.short) + '</div>' +
+        '</div>' +
+        '<button class="copy-code-btn" data-code="' + c.code + '">' + c.code + '</button>' +
+      '</div>' +
+      '<div class="status-detail">' +
+        '<p class="detail-text">' + escHTML(c.detail) + '</p>' +
+        '<div class="use-label">' + useLabel + '</div>' +
+        '<p class="use-text">' + escHTML(c.use) + '</p>' +
+      '</div>' +
+      '<span class="expand-icon">▼</span>' +
+    '</div>';
+  });
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.status-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      if (e.target.classList.contains('copy-code-btn')) return;
+      card.classList.toggle('expanded');
+    });
+  });
+
+  grid.querySelectorAll('.copy-code-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var code = btn.getAttribute('data-code');
+      navigator.clipboard.writeText(code).then(function() {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = code; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+}
+
+buildPills();
+document.getElementById('countShown').textContent = CODES.length;
+filterCodes();
+</script>
+</body>
+</html>
