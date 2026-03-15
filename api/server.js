@@ -122,12 +122,27 @@ app.post('/api/ai/cron', async (req, res) => {
 
   try {
     const result = await ollamaJSON(
-      `You are a cron expression expert. Given a schedule description, respond ONLY with a JSON object using this exact structure:
-{"expression":"<5-field cron>","readable":"<plain English of schedule>","fields":{"minute":"<value — explain it>","hour":"<value — explain it>","dom":"<value — explain it>","month":"<value — explain it>","dow":"<value — explain it>"}}
-The expression must have exactly 5 space-separated fields: minute hour day-of-month month day-of-week.
-Valid ranges: minute 0-59, hour 0-23, day-of-month 1-31, month 1-12, day-of-week 0-7.
-If the input is not a valid schedule description, set expression to "invalid" and readable to a clear explanation of what is wrong.
-Do not include any text outside the JSON.`,
+      `You are a cron expression expert. Convert schedule descriptions to 5-field cron expressions.
+
+FORMAT: minute(0-59) hour(0-23) day-of-month(1-31) month(1-12) day-of-week(0-6, 0=Sunday)
+
+CRITICAL RULES:
+- "every day" → day-of-week MUST be * (not a number)
+- PM hours: 1pm=13, 2pm=14, 3pm=15, 4pm=16, 5pm=17, 6pm=18, 7pm=19, 8pm=20, 9pm=21, 10pm=22, 11pm=23, 12pm=12
+- AM hours: 12am/midnight=0, 1am=1, 2am=2, ... 11am=11
+- "every X minutes" → */X in minute field, * in all others
+
+EXAMPLES:
+"every day at 7:30pm" → expression:"30 19 * * *"
+"every day at 9am" → expression:"0 9 * * *"
+"every monday at 2:30pm" → expression:"30 14 * * 1"
+"every 5 minutes" → expression:"*/5 * * * *"
+"every weekday at midnight" → expression:"0 0 * * 1-5"
+"first of every month at noon" → expression:"0 12 1 * *"
+
+Respond ONLY with this JSON:
+{"expression":"<5 fields>","readable":"<plain English>","fields":{"minute":"<val>","hour":"<val>","dom":"<val>","month":"<val>","dow":"<val>"}}
+If not a valid schedule, set expression to "invalid".`,
       desc
     );
     if (!result?.expression) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
