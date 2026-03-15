@@ -7,105 +7,107 @@
     return path === h || path.startsWith(h + '/');
   }
 
-  var GROUPS = [
-    {
-      label: 'Linux',
-      items: [
-        { href: '/',               label: 'chmod' },
-        { href: '/cron',           label: 'cron' },
-        { href: '/file-size',      label: 'file size' },
-        { href: '/linux-commands', label: 'commands' },
-      ]
-    },
-    {
-      label: 'Text',
-      items: [
-        { href: '/json',     label: 'json' },
-        { href: '/regex',    label: 'regex' },
-        { href: '/diff',     label: 'diff' },
-        { href: '/password', label: 'password' },
-      ]
-    },
-    {
-      label: 'Encode',
-      items: [
-        { href: '/base64',     label: 'base64' },
-        { href: '/url-encode', label: 'url encode' },
-        { href: '/uuid',       label: 'uuid' },
-        { href: '/jwt',        label: 'jwt' },
-      ]
-    },
-    {
-      label: 'Web',
-      items: [
-        { href: '/http-status', label: 'http status' },
-        { href: '/timestamp',   label: 'timestamp' },
-        { href: '/dns',         label: 'dns & whois' },
-      ]
-    },
-  ];
-
-  function esc(s) {
-    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  function link(href, label) {
+    var cls = active(href) ? ' class="active"' : '';
+    return '<a href="' + href + '"' + cls + '>' + label + '</a>';
   }
 
-  var html = '<nav class="topnav"><div class="nav-inner">';
-
-  // Brand
-  html += '<a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>';
-  html += '<div class="nav-sep"></div>';
-  html += '<div class="nav-links">';
-
-  // Groups with dropdowns
-  GROUPS.forEach(function (g) {
-    var groupActive = g.items.some(function (i) { return active(i.href); });
-    html += '<div class="nav-group' + (groupActive ? ' nav-group-active' : '') + '">';
-    html += '<button class="nav-group-btn" aria-expanded="false">' + esc(g.label) + '<span class="nav-caret">▾</span></button>';
-    html += '<div class="nav-dropdown" role="menu">';
-    g.items.forEach(function (item) {
-      html += '<a href="' + esc(item.href) + '" role="menuitem"' + (active(item.href) ? ' class="active"' : '') + '>' + esc(item.label) + '</a>';
-    });
-    html += '</div></div>';
+  // Show Tools button as active if current page is a tool
+  var toolPaths = ['/', '/cron', '/file-size', '/linux-commands',
+                   '/json', '/regex', '/diff', '/password',
+                   '/base64', '/url-encode', '/uuid', '/jwt',
+                   '/http-status', '/timestamp', '/dns'];
+  var toolActive = toolPaths.some(function (p) {
+    var h = p.replace(/\/$/, '') || '/';
+    if (h === '/') return path === '/';
+    return path === h || path.startsWith(h + '/');
   });
 
-  // Direct links
-  html += '<div class="nav-sep-v"></div>';
-  html += '<a href="/ai" class="nav-ai-link' + (active('/ai') ? ' active' : '') + '">✦ AI</a>';
-  html += '<a href="/blog"' + (active('/blog') ? ' class="active"' : '') + '>guides</a>';
+  var nav =
+    '<nav class="topnav"><div class="nav-inner">' +
+      '<a href="/" class="nav-brand"><span class="nav-brand-icon">⚙</span>SysUtil</a>' +
+      '<div class="nav-links">' +
 
-  html += '</div></div></nav>';
+        // ── Tools dropdown ──────────────────────────────────────
+        '<div class="nav-dropdown">' +
+          '<button class="nav-tools-btn' + (toolActive ? ' active' : '') + '">' +
+            'Tools <span class="nav-tools-arrow">▾</span>' +
+          '</button>' +
+          '<div class="nav-dropdown-panel">' +
+            '<div class="nav-dropdown-grid">' +
 
-  // Inject nav before the script tag
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Linux</div>' +
+                link('/', 'chmod') +
+                link('/cron', 'cron') +
+                link('/file-size', 'file size') +
+                link('/linux-commands', 'commands') +
+              '</div>' +
+
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Text / Code</div>' +
+                link('/json', 'json') +
+                link('/regex', 'regex') +
+                link('/diff', 'diff') +
+                link('/password', 'password') +
+              '</div>' +
+
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Encode</div>' +
+                link('/base64', 'base64') +
+                link('/url-encode', 'url encode') +
+                link('/uuid', 'uuid') +
+                link('/jwt', 'jwt') +
+              '</div>' +
+
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Web / Network</div>' +
+                link('/http-status', 'http status') +
+                link('/timestamp', 'timestamp') +
+                link('/dns', 'dns') +
+              '</div>' +
+
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        // ────────────────────────────────────────────────────────
+
+        '<a href="/blog"' + (active('/blog') ? ' class="active"' : '') + '>Guides</a>' +
+        '<a href="/ai" class="nav-ai-link' + (active('/ai') ? ' active' : '') + '">✦ AI</a>' +
+
+      '</div>' +
+    '</div></nav>';
+
   var script = document.currentScript;
-  var nav = document.createElement('div');
-  nav.innerHTML = html;
-  script.parentNode.insertBefore(nav.firstChild, script);
+  var tmp    = document.createElement('div');
+  tmp.innerHTML = nav;
+  var navEl = tmp.firstChild;
+  script.parentNode.insertBefore(navEl, script);
 
-  // Dropdown open/close logic
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.nav-group-btn').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var isOpen = btn.getAttribute('aria-expanded') === 'true';
-        // Close all
-        document.querySelectorAll('.nav-group-btn').forEach(function (b) {
-          b.setAttribute('aria-expanded', 'false');
-          b.closest('.nav-group').classList.remove('open');
-        });
-        // Toggle this one
-        if (!isOpen) {
-          btn.setAttribute('aria-expanded', 'true');
-          btn.closest('.nav-group').classList.add('open');
-        }
-      });
-    });
+  // ── Dropdown behaviour ──────────────────────────────────────
+  var btn   = navEl.querySelector('.nav-tools-btn');
+  var panel = navEl.querySelector('.nav-dropdown-panel');
 
-    // Close on outside click
-    document.addEventListener('click', function () {
-      document.querySelectorAll('.nav-group-btn').forEach(function (b) {
-        b.setAttribute('aria-expanded', 'false');
-        b.closest('.nav-group').classList.remove('open');
-      });
-    });
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = panel.classList.toggle('open');
+    btn.classList.toggle('open', open);
+  });
+
+  // Close on outside click
+  document.addEventListener('click', function () {
+    panel.classList.remove('open');
+    btn.classList.remove('open');
+  });
+
+  // Don't close when clicking inside the panel
+  panel.addEventListener('click', function (e) { e.stopPropagation(); });
+
+  // Close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      panel.classList.remove('open');
+      btn.classList.remove('open');
+    }
   });
 })();
