@@ -6,10 +6,10 @@ const rateLimit  = require('express-rate-limit');
 const whoiser    = require('whoiser');
 
 const app  = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // Trust nginx reverse proxy — required for express-rate-limit to work correctly
-app.set('trust proxy', 1);
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
 const AI_MODEL   = process.env.AI_MODEL   || 'llama3.1:70b';
