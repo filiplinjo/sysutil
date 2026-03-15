@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://127.0.0.1:11434';
-const AI_MODEL   = process.env.AI_MODEL   || 'llama3.2:1b';
+const AI_MODEL   = process.env.AI_MODEL   || 'llama3.2:3b';
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '32kb' }));
