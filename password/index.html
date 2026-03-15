@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free secure password generator. Generate strong, random passwords with custom length, symbols, numbers and more. No passwords are stored or transmitted.">
+<meta name="keywords" content="password generator, strong password generator, random password, secure password, online password generator, free password generator">
+<title>Password Generator - Free Strong & Secure Passwords | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
+  header{text-align:center;padding:40px 20px 20px}
+  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+  header h1 span{color:#6366f1}
+  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
+  .container{max-width:680px;margin:0 auto}
+  nav{text-align:center;margin-bottom:10px}
+  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
+  nav a:hover{text-decoration:underline}
+
+  .card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:20px}
+
+  /* Password display */
+  .pwd-display{background:#0f1117;border:1px solid #2d3148;border-radius:12px;padding:20px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .pwd-text{font-family:monospace;font-size:1.2rem;flex:1;word-break:break-all;letter-spacing:2px;color:#a5b4fc;line-height:1.5}
+  .icon-btn{background:#1e2130;border:1px solid #2d3148;color:#94a3b8;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+  .icon-btn:hover{border-color:#6366f1;color:#a5b4fc}
+
+  /* Strength bar */
+  .strength-wrap{margin-bottom:20px}
+  .strength-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85rem}
+  .strength-bar{height:6px;background:#0f1117;border-radius:3px;overflow:hidden}
+  .strength-fill{height:100%;border-radius:3px;transition:all 0.3s}
+
+  /* Length slider */
+  .length-row{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+  .length-row label{font-size:0.9rem;color:#94a3b8;white-space:nowrap}
+  .length-row input[type=range]{flex:1;accent-color:#6366f1;height:6px}
+  .length-val{font-family:monospace;font-weight:700;color:#6366f1;font-size:1.1rem;min-width:28px;text-align:center}
+
+  /* Options */
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .option-card{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s}
+  .option-card:hover{border-color:#4f46e5}
+  .option-card.active{border-color:#6366f1;background:#1a1d2e}
+  .option-card input{accent-color:#6366f1;width:16px;height:16px}
+  .option-info{flex:1}
+  .option-name{font-size:0.9rem;font-weight:600}
+  .option-chars{font-family:monospace;font-size:0.75rem;color:#475569;margin-top:2px}
+
+  /* Bulk */
+  .bulk-section{margin-top:8px}
+  .bulk-list{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:200px;overflow-y:auto;color:#a5b4fc}
+
+  /* Generate btn */
+  .gen-btn{width:100%;background:#6366f1;color:#fff;border:none;padding:14px;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:700;transition:background 0.2s;letter-spacing:0.03em}
+  .gen-btn:hover{background:#4f46e5}
+
+  .copy-btn{width:100%;background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:12px;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;margin-top:10px}
+  .copy-btn:hover{border-color:#6366f1;color:#a5b4fc}
+  .copy-btn.copied{background:#22c55e;border-color:#22c55e;color:#fff}
+
+  .privacy-note{text-align:center;color:#374151;font-size:0.8rem;margin-top:12px}
+  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Password <span>Generator</span></h1>
+    <p>Generate strong, secure random passwords instantly. Passwords are generated in your browser and never transmitted.</p>
+  </header>
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog">guides</a>
+  </nav>
+
+  <div class="card">
+    <!-- Password display -->
+    <div class="pwd-display">
+      <div class="pwd-text" id="pwdText">Click Generate</div>
+      <button class="icon-btn" onclick="generate()" title="Regenerate">↻</button>
+    </div>
+
+    <!-- Strength -->
+    <div class="strength-wrap">
+      <div class="strength-label">
+        <span style="color:#64748b;font-size:0.8rem">Strength</span>
+        <span id="strengthLabel" style="font-weight:600;font-size:0.85rem"></span>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+    </div>
+
+    <!-- Length -->
+    <div class="length-row">
+      <label>Length</label>
+      <input type="range" id="lengthSlider" min="6" max="64" value="16" oninput="updateLength();generate()">
+      <div class="length-val" id="lengthVal">16</div>
+    </div>
+
+    <!-- Options -->
+    <div class="options-grid">
+      <div class="option-card active" onclick="toggleOpt(this,'uppercase')">
+        <input type="checkbox" id="uppercase" checked>
+        <div class="option-info">
+          <div class="option-name">Uppercase</div>
+          <div class="option-chars">A B C ... Z</div>
+        </div>
+      </div>
+      <div class="option-card active" onclick="toggleOpt(this,'lowercase')">
+        <input type="checkbox" id="lowercase" checked>
+        <div class="option-info">
+          <div class="option-name">Lowercase</div>
+          <div class="option-chars">a b c ... z</div>
+        </div>
+      </div>
+      <div class="option-card active" onclick="toggleOpt(this,'numbers')">
+        <input type="checkbox" id="numbers" checked>
+        <div class="option-info">
+          <div class="option-name">Numbers</div>
+          <div class="option-chars">0 1 2 ... 9</div>
+        </div>
+      </div>
+      <div class="option-card active" onclick="toggleOpt(this,'symbols')">
+        <input type="checkbox" id="symbols" checked>
+        <div class="option-info">
+          <div class="option-name">Symbols</div>
+          <div class="option-chars">! @ # $ % ^ & *</div>
+        </div>
+      </div>
+      <div class="option-card" onclick="toggleOpt(this,'noambig')">
+        <input type="checkbox" id="noambig">
+        <div class="option-info">
+          <div class="option-name">Exclude ambiguous</div>
+          <div class="option-chars">0 O l 1 I</div>
+        </div>
+      </div>
+      <div class="option-card" onclick="toggleOpt(this,'norepeats')">
+        <input type="checkbox" id="norepeats">
+        <div class="option-info">
+          <div class="option-name">No repeating chars</div>
+          <div class="option-chars">unique only</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="gen-btn" onclick="generate()">Generate Password</button>
+    <button class="copy-btn" id="copyBtn" onclick="copyPwd()">Copy to Clipboard</button>
+    <div class="privacy-note">🔒 Generated locally in your browser. Never stored or sent anywhere.</div>
+  </div>
+
+  <!-- Bulk -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em">Bulk Generate</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="bulkCount" style="background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:6px 10px;border-radius:6px;font-size:0.85rem">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+        <button style="background:#6366f1;color:#fff;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600" onclick="generateBulk()">Generate</button>
+        <button style="background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem" onclick="copyBulk()">Copy All</button>
+      </div>
+    </div>
+    <div class="bulk-list" id="bulkList">Click Generate above to create multiple passwords at once.</div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a> — chmod, cron, regex, base64, json, password and more.</p>
+  </footer>
+</div>
+
+<script>
+var UPPER='ABCDEFGHIJKLMNOPQRSTUVWXYZ', LOWER='abcdefghijklmnopqrstuvwxyz';
+var NUMS='0123456789', SYMS='!@#$%^&*()_+-=[]{}|;:,.<>?';
+var AMBIG=/[0OlI1]/g;
+
+function getCharset() {
+  var c='';
+  if(document.getElementById('uppercase').checked) c+=UPPER;
+  if(document.getElementById('lowercase').checked) c+=LOWER;
+  if(document.getElementById('numbers').checked) c+=NUMS;
+  if(document.getElementById('symbols').checked) c+=SYMS;
+  if(document.getElementById('noambig').checked) c=c.replace(AMBIG,'');
+  return c || LOWER;
+}
+
+function genOne(len) {
+  var cs=getCharset(), pwd='', arr=new Uint32Array(len*2);
+  crypto.getRandomValues(arr);
+  var noRep=document.getElementById('norepeats').checked;
+  var used=new Set();
+  for(var i=0;i<arr.length&&pwd.length<len;i++){
+    var ch=cs[arr[i]%cs.length];
+    if(noRep&&used.has(ch)) continue;
+    used.add(ch); pwd+=ch;
+  }
+  return pwd.slice(0,len);
+}
+
+function strength(pwd) {
+  var s=0;
+  if(pwd.length>=8) s++;
+  if(pwd.length>=12) s++;
+  if(pwd.length>=16) s++;
+  if(/[A-Z]/.test(pwd)) s++;
+  if(/[a-z]/.test(pwd)) s++;
+  if(/[0-9]/.test(pwd)) s++;
+  if(/[^A-Za-z0-9]/.test(pwd)) s++;
+  return s;
+}
+
+function generate() {
+  var len=parseInt(document.getElementById('lengthSlider').value);
+  var pwd=genOne(len);
+  document.getElementById('pwdText').textContent=pwd;
+  var s=strength(pwd);
+  var colors=['#ef4444','#ef4444','#f97316','#eab308','#22c55e','#22c55e','#22c55e','#6366f1'];
+  var labels=['','Very Weak','Weak','Fair','Good','Strong','Very Strong','Excellent'];
+  var pct=Math.round(s/7*100);
+  document.getElementById('strengthFill').style.width=pct+'%';
+  document.getElementById('strengthFill').style.background=colors[s]||'#6366f1';
+  document.getElementById('strengthLabel').style.color=colors[s]||'#6366f1';
+  document.getElementById('strengthLabel').textContent=labels[s]||'';
+}
+
+function updateLength() {
+  document.getElementById('lengthVal').textContent=document.getElementById('lengthSlider').value;
+}
+
+function toggleOpt(card, id) {
+  var cb=document.getElementById(id);
+  cb.checked=!cb.checked;
+  card.classList.toggle('active',cb.checked);
+  generate();
+}
+
+function copyPwd() {
+  var pwd=document.getElementById('pwdText').textContent;
+  if(pwd==='Click Generate') return;
+  navigator.clipboard.writeText(pwd).then(function(){
+    var btn=document.getElementById('copyBtn');
+    btn.textContent='✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent='Copy to Clipboard'; btn.classList.remove('copied'); },2000);
+  });
+}
+
+function generateBulk() {
+  var count=parseInt(document.getElementById('bulkCount').value);
+  var len=parseInt(document.getElementById('lengthSlider').value);
+  var pwds=[];
+  for(var i=0;i<count;i++) pwds.push(genOne(len));
+  document.getElementById('bulkList').textContent=pwds.join('\n');
+}
+
+function copyBulk() {
+  var txt=document.getElementById('bulkList').textContent;
+  navigator.clipboard.writeText(txt);
+}
+
+generate();
+</script>
+</body>
+</html>

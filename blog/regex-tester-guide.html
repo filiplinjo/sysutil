@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to regular expressions. Learn regex syntax, common patterns, flags and how to test regex online. Includes email, URL, IP address and more patterns.">
+<meta name="keywords" content="regex tester, regular expression tester, regex syntax, regex patterns, regex online, test regex, regex email, regex url, regex cheatsheet">
+<title>Regex Tester: Complete Guide to Regular Expressions | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.7;padding:20px}
+  .container{max-width:780px;margin:0 auto}
+  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
+  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .regex-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .regex-table th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  .regex-table td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem;vertical-align:top}
+  .regex-table td:first-child{font-family:monospace;color:#6366f1;font-weight:700;white-space:nowrap}
+  .regex-table tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  .pattern-card{background:#1e2130;border:1px solid #2d3148;border-radius:10px;padding:16px 18px;margin:12px 0}
+  .pattern-card h4{color:#fff;font-size:0.95rem;margin-bottom:6px}
+  .pattern-card code{display:block;margin:6px 0;font-size:0.82rem;word-break:break-all}
+  .pattern-card p{margin:4px 0;font-size:0.85rem}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/linux">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog/regex-tester-guide" class="active">guide</a>
+  </nav>
+
+  <header>
+    <div class="meta">SysUtil Blog &bull; Regular Expressions Guide</div>
+    <h1>Regex Tester: Complete Guide to Regular Expressions</h1>
+    <p class="intro">Learn regex from scratch. Understand every symbol, test patterns live, and find ready-made expressions for email, URL, IP address, phone number and more.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Test your regex patterns live with match highlighting, capture groups and flag support — free, no login.</p>
+    <a href="/regex" class="cta-btn">Open Regex Tester →</a>
+  </div>
+
+  <h2>What is a Regular Expression?</h2>
+  <p>A regular expression (regex) is a sequence of characters that defines a search pattern. You can use regex to find text, validate input, extract data, or replace content in strings. They are supported in virtually every programming language and many command line tools like <code>grep</code>, <code>sed</code> and <code>awk</code>.</p>
+  <p>Regex looks intimidating at first but follows a small set of rules that are easy to learn.</p>
+
+  <h2>Basic Syntax — The Building Blocks</h2>
+
+  <h3>Literal characters</h3>
+  <p>The simplest regex is just plain text. The pattern <code>cat</code> matches the string "cat" anywhere in your text.</p>
+
+  <h3>The dot — match any character</h3>
+  <p>A dot <code>.</code> matches any single character except a newline. The pattern <code>c.t</code> matches "cat", "cut", "c3t" — anything where c and t have exactly one character between them.</p>
+
+  <h3>Character classes</h3>
+  <p>Square brackets define a set of characters to match:</p>
+  <table class="regex-table">
+    <thead><tr><th>Pattern</th><th>Matches</th></tr></thead>
+    <tbody>
+      <tr><td>[abc]</td><td>One character: a, b or c</td></tr>
+      <tr><td>[a-z]</td><td>Any lowercase letter</td></tr>
+      <tr><td>[A-Z]</td><td>Any uppercase letter</td></tr>
+      <tr><td>[0-9]</td><td>Any digit</td></tr>
+      <tr><td>[a-zA-Z0-9]</td><td>Any letter or digit</td></tr>
+      <tr><td>[^abc]</td><td>Any character except a, b or c</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Shorthand character classes</h3>
+  <table class="regex-table">
+    <thead><tr><th>Shorthand</th><th>Equivalent</th><th>Matches</th></tr></thead>
+    <tbody>
+      <tr><td>\d</td><td>[0-9]</td><td>Any digit</td></tr>
+      <tr><td>\D</td><td>[^0-9]</td><td>Any non-digit</td></tr>
+      <tr><td>\w</td><td>[a-zA-Z0-9_]</td><td>Word character</td></tr>
+      <tr><td>\W</td><td>[^\w]</td><td>Non-word character</td></tr>
+      <tr><td>\s</td><td>[ \t\n\r]</td><td>Whitespace</td></tr>
+      <tr><td>\S</td><td>[^\s]</td><td>Non-whitespace</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Quantifiers — How Many Times</h2>
+  <table class="regex-table">
+    <thead><tr><th>Quantifier</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>*</td><td>0 or more times</td><td><code>go*gle</code> matches "ggle", "gogle", "google"</td></tr>
+      <tr><td>+</td><td>1 or more times</td><td><code>go+gle</code> matches "gogle", "google" but not "ggle"</td></tr>
+      <tr><td>?</td><td>0 or 1 time (optional)</td><td><code>colou?r</code> matches "color" and "colour"</td></tr>
+      <tr><td>{n}</td><td>Exactly n times</td><td><code>\d{4}</code> matches exactly 4 digits</td></tr>
+      <tr><td>{n,}</td><td>n or more times</td><td><code>\d{2,}</code> matches 2 or more digits</td></tr>
+      <tr><td>{n,m}</td><td>Between n and m times</td><td><code>\d{2,4}</code> matches 2, 3 or 4 digits</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip-box">
+    <p>💡 <strong>Greedy vs Lazy:</strong> By default quantifiers are greedy — they match as much as possible. Add <code>?</code> after to make them lazy: <code>.*?</code> matches as little as possible.</p>
+  </div>
+
+  <h2>Anchors — Position in String</h2>
+  <table class="regex-table">
+    <thead><tr><th>Anchor</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>^</td><td>Start of string (or line with multiline flag)</td></tr>
+      <tr><td>$</td><td>End of string (or line with multiline flag)</td></tr>
+      <tr><td>\b</td><td>Word boundary</td></tr>
+      <tr><td>\B</td><td>Not a word boundary</td></tr>
+    </tbody>
+  </table>
+  <pre><code># Match lines that start with "Error"
+^Error
+
+# Match lines that end with a semicolon
+;$
+
+# Match whole word "cat" not "cats" or "concatenate"
+\bcat\b</code></pre>
+
+  <h2>Groups and Capturing</h2>
+  <p>Parentheses group parts of a pattern and capture the matched text:</p>
+  <pre><code># Capture year, month, day from a date
+(\d{4})-(\d{2})-(\d{2})
+# Group 1: year, Group 2: month, Group 3: day
+
+# Non-capturing group (just for grouping, no capture)
+(?:https?|ftp)://
+
+# Named capture group
+(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})</code></pre>
+
+  <h2>Flags / Modifiers</h2>
+  <table class="regex-table">
+    <thead><tr><th>Flag</th><th>Name</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td>g</td><td>Global</td><td>Find all matches, not just the first</td></tr>
+      <tr><td>i</td><td>Case insensitive</td><td><code>cat</code> matches "Cat", "CAT", "cat"</td></tr>
+      <tr><td>m</td><td>Multiline</td><td><code>^</code> and <code>$</code> match start/end of each line</td></tr>
+      <tr><td>s</td><td>Dot all</td><td>Dot <code>.</code> also matches newline characters</td></tr>
+      <tr><td>u</td><td>Unicode</td><td>Enable full Unicode matching</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Lookahead and Lookbehind</h2>
+  <p>Lookarounds let you match based on what comes before or after without including it in the match:</p>
+  <table class="regex-table">
+    <thead><tr><th>Syntax</th><th>Name</th><th>Matches</th></tr></thead>
+    <tbody>
+      <tr><td>(?=...)</td><td>Positive lookahead</td><td>Followed by pattern</td></tr>
+      <tr><td>(?!...)</td><td>Negative lookahead</td><td>NOT followed by pattern</td></tr>
+      <tr><td>(?&lt;=...)</td><td>Positive lookbehind</td><td>Preceded by pattern</td></tr>
+      <tr><td>(?&lt;!...)</td><td>Negative lookbehind</td><td>NOT preceded by pattern</td></tr>
+    </tbody>
+  </table>
+  <pre><code># Match a number followed by "px" but don't include "px"
+\d+(?=px)
+
+# Match password with at least one uppercase, one digit, 8+ chars
+(?=.*[A-Z])(?=.*\d).{8,}</code></pre>
+
+  <h2>Ready-Made Patterns</h2>
+
+  <div class="pattern-card">
+    <h4>Email address</h4>
+    <code>[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}</code>
+    <p>Matches most standard email addresses. Use with case-insensitive flag.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>URL</h4>
+    <code>https?:\/\/[^\s]+</code>
+    <p>Matches http and https URLs. For stricter validation use a more complete pattern.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>IP Address (basic)</h4>
+    <code>\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b</code>
+    <p>Matches IP-like strings. Does not validate range (0-255).</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>IP Address (strict)</h4>
+    <code>(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)</code>
+    <p>Validates each octet is in range 0-255.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>Date (YYYY-MM-DD)</h4>
+    <code>\d{4}-\d{2}-\d{2}</code>
+    <p>Matches ISO 8601 date format like 2026-03-14.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>Hex color</h4>
+    <code>#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})</code>
+    <p>Matches 3 or 6 digit hex color codes with optional #.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>Strong password</h4>
+    <code>(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}</code>
+    <p>Requires at least one lowercase, one uppercase, one digit, minimum 8 characters.</p>
+  </div>
+
+  <div class="pattern-card">
+    <h4>Username</h4>
+    <code>^[a-zA-Z0-9_]{3,20}$</code>
+    <p>Letters, digits and underscore, 3 to 20 characters.</p>
+  </div>
+
+  <h2>Using Regex in Common Languages</h2>
+
+  <h3>JavaScript</h3>
+  <pre><code>// Test if string matches
+const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+email.test('user@example.com'); // true
+
+// Find all matches
+const str = 'foo bar baz';
+str.match(/\b\w+\b/g); // ['foo', 'bar', 'baz']
+
+// Replace
+'hello world'.replace(/world/gi, 'Linux'); // 'hello Linux'</code></pre>
+
+  <h3>Python</h3>
+  <pre><code>import re
+
+# Test match
+re.match(r'\d+', '123abc')  # match object
+
+# Find all
+re.findall(r'\d+', 'foo 123 bar 456')  # ['123', '456']
+
+# Search anywhere in string
+re.search(r'[A-Z]', 'helloWorld')  # match object
+
+# Replace
+re.sub(r'\s+', '-', 'hello world foo')  # 'hello-world-foo'</code></pre>
+
+  <h3>grep on Linux</h3>
+  <pre><code># Find lines containing an email
+grep -E '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' file.txt
+
+# Case insensitive search
+grep -i 'error' /var/log/nginx/error.log
+
+# Show only matched part
+grep -oE '\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b' access.log</code></pre>
+
+  <h2>Frequently Asked Questions</h2>
+
+  <h3>What does .* mean in regex?</h3>
+  <p><code>.</code> matches any character and <code>*</code> means zero or more times, so <code>.*</code> matches any sequence of characters including an empty string. It is greedy by default — use <code>.*?</code> for lazy matching.</p>
+
+  <h3>What is the difference between + and *?</h3>
+  <p><code>*</code> matches zero or more occurrences, so the pattern can match even if the character is absent. <code>+</code> requires at least one match. For example <code>\d*</code> matches an empty string while <code>\d+</code> requires at least one digit.</p>
+
+  <h3>How do I match a literal dot?</h3>
+  <p>Escape it with a backslash: <code>\.</code>. Without the backslash, <code>.</code> matches any character. So to match an IP address dot use <code>\d+\.\d+\.\d+\.\d+</code>.</p>
+
+  <h3>What is a capture group?</h3>
+  <p>Parentheses <code>()</code> create a capture group. Whatever is matched inside them is saved and can be referenced later with <code>$1</code>, <code>\1</code> or named references. Use <code>(?:)</code> to group without capturing.</p>
+
+  <h3>Why does my regex match too much?</h3>
+  <p>You are probably seeing greedy matching. Add <code>?</code> after your quantifier to make it lazy: change <code>.*</code> to <code>.*?</code>. Or use anchors <code>^</code> and <code>$</code> to pin the match to the start and end of the string.</p>
+
+  <div class="cta-box">
+    <p>Ready to test your regex? Our tester shows live highlighting, capture groups and supports all flags.</p>
+    <a href="/regex" class="cta-btn">Open Regex Tester →</a>
+  </div>
+
+  <footer>
+    <p>Free Linux tools by <a href="/">SysUtil.dev</a> &mdash; chmod, cron, regex, base64, json, password, diff and more.</p>
+  </footer>
+</div>
+</body>
+</html>

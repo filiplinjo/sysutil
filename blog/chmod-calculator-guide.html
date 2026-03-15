@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to Linux chmod calculator and file permissions. Learn how to use chmod, understand octal notation, and set the right permissions for your files and directories.">
+<meta name="keywords" content="chmod calculator, linux file permissions, chmod command, octal permissions, chmod 755, chmod 644, linux chmod guide">
+<title>chmod Calculator: Complete Guide to Linux File Permissions | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.7;padding:20px}
+  .container{max-width:780px;margin:0 auto}
+  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
+  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .perm-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .perm-table th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  .perm-table td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  .perm-table td:first-child{font-family:monospace;color:#6366f1;font-weight:700}
+  .perm-table tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/linux">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog/chmod-calculator-guide" class="active">guide</a>
+  </nav>
+
+  <header>
+    <div class="meta">SysUtil Blog &bull; Linux File Permissions Guide</div>
+    <h1>chmod Calculator: Complete Guide to Linux File Permissions</h1>
+    <p class="intro">Everything you need to know about chmod, octal notation, and setting the right permissions for your Linux files and directories.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Use our free interactive chmod calculator — click checkboxes and get the exact command instantly.</p>
+    <a href="/" class="cta-btn">Open chmod Calculator →</a>
+  </div>
+
+  <h2>What is chmod?</h2>
+  <p><code>chmod</code> stands for <em>change mode</em> and is the Linux command used to set file and directory permissions. Every file on a Linux system has three sets of permissions: one for the owner, one for the group, and one for everyone else (other).</p>
+  <p>Each set contains three permission types: read, write, and execute. The <code>chmod</code> command lets you control exactly who can do what with your files.</p>
+
+  <h2>Understanding Octal Notation</h2>
+  <p>The most common way to use chmod is with octal (base-8) numbers. Each permission is assigned a value:</p>
+  <table class="perm-table">
+    <thead><tr><th>Value</th><th>Permission</th><th>Symbol</th></tr></thead>
+    <tbody>
+      <tr><td>4</td><td>Read</td><td>r</td></tr>
+      <tr><td>2</td><td>Write</td><td>w</td></tr>
+      <tr><td>1</td><td>Execute</td><td>x</td></tr>
+      <tr><td>0</td><td>No permission</td><td>-</td></tr>
+    </tbody>
+  </table>
+  <p>You add these values together for each user group. So <code>7</code> means read+write+execute (4+2+1), <code>6</code> means read+write (4+2), and <code>5</code> means read+execute (4+1).</p>
+
+  <h2>Most Common chmod Values</h2>
+  <table class="perm-table">
+    <thead><tr><th>chmod</th><th>Symbolic</th><th>Use case</th></tr></thead>
+    <tbody>
+      <tr><td>755</td><td>rwxr-xr-x</td><td>Web directories, scripts</td></tr>
+      <tr><td>644</td><td>rw-r--r--</td><td>Web files, HTML, CSS</td></tr>
+      <tr><td>777</td><td>rwxrwxrwx</td><td>Full access (use with caution)</td></tr>
+      <tr><td>700</td><td>rwx------</td><td>Private scripts</td></tr>
+      <tr><td>600</td><td>rw-------</td><td>Private files, SSH keys</td></tr>
+      <tr><td>640</td><td>rw-r-----</td><td>Config files</td></tr>
+      <tr><td>400</td><td>r--------</td><td>Read-only files</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to Use chmod</h2>
+  <h3>Basic syntax</h3>
+  <pre><code>chmod [permissions] [file or directory]</code></pre>
+
+  <h3>Set permissions on a single file</h3>
+  <pre><code># Make a script executable
+chmod 755 deploy.sh
+
+# Set web file permissions
+chmod 644 index.html
+
+# Restrict a private key
+chmod 600 ~/.ssh/id_rsa</code></pre>
+
+  <h3>Recursive — apply to all files in a directory</h3>
+  <pre><code># Set all files in /var/www to 644
+chmod -R 644 /var/www/html
+
+# Set directories to 755, files to 644 (common web server setup)
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;</code></pre>
+
+  <div class="tip-box">
+    <p>💡 <strong>Tip:</strong> For web servers, directories usually need 755 (execute allows traversal) while files need 644 (no execute needed for HTML/CSS/JS).</p>
+  </div>
+
+  <h2>Symbolic Mode vs Octal Mode</h2>
+  <p>Besides octal numbers, chmod also accepts symbolic notation using letters:</p>
+  <pre><code># Add execute permission for the owner
+chmod u+x script.sh
+
+# Remove write permission for group and others
+chmod go-w file.txt
+
+# Set exact permissions using equals
+chmod u=rwx,g=rx,o=r file.txt</code></pre>
+  <p>Symbolic mode is useful when you want to add or remove a specific permission without knowing the current state. Octal is better when you want to set an exact state.</p>
+
+  <h2>chmod for SSH Keys</h2>
+  <p>SSH is very strict about key file permissions. If they are too open, SSH will refuse to use them:</p>
+  <pre><code># Private key — owner read/write only
+chmod 600 ~/.ssh/id_rsa
+
+# Public key — owner read/write, others read
+chmod 644 ~/.ssh/id_rsa.pub
+
+# authorized_keys file
+chmod 600 ~/.ssh/authorized_keys
+
+# .ssh directory itself
+chmod 700 ~/.ssh</code></pre>
+
+  <div class="warn-box">
+    <p>⚠️ <strong>Warning:</strong> Never set SSH private keys to 777 or 666. SSH will reject them with "Permissions too open" error.</p>
+  </div>
+
+  <h2>chmod for Web Servers (Nginx / Apache)</h2>
+  <p>The standard permission setup for web servers running as <code>www-data</code>:</p>
+  <pre><code># Ownership — give web server read access
+chown -R www-data:www-data /var/www/html
+
+# Directories need execute (traverse) permission
+find /var/www/html -type d -exec chmod 755 {} \;
+
+# Files just need read
+find /var/www/html -type f -exec chmod 644 {} \;
+
+# If your app needs to write files (uploads etc)
+chmod 775 /var/www/html/uploads</code></pre>
+
+  <h2>Viewing Current Permissions</h2>
+  <pre><code># List files with permissions
+ls -la
+
+# Example output:
+# -rw-r--r-- 1 user group 1234 Mar 14 index.html
+# drwxr-xr-x 2 user group 4096 Mar 14 uploads/</code></pre>
+  <p>The first character is <code>-</code> for file or <code>d</code> for directory. The next 9 characters are three groups of rwx for owner, group and other.</p>
+
+  <h2>Quick Reference: Reading Permission Strings</h2>
+  <pre><code>-rwxr-xr-x
+ ^^^         owner:  rwx = 7
+    ^^^      group:  r-x = 5
+       ^^^   other:  r-x = 5
+             total:  755</code></pre>
+
+  <div class="cta-box">
+    <p>Don't want to calculate manually? Use our free chmod calculator — just click the checkboxes.</p>
+    <a href="/" class="cta-btn">Open chmod Calculator →</a>
+  </div>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>What is chmod 777?</h3>
+  <p>chmod 777 gives read, write and execute permission to everyone — owner, group and other. This is rarely a good idea in production as it means any user on the system can modify the file. Only use it temporarily for debugging.</p>
+
+  <h3>What is chmod 755?</h3>
+  <p>chmod 755 gives the owner full permissions (rwx) and everyone else read and execute (r-x). This is the standard permission for web directories and executable scripts — others can read and run but not modify.</p>
+
+  <h3>What is chmod 644?</h3>
+  <p>chmod 644 gives the owner read and write (rw-) and everyone else read only (r--). This is the standard for web files like HTML, CSS and JavaScript — the web server can read them but not modify them.</p>
+
+  <h3>Does chmod work recursively?</h3>
+  <p>Yes, use the <code>-R</code> flag: <code>chmod -R 755 /var/www</code>. Be careful as this applies the same permission to both files and directories, which is usually not what you want. Use <code>find</code> with <code>-type f</code> and <code>-type d</code> to set different permissions for files and directories.</p>
+
+  <footer>
+    <p>Free Linux tools by <a href="/">SysUtil.dev</a> &mdash; chmod, cron, regex, base64, json, password, diff and more.</p>
+  </footer>
+</div>
+</body>
+</html>

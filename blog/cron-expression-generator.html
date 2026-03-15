@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to cron expressions and cron job scheduling in Linux. Learn cron syntax, common examples, and use our free cron expression generator.">
+<meta name="keywords" content="cron expression generator, cron syntax, cron job, crontab, linux cron, cron schedule, cron examples, cron every 5 minutes">
+<title>Cron Expression Generator: Complete Guide to Cron Job Scheduling | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.7;padding:20px}
+  .container{max-width:780px;margin:0 auto}
+  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
+  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  .syntax-box{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:20px;margin:16px 0;font-family:monospace}
+  .syntax-row{display:grid;grid-template-columns:120px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid #161824;align-items:center}
+  .syntax-row:last-child{border-bottom:none}
+  .syntax-val{color:#6366f1;font-size:1rem;font-weight:700}
+  .syntax-desc{color:#94a3b8;font-size:0.85rem}
+  .cron-table{width:100%;border-collapse:collapse;margin:16px 0}
+  .cron-table th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  .cron-table td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  .cron-table td:first-child{font-family:monospace;color:#6366f1;font-weight:700;white-space:nowrap}
+  .cron-table tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+  @media(max-width:580px){.syntax-row{grid-template-columns:1fr;gap:2px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/linux">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog/cron-expression-generator" class="active">guide</a>
+  </nav>
+
+  <header>
+    <div class="meta">SysUtil Blog &bull; Cron Job Scheduling Guide</div>
+    <h1>Cron Expression Generator: Complete Guide to Cron Syntax</h1>
+    <p class="intro">Master cron job scheduling in Linux. Learn cron syntax, understand every field, and find the exact expression for any schedule you need.</p>
+  </header>
+
+  <div class="cta-box">
+    <p>Use our free cron expression generator — describe your schedule in plain English and get the exact cron syntax instantly.</p>
+    <a href="/cron" class="cta-btn">Open Cron Generator →</a>
+  </div>
+
+  <h2>What is a Cron Job?</h2>
+  <p>A cron job is a scheduled task in Linux and Unix systems that runs automatically at specified times or intervals. The name comes from <em>Chronos</em>, the Greek god of time. Cron jobs are managed by the <code>cron</code> daemon, a background process that wakes up every minute and checks if any scheduled task needs to run.</p>
+  <p>Common uses include database backups, log rotation, sending emails, running scripts, clearing cache, and syncing files.</p>
+
+  <h2>Cron Expression Syntax</h2>
+  <p>A cron expression consists of five fields separated by spaces:</p>
+
+  <div class="syntax-box">
+    <div class="syntax-row"><span class="syntax-val">*&nbsp;&nbsp;*&nbsp;&nbsp;*&nbsp;&nbsp;*&nbsp;&nbsp;*</span><span class="syntax-desc">command to execute</span></div>
+    <div class="syntax-row"><span class="syntax-val">│&nbsp;&nbsp;│&nbsp;&nbsp;│&nbsp;&nbsp;│&nbsp;&nbsp;│</span><span class="syntax-desc"></span></div>
+    <div class="syntax-row"><span class="syntax-val">│&nbsp;&nbsp;│&nbsp;&nbsp;│&nbsp;&nbsp;│&nbsp;&nbsp;└</span><span class="syntax-desc">Day of week (0-7, Sunday=0 or 7)</span></div>
+    <div class="syntax-row"><span class="syntax-val">│&nbsp;&nbsp;│&nbsp;&nbsp;│&nbsp;&nbsp;└</span><span class="syntax-desc">Month (1-12)</span></div>
+    <div class="syntax-row"><span class="syntax-val">│&nbsp;&nbsp;│&nbsp;&nbsp;└</span><span class="syntax-desc">Day of month (1-31)</span></div>
+    <div class="syntax-row"><span class="syntax-val">│&nbsp;&nbsp;└</span><span class="syntax-desc">Hour (0-23)</span></div>
+    <div class="syntax-row"><span class="syntax-val">└</span><span class="syntax-desc">Minute (0-59)</span></div>
+  </div>
+
+  <h2>Special Characters</h2>
+  <table class="cron-table">
+    <thead><tr><th>Character</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>*</td><td>Any value / every</td><td><code>* * * * *</code> — every minute</td></tr>
+      <tr><td>,</td><td>Value list separator</td><td><code>0 9,17 * * *</code> — at 9am and 5pm</td></tr>
+      <tr><td>-</td><td>Range of values</td><td><code>0 9-17 * * *</code> — every hour 9am to 5pm</td></tr>
+      <tr><td>/</td><td>Step values</td><td><code>*/5 * * * *</code> — every 5 minutes</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Common Cron Expressions</h2>
+  <table class="cron-table">
+    <thead><tr><th>Expression</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>* * * * *</td><td>Every minute</td></tr>
+      <tr><td>*/5 * * * *</td><td>Every 5 minutes</td></tr>
+      <tr><td>*/15 * * * *</td><td>Every 15 minutes</td></tr>
+      <tr><td>0 * * * *</td><td>Every hour at minute 0</td></tr>
+      <tr><td>0 */6 * * *</td><td>Every 6 hours</td></tr>
+      <tr><td>0 0 * * *</td><td>Every day at midnight</td></tr>
+      <tr><td>0 9 * * *</td><td>Every day at 9am</td></tr>
+      <tr><td>0 0 * * 0</td><td>Every Sunday at midnight</td></tr>
+      <tr><td>0 0 1 * *</td><td>First day of every month</td></tr>
+      <tr><td>0 9-17 * * 1-5</td><td>Every hour during business hours weekdays</td></tr>
+      <tr><td>0 0 * * 1-5</td><td>Every weekday at midnight</td></tr>
+      <tr><td>0 0 1 1 *</td><td>Once a year on January 1st</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Special Shorthand Strings</h2>
+  <p>Instead of five fields, cron also accepts these convenient shortcuts:</p>
+  <table class="cron-table">
+    <thead><tr><th>Shorthand</th><th>Equivalent</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>@hourly</td><td>0 * * * *</td><td>Once per hour</td></tr>
+      <tr><td>@daily</td><td>0 0 * * *</td><td>Once per day at midnight</td></tr>
+      <tr><td>@weekly</td><td>0 0 * * 0</td><td>Once per week on Sunday</td></tr>
+      <tr><td>@monthly</td><td>0 0 1 * *</td><td>Once per month on the 1st</td></tr>
+      <tr><td>@yearly</td><td>0 0 1 1 *</td><td>Once per year on January 1st</td></tr>
+      <tr><td>@reboot</td><td>—</td><td>Once at system startup</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to Edit Your Crontab</h2>
+  <pre><code># Open your personal crontab for editing
+crontab -e
+
+# List your current cron jobs
+crontab -l
+
+# Remove all your cron jobs (careful!)
+crontab -r
+
+# Edit crontab for a specific user (as root)
+crontab -u username -e</code></pre>
+
+  <div class="tip-box">
+    <p>💡 <strong>Tip:</strong> The first time you run <code>crontab -e</code> it will ask you to choose an editor. Pick <code>nano</code> if you are not familiar with vim.</p>
+  </div>
+
+  <h2>Crontab File Format</h2>
+  <p>Each line in your crontab is one scheduled job:</p>
+  <pre><code># Minute Hour Day Month Weekday Command
+# ─────── ──── ─── ───── ─────── ──────────────────────────
+
+# Run backup every day at 2am
+0 2 * * * /home/user/backup.sh
+
+# Clear temp files every Sunday at midnight
+0 0 * * 0 rm -rf /tmp/myapp/*
+
+# Send report every weekday at 9am
+0 9 * * 1-5 /usr/local/bin/send-report.py
+
+# Restart app every 6 hours
+0 */6 * * * systemctl restart myapp</code></pre>
+
+  <h2>System-Wide Cron Jobs</h2>
+  <p>For system-wide cron jobs that run as root, use the <code>/etc/crontab</code> file or drop scripts into these directories:</p>
+  <pre><code>/etc/cron.hourly/    # runs every hour
+/etc/cron.daily/     # runs every day
+/etc/cron.weekly/    # runs every week
+/etc/cron.monthly/   # runs every month</code></pre>
+  <p>The system <code>/etc/crontab</code> has an extra field for the user to run as:</p>
+  <pre><code># Minute Hour Day Month Weekday User    Command
+0 2 * * *  root    /usr/local/bin/backup.sh</code></pre>
+
+  <h2>Redirecting Cron Output</h2>
+  <p>By default cron emails output to the system user. Redirect it to a log file instead:</p>
+  <pre><code># Discard all output
+0 2 * * * /path/to/script.sh > /dev/null 2>&1
+
+# Log output to a file
+0 2 * * * /path/to/script.sh >> /var/log/myjob.log 2>&1
+
+# Log with timestamp
+0 2 * * * echo "$(date): starting" >> /var/log/myjob.log && /path/to/script.sh >> /var/log/myjob.log 2>&1</code></pre>
+
+  <div class="warn-box">
+    <p>⚠️ <strong>Warning:</strong> Always use full paths in cron jobs. The cron environment has a minimal PATH, so commands like <code>python</code> or <code>node</code> may not be found. Use <code>/usr/bin/python3</code> instead.</p>
+  </div>
+
+  <h2>Debugging Cron Jobs</h2>
+  <pre><code># Check if cron daemon is running
+systemctl status cron
+
+# View cron logs (Ubuntu/Debian)
+grep CRON /var/log/syslog
+
+# View cron logs (CentOS/RHEL)
+grep CRON /var/log/cron
+
+# Test your script manually first
+bash -x /path/to/script.sh</code></pre>
+
+  <h2>Environment Variables in Cron</h2>
+  <p>Cron runs with a minimal environment. Set variables at the top of your crontab:</p>
+  <pre><code>SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MAILTO=admin@example.com
+
+# Now your jobs
+0 2 * * * /usr/local/bin/backup.sh</code></pre>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>How do I run a cron job every 5 minutes?</h3>
+  <p>Use the step operator: <code>*/5 * * * * /path/to/script.sh</code>. The <code>*/5</code> in the minute field means "every 5 minutes".</p>
+
+  <h3>How do I run a cron job every hour?</h3>
+  <p>Use <code>0 * * * * /path/to/script.sh</code> — the <code>0</code> in the minute field means it runs at the start of every hour.</p>
+
+  <h3>What is the difference between crontab and cron?</h3>
+  <p><code>cron</code> is the daemon (background service) that executes scheduled tasks. <code>crontab</code> is both the file that stores the schedule and the command used to edit it.</p>
+
+  <h3>Can cron run a job every 30 seconds?</h3>
+  <p>Not directly — cron has a minimum resolution of 1 minute. To run every 30 seconds, schedule the job every minute and use <code>sleep</code>: <code>* * * * * /path/script.sh; sleep 30; /path/script.sh</code>.</p>
+
+  <div class="cta-box">
+    <p>Need to build a cron expression quickly? Use our free generator — no login required.</p>
+    <a href="/cron" class="cta-btn">Open Cron Generator →</a>
+  </div>
+
+  <footer>
+    <p>Free Linux tools by <a href="/">SysUtil.dev</a> &mdash; chmod, cron, regex, base64, json, password, diff and more.</p>
+  </footer>
+</div>
+</body>
+</html>

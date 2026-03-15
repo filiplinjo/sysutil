@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online regex tester and debugger. Test regular expressions in real time with match highlighting, capture groups, flags support and common patterns.">
+<meta name="keywords" content="regex tester, regular expression tester, regex debugger, online regex, regex matcher, javascript regex, test regex online">
+<title>Regex Tester - Test Regular Expressions Online | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
+  header{text-align:center;padding:40px 20px 20px}
+  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+  header h1 span{color:#6366f1}
+  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
+  .container{max-width:820px;margin:0 auto}
+  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
+  nav a:hover,nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  .nav-divider{width:1px;background:#2d3148;margin:0 4px}
+
+  .card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:20px}
+  .card-title{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
+
+  /* Regex input row */
+  .regex-row{display:flex;align-items:center;background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:6px 14px;gap:6px;margin-bottom:12px;transition:border 0.15s}
+  .regex-row:focus-within{border-color:#6366f1}
+  .slash{color:#6366f1;font-size:1.3rem;font-family:monospace;font-weight:700;user-select:none}
+  .regex-input{background:none;border:none;color:#a5b4fc;font-family:monospace;font-size:1rem;flex:1;padding:8px 4px;outline:none}
+  .flags-input{background:none;border:none;border-left:1px solid #2d3148;color:#6366f1;font-family:monospace;font-size:1rem;width:55px;padding:8px 8px;outline:none}
+
+  /* Flag pills */
+  .flags-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+  .flag-pill{background:#0f1117;border:1px solid #2d3148;color:#64748b;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-family:monospace;font-weight:600;transition:all 0.15s;user-select:none}
+  .flag-pill.on{background:#312e81;border-color:#6366f1;color:#a5b4fc}
+
+  /* Error */
+  .regex-error{color:#ef4444;font-size:0.82rem;margin-bottom:8px;min-height:18px;font-family:monospace}
+
+  /* Test area — rendered with highlights */
+  .test-wrap{position:relative;margin-bottom:12px}
+  .test-backdrop{position:absolute;top:0;left:0;right:0;bottom:0;padding:14px;font-family:monospace;font-size:0.95rem;line-height:1.75;white-space:pre-wrap;word-break:break-all;pointer-events:none;border-radius:10px;overflow:hidden;color:transparent}
+  .test-textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.95rem;width:100%;min-height:140px;resize:vertical;outline:none;line-height:1.75;white-space:pre-wrap;word-break:break-all;position:relative;caret-color:#e2e8f0}
+  .test-textarea:focus{border-color:#6366f1}
+  mark{background:#6366f1;color:#fff;border-radius:3px;padding:0 2px}
+  mark.group{background:#7c3aed}
+
+  /* Stats row */
+  .stats-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .match-badge{font-size:0.9rem;font-weight:700;padding:4px 14px;border-radius:20px}
+  .match-badge.ok{background:#0d2818;color:#22c55e;border:1px solid #166534}
+  .match-badge.none{background:#2d1111;color:#ef4444;border:1px solid #7f1d1d}
+  .match-badge.idle{background:#1e2130;color:#64748b;border:1px solid #2d3148}
+
+  /* Matches table */
+  .matches-table{width:100%;border-collapse:collapse;font-size:0.83rem;font-family:monospace}
+  .matches-table th{text-align:left;padding:6px 10px;color:#64748b;font-weight:600;border-bottom:1px solid #2d3148;font-size:0.75rem;text-transform:uppercase}
+  .matches-table td{padding:6px 10px;border-bottom:1px solid #161824;vertical-align:top}
+  .matches-table tr:hover td{background:#161824}
+  .match-val{color:#a5b4fc}
+  .match-pos{color:#475569}
+  .match-group{color:#c4b5fd}
+  .more-note{color:#475569;font-size:0.8rem;padding:8px 10px}
+
+  /* Patterns */
+  .patterns-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .pat-btn{background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.15s;text-align:left}
+  .pat-btn:hover{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  .pat-btn code{display:block;color:#6366f1;font-family:monospace;font-size:0.73rem;margin-top:3px;word-break:break-all;white-space:normal}
+
+  /* Cheatsheet */
+  .cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .cheat-item{background:#0f1117;border-radius:8px;padding:8px 12px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+  .cheat-sym{font-family:monospace;font-weight:700;color:#6366f1;font-size:0.9rem}
+  .cheat-desc{font-size:0.77rem;color:#94a3b8}
+
+  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Regex <span>Tester</span></h1>
+    <p>Test regular expressions in real time. Highlights all matches, shows capture groups and index positions.</p>
+  </header>
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex" class="active">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/file-size">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog">guides</a>
+  </nav>
+
+  <!-- Regex input -->
+  <div class="card">
+    <div class="card-title">Regular Expression</div>
+    <div class="regex-row">
+      <span class="slash">/</span>
+      <input class="regex-input" id="rInput" placeholder="[a-z]+" value="(\w+)@(\w+)\.(\w+)" oninput="run()">
+      <span class="slash">/</span>
+      <input class="flags-input" id="fInput" value="gi" oninput="syncFlags();run()" maxlength="8" title="Flags">
+    </div>
+    <div class="flags-row">
+      <span class="flag-pill on" data-f="g" onclick="toggleF(this)">g &nbsp;global</span>
+      <span class="flag-pill on" data-f="i" onclick="toggleF(this)">i &nbsp;insensitive</span>
+      <span class="flag-pill" data-f="m" onclick="toggleF(this)">m &nbsp;multiline</span>
+      <span class="flag-pill" data-f="s" onclick="toggleF(this)">s &nbsp;dotAll</span>
+      <span class="flag-pill" data-f="u" onclick="toggleF(this)">u &nbsp;unicode</span>
+    </div>
+    <div class="regex-error" id="rError"></div>
+  </div>
+
+  <!-- Test string -->
+  <div class="card">
+    <div class="card-title">Test String</div>
+    <div class="test-wrap">
+      <div class="test-backdrop" id="backdrop" aria-hidden="true"></div>
+      <textarea class="test-textarea" id="tInput" oninput="run()" spellcheck="false">Hello world, contact us at info@example.com or support@sysutil.dev for help.</textarea>
+    </div>
+    <div class="stats-row">
+      <span class="match-badge idle" id="badge">Enter a pattern</span>
+      <span style="font-size:0.8rem;color:#475569" id="subInfo"></span>
+    </div>
+    <div id="matchesWrap"></div>
+  </div>
+
+  <!-- Common patterns -->
+  <div class="card">
+    <div class="card-title">Common Patterns</div>
+    <div class="patterns-grid">
+      <button class="pat-btn" onclick="setPat('[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}','gi','test@email.com and hello@example.org are emails')">Email<code>[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}</code></button>
+      <button class="pat-btn" onclick="setPat('https?:\\/\\/[^\\s]+','gi','Visit https://example.com or http://test.org today')">URL<code>https?:\/\/[^\s]+</code></button>
+      <button class="pat-btn" onclick="setPat('\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b','g','Server at 192.168.1.1 and 10.0.0.254')">IP Address<code>\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b</code></button>
+      <button class="pat-btn" onclick="setPat('[+]?[(]?\\d{1,3}[)]?[\\s.\\-]?\\d{3}[\\s.\\-]?\\d{4,6}','g','Call +1 (555) 123-4567 or 555.987.6543')">Phone<code>[+]?[(]?\d{1,3}[)]?[\s.\-]?\d{3}[\s.\-]?\d{4,6}</code></button>
+      <button class="pat-btn" onclick="setPat('#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})','g','Colors: #ff6600 #abc and #1A2B3C')">Hex color<code>#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})</code></button>
+      <button class="pat-btn" onclick="setPat('\\d{4}[\\-\\/]\\d{2}[\\-\\/]\\d{2}','g','Dates: 2026-03-14 and 2025/12/01')">Date<code>\d{4}[\-\/]\d{2}[\-\/]\d{2}</code></button>
+      <button class="pat-btn" onclick="setPat('^[a-zA-Z0-9_]{3,20}$','gm','valid_user\nthis is invalid\nok123')">Username<code>^[a-zA-Z0-9_]{3,20}$</code></button>
+      <button class="pat-btn" onclick="setPat('(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)','g','Valid: 192.168.0.1, invalid: 999.999.999.999')">Strict IP<code>(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}...</code></button>
+      <button class="pat-btn" onclick="setPat('(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}','g','weak\nStr0ngPass\nAb1cdefgh')">Strong password<code>(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}</code></button>
+      <button class="pat-btn" onclick="setPat('\\/\\*(.|\\n)*?\\*\\/|(\\/\\/.*)','gm','// single line comment\n/* multi\nline */')">Code comments<code>\/\*(.|\\n)*?\*\/|(\/\/.*)</code></button>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="card" style="margin-bottom:40px">
+    <div class="card-title">Quick Reference</div>
+    <div class="cheat-grid">
+      <div class="cheat-item"><span class="cheat-sym">.</span><span class="cheat-desc">Any char except newline</span></div>
+      <div class="cheat-item"><span class="cheat-sym">*</span><span class="cheat-desc">0 or more (greedy)</span></div>
+      <div class="cheat-item"><span class="cheat-sym">+</span><span class="cheat-desc">1 or more (greedy)</span></div>
+      <div class="cheat-item"><span class="cheat-sym">?</span><span class="cheat-desc">0 or 1 / lazy</span></div>
+      <div class="cheat-item"><span class="cheat-sym">^</span><span class="cheat-desc">Start of string/line</span></div>
+      <div class="cheat-item"><span class="cheat-sym">$</span><span class="cheat-desc">End of string/line</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\d</span><span class="cheat-desc">Digit [0-9]</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\D</span><span class="cheat-desc">Non-digit</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\w</span><span class="cheat-desc">Word [a-zA-Z0-9_]</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\W</span><span class="cheat-desc">Non-word char</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\s</span><span class="cheat-desc">Whitespace</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\S</span><span class="cheat-desc">Non-whitespace</span></div>
+      <div class="cheat-item"><span class="cheat-sym">\b</span><span class="cheat-desc">Word boundary</span></div>
+      <div class="cheat-item"><span class="cheat-sym">[abc]</span><span class="cheat-desc">Character class</span></div>
+      <div class="cheat-item"><span class="cheat-sym">[^abc]</span><span class="cheat-desc">Negated class</span></div>
+      <div class="cheat-item"><span class="cheat-sym">(abc)</span><span class="cheat-desc">Capture group</span></div>
+      <div class="cheat-item"><span class="cheat-sym">(?:abc)</span><span class="cheat-desc">Non-capture group</span></div>
+      <div class="cheat-item"><span class="cheat-sym">a|b</span><span class="cheat-desc">Alternation (or)</span></div>
+      <div class="cheat-item"><span class="cheat-sym">{n,m}</span><span class="cheat-desc">Between n and m</span></div>
+      <div class="cheat-item"><span class="cheat-sym">(?=...)</span><span class="cheat-desc">Positive lookahead</span></div>
+      <div class="cheat-item"><span class="cheat-sym">(?!...)</span><span class="cheat-desc">Negative lookahead</span></div>
+      <div class="cheat-item"><span class="cheat-sym">(?&lt;=...)</span><span class="cheat-desc">Lookbehind</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
+</div>
+
+<script>
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toggleF(el) {
+  el.classList.toggle('on');
+  var flags = '';
+  document.querySelectorAll('.flag-pill').forEach(function(p){ if(p.classList.contains('on')) flags+=p.dataset.f; });
+  document.getElementById('fInput').value = flags;
+  run();
+}
+
+function syncFlags() {
+  var flags = document.getElementById('fInput').value;
+  document.querySelectorAll('.flag-pill').forEach(function(p){
+    p.classList.toggle('on', flags.includes(p.dataset.f));
+  });
+}
+
+function setPat(pattern, flags, testStr) {
+  document.getElementById('rInput').value = pattern;
+  document.getElementById('fInput').value = flags || 'g';
+  if(testStr) document.getElementById('tInput').value = testStr;
+  syncFlags();
+  run();
+}
+
+function run() {
+  var pattern = document.getElementById('rInput').value;
+  var flags = document.getElementById('fInput').value;
+  var text = document.getElementById('tInput').value;
+  var errEl = document.getElementById('rError');
+  var badge = document.getElementById('badge');
+  var subInfo = document.getElementById('subInfo');
+  var wrap = document.getElementById('matchesWrap');
+  var backdrop = document.getElementById('backdrop');
+
+  errEl.textContent = '';
+  backdrop.innerHTML = '';
+
+  if(!pattern) {
+    badge.className = 'match-badge idle';
+    badge.textContent = 'Enter a pattern';
+    wrap.innerHTML = '';
+    subInfo.textContent = '';
+    return;
+  }
+
+  var re;
+  try {
+    // always add g for matching, keep other flags
+    var cleanFlags = flags.replace(/g/g,'');
+    re = new RegExp(pattern, cleanFlags + 'g');
+  } catch(e) {
+    errEl.textContent = '⚠ ' + e.message;
+    badge.className = 'match-badge none';
+    badge.textContent = 'Invalid pattern';
+    wrap.innerHTML = '';
+    backdrop.innerHTML = esc(text);
+    return;
+  }
+
+  var matches = [];
+  var m;
+  re.lastIndex = 0;
+  var safety = 0;
+  while((m = re.exec(text)) !== null && safety++ < 1000) {
+    matches.push({ val: m[0], index: m.index, end: m.index+m[0].length, groups: Array.from(m).slice(1) });
+    if(m[0].length === 0) re.lastIndex++;
+    if(!flags.includes('g')) break;
+  }
+
+  // Highlight backdrop
+  var highlighted = '';
+  var last = 0;
+  matches.forEach(function(mt) {
+    highlighted += esc(text.slice(last, mt.index));
+    highlighted += '<mark>' + esc(mt.val) + '</mark>';
+    last = mt.end;
+  });
+  highlighted += esc(text.slice(last));
+  backdrop.innerHTML = highlighted;
+
+  // Badge
+  if(matches.length > 0) {
+    badge.className = 'match-badge ok';
+    badge.textContent = matches.length + ' match' + (matches.length !== 1 ? 'es' : '');
+    var hasGroups = matches.some(function(mt){ return mt.groups.some(function(g){ return g !== undefined; }); });
+    subInfo.textContent = hasGroups ? matches[0].groups.length + ' capture group(s)' : '';
+  } else {
+    badge.className = 'match-badge none';
+    badge.textContent = 'No matches';
+    subInfo.textContent = '';
+    wrap.innerHTML = '';
+    return;
+  }
+
+  // Matches table
+  var hasGroups = matches[0].groups.some(function(g){ return g !== undefined; });
+  var thead = '<th>#</th><th>Match</th><th>Index</th>' + (hasGroups ? '<th>Groups</th>' : '');
+  var rows = matches.slice(0,50).map(function(mt,i){
+    var grpHtml = hasGroups ? '<td class="match-group">' + mt.groups.map(function(g,gi){ return g !== undefined ? '<span title="Group '+(gi+1)+'">'+ esc(g) +'</span>' : '<span style="color:#374151">undefined</span>'; }).join(', ') + '</td>' : '';
+    return '<tr><td class="match-pos">'+(i+1)+'</td><td class="match-val">'+esc(mt.val)+'</td><td class="match-pos">'+mt.index+'–'+mt.end+'</td>'+grpHtml+'</tr>';
+  }).join('');
+  var more = matches.length > 50 ? '<tr><td colspan="4" class="more-note">...and '+(matches.length-50)+' more matches</td></tr>' : '';
+  wrap.innerHTML = '<table class="matches-table"><thead><tr>'+thead+'</tr></thead><tbody>'+rows+more+'</tbody></table>';
+}
+
+// Sync backdrop scroll with textarea
+document.getElementById('tInput').addEventListener('scroll', function(){
+  document.getElementById('backdrop').scrollTop = this.scrollTop;
+  document.getElementById('backdrop').scrollLeft = this.scrollLeft;
+});
+
+run();
+</script>
+</body>
+</html>

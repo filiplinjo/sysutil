@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online JSON formatter, validator and beautifier. Instantly format, validate, minify and highlight JSON data online.">
+<meta name="keywords" content="json formatter, json validator, json beautifier, json minifier, format json online, validate json, json viewer">
+<title>JSON Formatter & Validator - Free Online JSON Tool | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
+  header{text-align:center;padding:40px 20px 20px}
+  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+  header h1 span{color:#6366f1}
+  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
+  .container{max-width:1000px;margin:0 auto}
+  nav{text-align:center;margin-bottom:10px}
+  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
+  nav a:hover{text-decoration:underline}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
+  .btn-primary{background:#6366f1;color:#fff}
+  .btn-primary:hover{background:#4f46e5}
+  .btn-secondary{background:#1e2130;border:1px solid #2d3148;color:#94a3b8}
+  .btn-secondary:hover{border-color:#6366f1;color:#a5b4fc}
+  .btn.success{background:#22c55e;color:#fff}
+  .btn.error{background:#ef4444;color:#fff}
+
+  .indent-select{background:#1e2130;border:1px solid #2d3148;color:#94a3b8;padding:8px 12px;border-radius:8px;font-size:0.85rem;outline:none}
+
+  .editor-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .editor-box{display:flex;flex-direction:column;gap:8px}
+  .editor-label{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+  textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.85rem;width:100%;height:420px;resize:vertical;outline:none;transition:border 0.15s;line-height:1.6}
+  textarea:focus{border-color:#6366f1}
+  textarea.valid{border-color:#22c55e}
+  textarea.invalid{border-color:#ef4444}
+
+  .output-box{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;height:420px;overflow:auto;line-height:1.6;white-space:pre}
+  .output-box .key{color:#a5b4fc}
+  .output-box .str{color:#86efac}
+  .output-box .num{color:#fcd34d}
+  .output-box .bool{color:#f97316}
+  .output-box .null{color:#94a3b8}
+  .output-box .punct{color:#64748b}
+
+  .status-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .status{font-size:0.85rem;font-weight:600}
+  .status.ok{color:#22c55e}
+  .status.err{color:#ef4444}
+  .stats{font-size:0.8rem;color:#475569}
+
+  @media(max-width:640px){
+    .editor-wrap{grid-template-columns:1fr}
+    textarea,.output-box{height:250px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>JSON <span>Formatter</span></h1>
+    <p>Format, validate, minify and highlight JSON data instantly. Paste your JSON and get a clean, readable result.</p>
+  </header>
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/file-size">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+  </nav>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="formatJSON()">Format / Beautify</button>
+    <button class="btn btn-secondary" onclick="minifyJSON()">Minify</button>
+    <button class="btn btn-secondary" onclick="validateJSON()">Validate</button>
+    <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+    <select class="indent-select" id="indentSize">
+      <option value="2" selected>2 spaces</option>
+      <option value="4">4 spaces</option>
+      <option value="tab">Tab</option>
+    </select>
+    <button class="btn btn-secondary" id="copyBtn" onclick="copyOutput()">Copy Output</button>
+  </div>
+
+  <div class="editor-wrap">
+    <div class="editor-box">
+      <div class="editor-label">Input JSON</div>
+      <textarea id="inputJSON" placeholder='Paste your JSON here...
+{"name":"John","age":30,"city":"New York"}' oninput="autoFormat()"></textarea>
+    </div>
+    <div class="editor-box">
+      <div class="editor-label">Formatted Output</div>
+      <div class="output-box" id="outputBox"></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status" id="statusMsg"></div>
+    <div class="stats" id="statsMsg"></div>
+  </div>
+</div>
+
+<script>
+var lastOutput = '';
+
+function getIndent() {
+  var v = document.getElementById('indentSize').value;
+  return v === 'tab' ? '\t' : parseInt(v);
+}
+
+function highlight(json) {
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(m) {
+      if(/^"/.test(m)) {
+        if(/:$/.test(m)) return '<span class="key">'+esc(m)+'</span>';
+        return '<span class="str">'+esc(m)+'</span>';
+      }
+      if(/true|false/.test(m)) return '<span class="bool">'+m+'</span>';
+      if(/null/.test(m)) return '<span class="null">'+m+'</span>';
+      return '<span class="num">'+m+'</span>';
+    })
+    .replace(/([{}\[\],])/g, '<span class="punct">$1</span>');
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function formatJSON() {
+  var inp = document.getElementById('inputJSON').value.trim();
+  if(!inp) return;
+  try {
+    var parsed = JSON.parse(inp);
+    var formatted = JSON.stringify(parsed, null, getIndent());
+    lastOutput = formatted;
+    document.getElementById('outputBox').innerHTML = highlight(formatted);
+    document.getElementById('inputJSON').className = 'valid';
+    setStatus(true, 'Valid JSON', inp, formatted);
+  } catch(e) {
+    document.getElementById('inputJSON').className = 'invalid';
+    document.getElementById('outputBox').innerHTML = '<span style="color:#ef4444">'+esc(e.message)+'</span>';
+    setStatus(false, e.message);
+  }
+}
+
+function minifyJSON() {
+  var inp = document.getElementById('inputJSON').value.trim();
+  if(!inp) return;
+  try {
+    var parsed = JSON.parse(inp);
+    var minified = JSON.stringify(parsed);
+    lastOutput = minified;
+    document.getElementById('outputBox').innerHTML = highlight(minified);
+    document.getElementById('inputJSON').className = 'valid';
+    setStatus(true, 'Minified', inp, minified);
+  } catch(e) {
+    document.getElementById('inputJSON').className = 'invalid';
+    setStatus(false, e.message);
+  }
+}
+
+function validateJSON() {
+  var inp = document.getElementById('inputJSON').value.trim();
+  if(!inp) return;
+  try {
+    JSON.parse(inp);
+    document.getElementById('inputJSON').className = 'valid';
+    setStatus(true, '✓ Valid JSON');
+  } catch(e) {
+    document.getElementById('inputJSON').className = 'invalid';
+    setStatus(false, '✗ ' + e.message);
+  }
+}
+
+function setStatus(ok, msg, inp, out) {
+  var el = document.getElementById('statusMsg');
+  el.className = 'status ' + (ok ? 'ok' : 'err');
+  el.textContent = msg;
+  if(inp && out) {
+    document.getElementById('statsMsg').textContent =
+      'Input: ' + inp.length + ' chars | Output: ' + out.length + ' chars | Keys: ' + (out.match(/"[^"]+"\s*:/g)||[]).length;
+  }
+}
+
+function autoFormat() {
+  var inp = document.getElementById('inputJSON').value.trim();
+  if(!inp) { document.getElementById('outputBox').innerHTML=''; document.getElementById('statusMsg').textContent=''; return; }
+  try { JSON.parse(inp); formatJSON(); } catch(e) { document.getElementById('inputJSON').className=''; }
+}
+
+function copyOutput() {
+  if(!lastOutput) return;
+  navigator.clipboard.writeText(lastOutput).then(function(){
+    var btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('success');
+    setTimeout(function(){ btn.textContent='Copy Output'; btn.classList.remove('success'); }, 2000);
+  });
+}
+
+function clearAll() {
+  document.getElementById('inputJSON').value = '';
+  document.getElementById('inputJSON').className = '';
+  document.getElementById('outputBox').innerHTML = '';
+  document.getElementById('statusMsg').textContent = '';
+  document.getElementById('statsMsg').textContent = '';
+  lastOutput = '';
+}
+</script>
+</body>
+</html>

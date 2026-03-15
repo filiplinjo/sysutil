@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online text diff tool. Compare two texts side by side and see exactly what changed. Highlights additions, deletions and modifications instantly.">
+<meta name="keywords" content="text diff, compare text online, text comparison, diff tool, find differences, online diff checker, text compare">
+<title>Text Diff Tool - Compare Two Texts Online | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
+  header{text-align:center;padding:40px 20px 20px}
+  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+  header h1 span{color:#6366f1}
+  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
+  .container{max-width:1100px;margin:0 auto}
+  nav{text-align:center;margin-bottom:10px}
+  nav a{color:#6366f1;text-decoration:none;font-size:0.85rem;margin:0 8px}
+  nav a:hover{text-decoration:underline}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
+  .btn-primary{background:#6366f1;color:#fff}
+  .btn-primary:hover{background:#4f46e5}
+  .btn-secondary{background:#1e2130;border:1px solid #2d3148;color:#94a3b8}
+  .btn-secondary:hover{border-color:#6366f1;color:#a5b4fc}
+
+  .mode-tabs{display:flex;gap:4px;background:#1e2130;border:1px solid #2d3148;border-radius:10px;padding:4px}
+  .mode-tab{padding:7px 16px;border-radius:7px;cursor:pointer;font-size:0.85rem;color:#64748b;font-weight:600;transition:all 0.15s;border:none;background:none}
+  .mode-tab.active{background:#6366f1;color:#fff}
+
+  .editors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .editor-box{display:flex;flex-direction:column;gap:8px}
+  .editor-label{font-size:0.8rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+  .label-orig{color:#64748b}
+  .label-new{color:#64748b}
+  textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.85rem;width:100%;height:300px;resize:vertical;outline:none;transition:border 0.15s;line-height:1.7}
+  textarea:focus{border-color:#6366f1}
+
+  .diff-wrap{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:0;margin-bottom:16px;overflow:hidden;display:none}
+  .diff-header{display:grid;grid-template-columns:1fr 1fr;background:#161824;border-bottom:1px solid #2d3148}
+  .diff-col-label{padding:10px 16px;font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em}
+  .diff-body{display:grid;grid-template-columns:1fr 1fr;max-height:500px;overflow-y:auto}
+  .diff-col{font-family:monospace;font-size:0.85rem;line-height:1.7}
+  .diff-line{padding:2px 16px;display:flex;gap:8px;min-height:24px}
+  .diff-line.added{background:#0d2818;border-left:3px solid #22c55e}
+  .diff-line.removed{background:#2d1111;border-left:3px solid #ef4444}
+  .diff-line.unchanged{border-left:3px solid transparent}
+  .diff-line .ln{color:#374151;min-width:28px;text-align:right;user-select:none;font-size:0.75rem;padding-top:2px}
+  .diff-line .content{flex:1;whitespace:pre-wrap;word-break:break-all}
+  .diff-line.added .content{color:#86efac}
+  .diff-line.removed .content{color:#fca5a5}
+  ins{background:#14532d;border-radius:2px;text-decoration:none;padding:0 1px}
+  del{background:#450a0a;border-radius:2px;text-decoration:none;padding:0 1px}
+
+  .unified-body{font-family:monospace;font-size:0.85rem;line-height:1.7;max-height:500px;overflow-y:auto}
+  .u-line{padding:2px 16px;display:flex;gap:8px}
+  .u-line.added{background:#0d2818;border-left:3px solid #22c55e}
+  .u-line.removed{background:#2d1111;border-left:3px solid #ef4444}
+  .u-line.unchanged{border-left:3px solid transparent}
+  .u-prefix{min-width:16px;color:#475569}
+  .u-line.added .u-prefix{color:#22c55e}
+  .u-line.removed .u-prefix{color:#ef4444}
+  .u-content{flex:1;white-space:pre-wrap;word-break:break-all}
+  .u-line.added .u-content{color:#86efac}
+  .u-line.removed .u-content{color:#fca5a5}
+
+  .stats-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .stat{padding:6px 14px;border-radius:8px;font-size:0.85rem;font-weight:600}
+  .stat-add{background:#0d2818;color:#22c55e;border:1px solid #166534}
+  .stat-rem{background:#2d1111;color:#ef4444;border:1px solid #7f1d1d}
+  .stat-unch{background:#1e2130;color:#64748b;border:1px solid #2d3148}
+
+  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
+  footer a{color:#6366f1;text-decoration:none}
+
+  @media(max-width:640px){
+    .editors{grid-template-columns:1fr}
+    .diff-header,.diff-body{grid-template-columns:1fr}
+    .diff-col:first-child{border-bottom:1px solid #2d3148}
+    textarea{height:200px}
+    header h1{font-size:1.6rem}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Text <span>Diff</span></h1>
+    <p>Compare two texts and instantly see what changed. Highlights additions, deletions line by line.</p>
+  </header>
+  <nav>
+    <a href="/">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/file-size">file-size</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog">guides</a>
+  </nav>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="runDiff()">Compare</button>
+    <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+    <button class="btn btn-secondary" onclick="swapTexts()">Swap</button>
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setView('split')">Split</button>
+      <button class="mode-tab" onclick="setView('unified')">Unified</button>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#94a3b8;cursor:pointer">
+      <input type="checkbox" id="ignoreCase" style="accent-color:#6366f1"> Ignore case
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#94a3b8;cursor:pointer">
+      <input type="checkbox" id="ignoreWhitespace" style="accent-color:#6366f1"> Ignore whitespace
+    </label>
+  </div>
+
+  <div class="editors">
+    <div class="editor-box">
+      <div class="editor-label label-orig"><span>Original Text</span></div>
+      <textarea id="textA" placeholder="Paste original text here..." oninput="autoDiff()">The quick brown fox jumps over the lazy dog.
+This is the second line.
+Third line here.
+Same line four.</textarea>
+    </div>
+    <div class="editor-box">
+      <div class="editor-label label-new"><span>Modified Text</span></div>
+      <textarea id="textB" placeholder="Paste modified text here..." oninput="autoDiff()">The quick brown fox leaps over the lazy cat.
+This is the second line.
+A brand new third line.
+Same line four.
+And a fifth line added.</textarea>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar"></div>
+
+  <div class="diff-wrap" id="splitView">
+    <div class="diff-header">
+      <div class="diff-col-label">− Original</div>
+      <div class="diff-col-label">+ Modified</div>
+    </div>
+    <div class="diff-body">
+      <div class="diff-col" id="leftCol"></div>
+      <div class="diff-col" id="rightCol"></div>
+    </div>
+  </div>
+
+  <div class="diff-wrap" id="unifiedView">
+    <div class="unified-body" id="unifiedBody"></div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
+</div>
+
+<script>
+var currentView = 'split';
+
+function setView(v) {
+  currentView = v;
+  document.querySelectorAll('.mode-tab').forEach(function(t,i){
+    t.classList.toggle('active',(i===0&&v==='split')||(i===1&&v==='unified'));
+  });
+  runDiff();
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function normalize(s) {
+  if(document.getElementById('ignoreCase').checked) s = s.toLowerCase();
+  if(document.getElementById('ignoreWhitespace').checked) s = s.replace(/\s+/g,' ').trim();
+  return s;
+}
+
+function diffLines(a, b) {
+  var aLines = a.split('\n'), bLines = b.split('\n');
+  var aNorm = aLines.map(normalize), bNorm = bLines.map(normalize);
+  var m = aLines.length, n = bLines.length;
+  var dp = [];
+  for(var i=0;i<=m;i++){ dp[i]=[]; for(var j=0;j<=n;j++) dp[i][j]=0; }
+  for(var i=1;i<=m;i++) for(var j=1;j<=n;j++) {
+    dp[i][j] = aNorm[i-1]===bNorm[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+  }
+  var result=[], i=m, j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&aNorm[i-1]===bNorm[j-1]){ result.unshift({type:'unchanged',a:aLines[i-1],b:bLines[j-1]}); i--;j--; }
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ result.unshift({type:'added',b:bLines[j-1]}); j--; }
+    else { result.unshift({type:'removed',a:aLines[i-1]}); i--; }
+  }
+  return result;
+}
+
+function runDiff() {
+  var a = document.getElementById('textA').value;
+  var b = document.getElementById('textB').value;
+  if(!a && !b) { document.getElementById('splitView').style.display='none'; document.getElementById('unifiedView').style.display='none'; return; }
+
+  var diff = diffLines(a, b);
+  var added=0, removed=0, unchanged=0;
+  diff.forEach(function(d){ if(d.type==='added') added++; else if(d.type==='removed') removed++; else unchanged++; });
+
+  document.getElementById('statsBar').innerHTML =
+    '<div class="stat stat-add">+ '+added+' added</div>' +
+    '<div class="stat stat-rem">− '+removed+' removed</div>' +
+    '<div class="stat stat-unch">= '+unchanged+' unchanged</div>';
+
+  if(currentView === 'split') {
+    document.getElementById('splitView').style.display = 'block';
+    document.getElementById('unifiedView').style.display = 'none';
+
+    var leftHtml='', rightHtml='', ln=1, rn=1;
+    diff.forEach(function(d){
+      if(d.type==='unchanged'){
+        leftHtml+='<div class="diff-line unchanged"><span class="ln">'+ln+'</span><span class="content">'+esc(d.a)+'</span></div>';
+        rightHtml+='<div class="diff-line unchanged"><span class="ln">'+rn+'</span><span class="content">'+esc(d.b)+'</span></div>';
+        ln++;rn++;
+      } else if(d.type==='removed'){
+        leftHtml+='<div class="diff-line removed"><span class="ln">'+ln+'</span><span class="content">'+esc(d.a)+'</span></div>';
+        rightHtml+='<div class="diff-line removed"><span class="ln"> </span><span class="content"> </span></div>';
+        ln++;
+      } else {
+        leftHtml+='<div class="diff-line added"><span class="ln"> </span><span class="content"> </span></div>';
+        rightHtml+='<div class="diff-line added"><span class="ln">'+rn+'</span><span class="content">'+esc(d.b)+'</span></div>';
+        rn++;
+      }
+    });
+    document.getElementById('leftCol').innerHTML = leftHtml;
+    document.getElementById('rightCol').innerHTML = rightHtml;
+
+    var lc = document.getElementById('leftCol').parentElement;
+    var rc = document.getElementById('rightCol').parentElement;
+    lc.onscroll = function(){ rc.scrollTop=lc.scrollTop; };
+    rc.onscroll = function(){ lc.scrollTop=rc.scrollTop; };
+
+  } else {
+    document.getElementById('splitView').style.display = 'none';
+    document.getElementById('unifiedView').style.display = 'block';
+    var uHtml='', ln=1, rn=1;
+    diff.forEach(function(d){
+      if(d.type==='unchanged'){
+        uHtml+='<div class="u-line unchanged"><span class="u-prefix"> </span><span class="ln" style="color:#374151;min-width:28px;font-size:0.75rem">'+ln+'</span><span class="u-content">'+esc(d.a)+'</span></div>';
+        ln++;rn++;
+      } else if(d.type==='removed'){
+        uHtml+='<div class="u-line removed"><span class="u-prefix">−</span><span class="ln" style="color:#374151;min-width:28px;font-size:0.75rem">'+ln+'</span><span class="u-content">'+esc(d.a)+'</span></div>';
+        ln++;
+      } else {
+        uHtml+='<div class="u-line added"><span class="u-prefix">+</span><span class="ln" style="color:#374151;min-width:28px;font-size:0.75rem">'+rn+'</span><span class="u-content">'+esc(d.b)+'</span></div>';
+        rn++;
+      }
+    });
+    document.getElementById('unifiedBody').innerHTML = uHtml;
+  }
+}
+
+function autoDiff() { runDiff(); }
+function clearAll() {
+  document.getElementById('textA').value='';
+  document.getElementById('textB').value='';
+  document.getElementById('splitView').style.display='none';
+  document.getElementById('unifiedView').style.display='none';
+  document.getElementById('statsBar').innerHTML='';
+}
+function swapTexts() {
+  var a=document.getElementById('textA').value;
+  document.getElementById('textA').value=document.getElementById('textB').value;
+  document.getElementById('textB').value=a;
+  runDiff();
+}
+
+runDiff();
+</script>
+</body>
+</html>

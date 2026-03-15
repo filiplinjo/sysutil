@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online chmod calculator. Instantly generate chmod commands and octal permission values for Linux and Unix file permissions.">
+<meta name="keywords" content="chmod calculator, linux file permissions, octal permissions, chmod command generator, unix permissions">
+<title>Chmod Calculator - Linux File Permission Generator | SysUtil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:20px}
+  header{text-align:center;padding:40px 20px 20px}
+  header h1{font-size:2.2rem;font-weight:700;color:#fff;margin-bottom:8px}
+  header h1 span{color:#6366f1}
+  header p{color:#94a3b8;font-size:1rem;max-width:500px;margin:0 auto}
+  .container{max-width:780px;margin:0 auto}
+
+  nav{text-align:center;margin-bottom:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  nav a{color:#94a3b8;text-decoration:none;font-size:0.85rem;padding:5px 12px;border:1px solid #2d3148;border-radius:6px;transition:all 0.15s;background:#1e2130}
+  nav a:hover{border-color:#6366f1;color:#a5b4fc}
+  nav a.active{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+
+  .mode-toggle{display:flex;gap:0;margin-bottom:24px;background:#1e2130;border:1px solid #2d3148;border-radius:10px;overflow:hidden}
+  .mode-btn{flex:1;background:transparent;border:none;color:#94a3b8;padding:12px 20px;cursor:pointer;font-size:0.95rem;font-weight:600;transition:all 0.2s;font-family:'Segoe UI',system-ui,sans-serif}
+  .mode-btn.active{background:#6366f1;color:#fff}
+  .mode-btn:hover:not(.active){background:#252840;color:#a5b4fc}
+
+  .section{display:none}
+  .section.active{display:block}
+
+  .result-box{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:28px;margin:0 0 24px;text-align:center}
+  .octal-display{font-size:5rem;font-weight:800;color:#6366f1;letter-spacing:8px;line-height:1;margin-bottom:16px;font-family:monospace}
+  .symbolic{font-size:1.1rem;font-family:monospace;color:#64748b;margin-bottom:16px;letter-spacing:2px}
+  .command-box{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .command-text{font-family:monospace;font-size:1.1rem;color:#a5b4fc;word-break:break-all;text-align:left}
+  .copy-btn{background:#6366f1;color:#fff;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;white-space:nowrap;transition:background 0.2s}
+  .copy-btn:hover{background:#4f46e5}
+  .copy-btn.copied{background:#22c55e}
+
+  .perm-grid{background:#1e2130;border:1px solid #2d3148;border-radius:16px;overflow:hidden;margin-bottom:24px}
+  .perm-header{display:grid;grid-template-columns:140px repeat(3,1fr) 80px;background:#161824;padding:12px 20px;font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;text-align:center}
+  .perm-header div:first-child{text-align:left}
+  .perm-row{display:grid;grid-template-columns:140px repeat(3,1fr) 80px;padding:16px 20px;border-top:1px solid #2d3148;align-items:center;transition:background 0.15s}
+  .perm-row:hover{background:#252840}
+  .row-label{display:flex;align-items:center;gap:10px;font-weight:600;font-size:0.95rem}
+  .row-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .icon-owner{background:#312e81}
+  .icon-group{background:#1e3a5f}
+  .icon-other{background:#1a3a2a}
+  .check-cell{display:flex;justify-content:center}
+  .check-wrap{position:relative;cursor:pointer}
+  .check-wrap input{opacity:0;position:absolute;width:0;height:0}
+  .checkmark{width:28px;height:28px;border-radius:7px;border:2px solid #374151;background:#0f1117;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-size:1rem}
+  .check-wrap input:checked~.checkmark{background:#6366f1;border-color:#6366f1}
+  .check-wrap input:checked~.checkmark::after{content:'✓';color:#fff;font-weight:700;font-size:0.85rem}
+  .row-octal{text-align:center;font-family:monospace;font-size:1.3rem;font-weight:700;color:#6366f1}
+
+  .presets{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:24px}
+  .presets h3{font-size:0.9rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px}
+  .preset-grid{display:flex;flex-wrap:wrap;gap:10px}
+  .preset-btn{background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.15s;font-family:monospace}
+  .preset-btn:hover{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
+  .preset-btn span{color:#6366f1;font-weight:700;margin-right:6px}
+
+  .reference{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:40px}
+  .reference h3{font-size:0.9rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px}
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  .ref-item{background:#0f1117;border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+  .ref-num{font-family:monospace;font-weight:700;color:#6366f1}
+  .ref-desc{font-size:0.85rem;color:#94a3b8}
+
+  .parse-input-box{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:28px;margin-bottom:24px}
+  .parse-input-box label{display:block;color:#64748b;font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
+  .parse-input-box input{width:100%;background:#0f1117;border:1px solid #2d3148;color:#e2e8f0;padding:14px 18px;border-radius:10px;font-family:monospace;font-size:1.3rem;text-align:center;transition:border 0.2s}
+  .parse-input-box input:focus{outline:none;border-color:#6366f1}
+  .parse-input-box input::placeholder{color:#374151}
+
+  .parse-result{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:24px;margin-bottom:20px}
+  .parse-result h3{font-size:0.9rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:16px}
+  .breakdown-grid{display:grid;gap:12px}
+  .breakdown-item{background:#0f1117;border-radius:10px;padding:14px 18px;border-left:4px solid #6366f1}
+  .breakdown-item strong{color:#6366f1;display:block;margin-bottom:4px;font-size:0.95rem}
+  .breakdown-item span{color:#94a3b8;font-size:0.9rem}
+  .error-box{background:#3a1a1a;border:1px solid #ff0055;color:#ff6688;border-radius:16px;padding:20px;margin-bottom:20px}
+  .error-box h3{color:#ff6688;margin-bottom:10px}
+
+  footer{text-align:center;padding:20px;color:#374151;font-size:0.85rem}
+  footer a{color:#6366f1;text-decoration:none}
+
+  @media(max-width:580px){
+    .perm-header,.perm-row{grid-template-columns:100px repeat(3,1fr) 50px;padding:12px}
+    .octal-display{font-size:3.5rem}
+    header h1{font-size:1.6rem}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>chmod <span>Calculator</span></h1>
+    <p>Calculate permissions from checkboxes or parse octal/symbolic notation.</p>
+  </header>
+
+  <nav>
+    <a href="/" class="active">chmod</a>
+    <a href="/cron">cron</a>
+    <a href="/regex">regex</a>
+    <a href="/base64">base64</a>
+    <a href="/file-size">linux</a>
+    <a href="/json">json</a>
+    <a href="/password">password</a>
+    <a href="/diff">diff</a>
+    <a href="/blog">guides</a>
+  </nav>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="switchMode('calculate')">Calculate</button>
+    <button class="mode-btn" onclick="switchMode('parse')">Parse</button>
+  </div>
+
+  <!-- CALCULATE MODE -->
+  <div id="calculate-section" class="section active">
+    <div class="result-box">
+      <div class="octal-display" id="octalDisplay">755</div>
+      <div class="symbolic" id="symbolic">rwxr-xr-x</div>
+      <div class="command-box">
+        <div class="command-text" id="commandText">chmod 755 filename</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyCommand()">Copy</button>
+      </div>
+    </div>
+
+    <div class="perm-grid">
+      <div class="perm-header">
+        <div>Who</div><div>Read (4)</div><div>Write (2)</div><div>Execute (1)</div><div>Octal</div>
+      </div>
+      <div class="perm-row">
+        <div class="row-label"><div class="row-icon icon-owner">👤</div>Owner</div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="or" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="ow" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="ox" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="row-octal" id="oo">7</div>
+      </div>
+      <div class="perm-row">
+        <div class="row-label"><div class="row-icon icon-group">👥</div>Group</div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="gr" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="gw" onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="gx" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="row-octal" id="go">5</div>
+      </div>
+      <div class="perm-row">
+        <div class="row-label"><div class="row-icon icon-other">🌍</div>Other</div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="pr" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="pw" onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="check-cell"><label class="check-wrap"><input type="checkbox" id="px" checked onchange="calc()"><div class="checkmark"></div></label></div>
+        <div class="row-octal" id="po">5</div>
+      </div>
+    </div>
+
+    <div class="presets">
+      <h3>Common Presets</h3>
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="setPreset('111101101')"><span>755</span>Web directory</button>
+        <button class="preset-btn" onclick="setPreset('110100100')"><span>644</span>Web file</button>
+        <button class="preset-btn" onclick="setPreset('111111111')"><span>777</span>Full access</button>
+        <button class="preset-btn" onclick="setPreset('110110000')"><span>660</span>Private shared</button>
+        <button class="preset-btn" onclick="setPreset('110100000')"><span>640</span>Config file</button>
+        <button class="preset-btn" onclick="setPreset('111000000')"><span>700</span>Private script</button>
+        <button class="preset-btn" onclick="setPreset('100000000')"><span>400</span>Read only</button>
+        <button class="preset-btn" onclick="setPreset('110110100')"><span>664</span>Group write</button>
+      </div>
+    </div>
+
+    <div class="reference">
+      <h3>Octal Reference</h3>
+      <div class="ref-grid">
+        <div class="ref-item"><span class="ref-num">0</span><span class="ref-desc">No permission</span></div>
+        <div class="ref-item"><span class="ref-num">1</span><span class="ref-desc">Execute only</span></div>
+        <div class="ref-item"><span class="ref-num">2</span><span class="ref-desc">Write only</span></div>
+        <div class="ref-item"><span class="ref-num">3</span><span class="ref-desc">Write + Execute</span></div>
+        <div class="ref-item"><span class="ref-num">4</span><span class="ref-desc">Read only</span></div>
+        <div class="ref-item"><span class="ref-num">5</span><span class="ref-desc">Read + Execute</span></div>
+        <div class="ref-item"><span class="ref-num">6</span><span class="ref-desc">Read + Write</span></div>
+        <div class="ref-item"><span class="ref-num">7</span><span class="ref-desc">Full permission</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARSE MODE -->
+  <div id="parse-section" class="section">
+    <div class="parse-input-box">
+      <label>Enter octal (e.g. 755) or symbolic (e.g. -rwxr-xr-x):</label>
+      <input type="text" id="parseInput" placeholder="755 or -rwxr-xr-x" oninput="parsePerms()">
+    </div>
+    <div id="parseOutput"></div>
+  </div>
+
+  <footer>
+    <p>Free tools by <a href="/">SysUtil.dev</a></p>
+  </footer>
+</div>
+
+<script>
+  function v(id){ return document.getElementById(id).checked?1:0 }
+  function oct(r,w,x){ return v(r)*4+v(w)*2+v(x) }
+  function sym(r,w,x){ return (v(r)?'r':'-')+(v(w)?'w':'-')+(v(x)?'x':'-') }
+
+  function calc(){
+    var o=oct('or','ow','ox'), g=oct('gr','gw','gx'), p=oct('pr','pw','px');
+    document.getElementById('oo').textContent=o;
+    document.getElementById('go').textContent=g;
+    document.getElementById('po').textContent=p;
+    var full=''+o+g+p;
+    document.getElementById('octalDisplay').textContent=full;
+    document.getElementById('symbolic').textContent=sym('or','ow','ox')+sym('gr','gw','gx')+sym('pr','pw','px');
+    document.getElementById('commandText').textContent='chmod '+full+' filename';
+  }
+
+  function setPreset(bits){
+    var ids=['or','ow','ox','gr','gw','gx','pr','pw','px'];
+    ids.forEach(function(id,i){ document.getElementById(id).checked=bits[i]==='1'; });
+    calc();
+  }
+
+  function copyCommand(){
+    navigator.clipboard.writeText(document.getElementById('commandText').textContent).then(function(){
+      var btn=document.getElementById('copyBtn');
+      btn.textContent='Copied!'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('copied'); },2000);
+    });
+  }
+
+  function switchMode(mode){
+    document.querySelectorAll('.mode-btn').forEach(function(btn){ btn.classList.remove('active'); });
+    document.querySelectorAll('.section').forEach(function(sec){ sec.classList.remove('active'); });
+    if(mode==='calculate'){
+      document.querySelector('.mode-btn:first-child').classList.add('active');
+      document.getElementById('calculate-section').classList.add('active');
+    }else{
+      document.querySelector('.mode-btn:last-child').classList.add('active');
+      document.getElementById('parse-section').classList.add('active');
+    }
+  }
+
+  function parsePerms(){
+    var input=document.getElementById('parseInput').value.trim();
+    var output=document.getElementById('parseOutput');
+    if(!input){ output.innerHTML=''; return; }
+
+    // Try octal
+    if(/^\d{3}$/.test(input)){
+      var digits=input.split('').map(Number);
+      if(digits.every(function(d){ return d>=0&&d<=7; })){
+        displayParsed(digits[0],digits[1],digits[2],input);
+        return;
+      }
+    }
+
+    // Try symbolic
+    var match=input.match(/^[-d]([r-][w-][x-])([r-][w-][x-])([r-][w-][x-])$/);
+    if(match){
+      var toOct=function(str){ return (str[0]==='r'?4:0)+(str[1]==='w'?2:0)+(str[2]==='x'?1:0); };
+      var o=toOct(match[1]), g=toOct(match[2]), p=toOct(match[3]);
+      displayParsed(o,g,p,''+o+g+p);
+      return;
+    }
+
+    // Error
+    output.innerHTML='<div class="error-box"><h3>Invalid Format</h3><p>Enter 3-digit octal (e.g. <strong>755</strong>) or symbolic notation (e.g. <strong>-rwxr-xr-x</strong>).</p></div>';
+  }
+
+  function displayParsed(o,g,p,octal){
+    var explain=function(val){
+      var perms=[];
+      if(val&4) perms.push('read');
+      if(val&2) perms.push('write');
+      if(val&1) perms.push('execute');
+      return perms.length?perms.join(', '):'no permissions';
+    };
+    var getString=function(val){ return (val&4?'r':'-')+(val&2?'w':'-')+(val&1?'x':'-'); };
+    var symbolic='-'+getString(o)+getString(g)+getString(p);
+
+    document.getElementById('parseOutput').innerHTML=`
+      <div class="result-box">
+        <div class="octal-display">${octal}</div>
+        <div class="symbolic">${symbolic}</div>
+        <div class="command-box">
+          <div class="command-text">chmod ${octal} filename</div>
+        </div>
+      </div>
+      <div class="parse-result">
+        <h3>Permission Breakdown</h3>
+        <div class="breakdown-grid">
+          <div class="breakdown-item"><strong>Owner (${o})</strong><span>${explain(o)}</span></div>
+          <div class="breakdown-item"><strong>Group (${g})</strong><span>${explain(g)}</span></div>
+          <div class="breakdown-item"><strong>Other (${p})</strong><span>${explain(p)}</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  calc();
+</script>
+</body>
+</html>
