@@ -176,9 +176,21 @@ app.post('/api/ai/regex', async (req, res) => {
 
   try {
     const result = await ollamaJSON(
-      `You are a regex expert for developers. Given a description of what to match, respond ONLY with a JSON object:
-{"pattern":"<regex without delimiters>","flags":"<flags like g,i,m or empty string>","readable":"<one sentence of what it matches>","breakdown":[{"token":"<regex part>","meaning":"<plain English>"}],"examples":["<string that would match>","<another example>"]}
-Do not include any text outside the JSON.`,
+      `You are a regex expert. Convert a description into a JavaScript regular expression.
+
+RULES:
+- pattern: regex body WITHOUT slashes or flags (e.g. ^[a-z]+$ not /^[a-z]+$/i)
+- flags: only include needed flags — "g" for all matches, "i" for case-insensitive, "m" for multiline, "" for none
+- breakdown: split the pattern into meaningful tokens and explain each one
+- examples: 2-3 real strings that the pattern would match
+
+EXAMPLES:
+"email address" → pattern:"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}", flags:"i", readable:"Matches a standard email address"
+"phone number US" → pattern:"\\(?\\d{3}\\)?[\\s.\\-]?\\d{3}[\\s.\\-]?\\d{4}", flags:"g", readable:"Matches US phone numbers in common formats"
+"only digits" → pattern:"^\\d+$", flags:"", readable:"Matches strings containing only digits"
+
+Respond ONLY with this JSON:
+{"pattern":"<regex>","flags":"<flags or empty>","readable":"<one sentence>","breakdown":[{"token":"<part>","meaning":"<explanation>"}],"examples":["<match1>","<match2>"]}`,
       desc
     );
     if (!result?.pattern) return res.status(502).json({ error: 'Model returned unexpected output. Try rephrasing.' });
@@ -201,10 +213,21 @@ app.post('/api/ai/command', async (req, res) => {
 
   try {
     const result = await ollamaJSON(
-      `You are a Linux and bash expert. Given a shell command or pipeline, respond ONLY with a JSON object:
-{"summary":"<one sentence of what the whole command does>","parts":[{"token":"<word, flag, or operator>","type":"command|flag|argument|pipe|redirect|operator","description":"<plain English of what this part does>"}],"danger":null,"tip":null}
-Set "danger" to a warning string if the command is destructive, irreversible, or risky (e.g. rm -rf, dd, chmod 777). Set "tip" to a useful pro-tip if applicable. Otherwise leave them null.
-Do not include any text outside the JSON.`,
+      `You are a Linux and bash expert. Explain a shell command by breaking it into parts.
+
+RULES:
+- summary: one clear sentence describing what the entire command does
+- parts: every meaningful token — commands, flags, arguments, pipes, redirects
+- token types: "command", "flag", "argument", "pipe", "redirect", "operator"
+- danger: set to a warning string ONLY if the command is destructive or irreversible (rm -rf, dd, mkfs, chmod 777, > file overwrites). Otherwise null.
+- tip: one useful pro-tip if relevant, otherwise null
+
+EXAMPLES:
+"ls -la /tmp" → summary:"Lists all files in /tmp with permissions and hidden files", parts:[{token:"ls",type:"command",description:"List directory contents"},{token:"-la",type:"flag",description:"-l long format with permissions, -a includes hidden files"},{token:"/tmp",type:"argument",description:"Target directory"}], danger:null
+"rm -rf /var/log/*" → danger:"Permanently deletes all files in /var/log — cannot be undone"
+
+Respond ONLY with this JSON:
+{"summary":"<sentence>","parts":[{"token":"<part>","type":"<type>","description":"<explanation>"}],"danger":<string or null>,"tip":<string or null>}`,
       command
     );
     if (!result?.summary) return res.status(502).json({ error: 'Model returned unexpected output.' });
@@ -227,9 +250,20 @@ app.post('/api/ai/error', async (req, res) => {
 
   try {
     const result = await ollamaJSON(
-      `You are a software debugging expert. Given an error message or stack trace, respond ONLY with a JSON object:
-{"title":"<short error name or type>","cause":"<plain English explanation of what caused this>","solutions":["<actionable fix step 1>","<fix step 2>","<fix step 3 if needed>"],"prevention":"<how to avoid this in future, or null>"}
-Be specific and practical. Do not include any text outside the JSON.`,
+      `You are a software debugging expert. Analyse an error message or stack trace and explain it clearly.
+
+RULES:
+- title: short name for the error type (e.g. "NullPointerException", "ECONNREFUSED", "SyntaxError")
+- cause: plain English — what specifically triggered this error, not just a restatement of the message
+- solutions: 2-3 concrete, actionable steps to fix it — be specific, include commands or code snippets where helpful
+- prevention: one sentence on how to avoid this in future code, or null if not applicable
+
+EXAMPLES:
+"ECONNREFUSED 127.0.0.1:5432" → title:"Connection Refused", cause:"Nothing is listening on port 5432 — PostgreSQL is likely not running or bound to a different port"
+"Cannot read properties of undefined (reading 'map')" → title:"TypeError: undefined.map()", cause:"Calling .map() on a variable that is undefined instead of an array — the data likely hasn't loaded yet"
+
+Respond ONLY with this JSON:
+{"title":"<name>","cause":"<explanation>","solutions":["<fix1>","<fix2>","<fix3>"],"prevention":<string or null>}`,
       error
     );
     if (!result?.cause) return res.status(502).json({ error: 'Model returned unexpected output.' });
