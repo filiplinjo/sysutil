@@ -116,7 +116,7 @@
         </div>
         <div id="timeRow" class="simple-row">
           <label>At time</label>
-          <input type="time" id="timeInput" autocomplete="off" value="00:00" onchange="updateSimple()">
+          <input type="time" id="timeInput" autocomplete="off" data-form-type="other" data-lpignore="true" value="00:00" onchange="updateSimple()">
         </div>
         <div id="weekRow" class="simple-row" style="display:none">
           <label>On day</label>
@@ -132,12 +132,12 @@
         </div>
         <div id="monthRow" class="simple-row" style="display:none">
           <label>On date</label>
-          <input type="number" id="monthDay" autocomplete="off" value="1" min="1" max="31" onchange="updateSimple()">
+          <input type="number" id="monthDay" autocomplete="off" data-form-type="other" data-lpignore="true" value="1" min="1" max="31" onchange="updateSimple()">
         </div>
         <div id="intervalRow" class="simple-row" style="display:none">
           <label>Every N</label>
           <div class="sub-row">
-            <input type="number" id="intervalVal" autocomplete="off" value="5" min="1" onchange="updateSimple()">
+            <input type="number" id="intervalVal" autocomplete="off" data-form-type="other" data-lpignore="true" value="5" min="1" onchange="updateSimple()">
             <select id="intervalUnit" onchange="updateSimple()">
               <option value="min">Minutes</option>
               <option value="hour">Hours</option>
@@ -151,27 +151,27 @@
       <div class="fields">
         <div class="field">
           <label>Minute</label>
-          <input type="text" id="fMin" autocomplete="off" value="0" oninput="updateAdvanced()">
+          <input type="text" id="fMin" autocomplete="off" data-form-type="other" data-lpignore="true" value="0" oninput="updateAdvanced()">
           <div class="field-hint">0-59</div>
         </div>
         <div class="field">
           <label>Hour</label>
-          <input type="text" id="fHour" autocomplete="off" value="*" oninput="updateAdvanced()">
+          <input type="text" id="fHour" autocomplete="off" data-form-type="other" data-lpignore="true" value="*" oninput="updateAdvanced()">
           <div class="field-hint">0-23</div>
         </div>
         <div class="field">
           <label>Day</label>
-          <input type="text" id="fDay" autocomplete="off" value="*" oninput="updateAdvanced()">
+          <input type="text" id="fDay" autocomplete="off" data-form-type="other" data-lpignore="true" value="*" oninput="updateAdvanced()">
           <div class="field-hint">1-31</div>
         </div>
         <div class="field">
           <label>Month</label>
-          <input type="text" id="fMonth" autocomplete="off" value="*" oninput="updateAdvanced()">
+          <input type="text" id="fMonth" autocomplete="off" data-form-type="other" data-lpignore="true" value="*" oninput="updateAdvanced()">
           <div class="field-hint">1-12</div>
         </div>
         <div class="field">
           <label>Weekday</label>
-          <input type="text" id="fWeek" autocomplete="off" value="*" oninput="updateAdvanced()">
+          <input type="text" id="fWeek" autocomplete="off" data-form-type="other" data-lpignore="true" value="*" oninput="updateAdvanced()">
           <div class="field-hint">0-7</div>
         </div>
       </div>
@@ -212,7 +212,7 @@
   <div id="validate-section" class="section">
     <div class="validate-input-box">
       <label>Enter cron expression (e.g. 0 */6 * * *):</label>
-      <input type="text" id="validateInput" autocomplete="off" placeholder="0 */6 * * *" oninput="validateCron()">
+      <input type="text" id="validateInput" autocomplete="off" data-form-type="other" data-lpignore="true" placeholder="0 */6 * * *" oninput="validateCron()">
     </div>
     <div id="validateOutput"></div>
   </div>
