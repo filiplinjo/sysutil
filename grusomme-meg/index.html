@@ -368,45 +368,128 @@
 
   <!-- Villain illustration -->
   <div class="villain-figure">
-    <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Cape -->
-      <path d="M30 90 Q20 130 15 155 Q50 140 80 145 Q110 140 145 155 Q140 130 130 90 Q110 110 80 105 Q50 110 30 90Z" fill="#1a0000"/>
-      <path d="M30 90 Q20 130 15 155 Q50 140 80 145 Q110 140 145 155 Q140 130 130 90" fill="none" stroke="#dc2626" stroke-width="2"/>
-      <!-- Body -->
-      <rect x="52" y="85" width="56" height="55" rx="8" fill="#2a2a2a"/>
+    <svg width="200" height="220" viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shadow -->
+      <ellipse cx="100" cy="212" rx="55" ry="8" fill="rgba(0,0,0,0.5)"/>
+
+      <!-- Cape / back -->
+      <path d="M38 115 Q10 160 8 205 Q55 188 100 192 Q145 188 192 205 Q190 160 162 115 Q135 138 100 132 Q65 138 38 115Z" fill="#1a0000"/>
+      <path d="M38 115 Q10 160 8 205 Q55 188 100 192" fill="none" stroke="#dc2626" stroke-width="2"/>
+      <path d="M162 115 Q190 160 192 205 Q145 188 100 192" fill="none" stroke="#dc2626" stroke-width="2"/>
+
+      <!-- FAT BODY - big round belly -->
+      <ellipse cx="100" cy="148" rx="52" ry="48" fill="#1e1e1e"/>
+      <!-- Belly bulge -->
+      <ellipse cx="100" cy="158" rx="40" ry="32" fill="#252525"/>
+      <!-- Suit shirt/belly button area -->
+      <ellipse cx="100" cy="162" rx="20" ry="22" fill="#1a1a1a"/>
+      <!-- Tie -->
+      <path d="M100 108 L93 118 L100 155 L107 118 Z" fill="#dc2626"/>
+      <path d="M95 108 L100 114 L105 108 Z" fill="#b91c1c"/>
+
       <!-- Suit lapels -->
-      <path d="M80 90 L62 95 L65 140 L80 135 L95 140 L98 95 Z" fill="#1a1a1a"/>
-      <path d="M80 90 L70 100 L80 108 L90 100 Z" fill="#dc2626"/>
-      <!-- Head -->
-      <ellipse cx="80" cy="68" rx="28" ry="30" fill="#e8c99a"/>
-      <!-- Evil eyebrows -->
-      <path d="M58 58 Q65 52 72 57" stroke="#3d2b0a" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <path d="M88 57 Q95 52 102 58" stroke="#3d2b0a" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <!-- Eyes -->
-      <ellipse cx="68" cy="66" rx="7" ry="7" fill="white"/>
-      <ellipse cx="92" cy="66" rx="7" ry="7" fill="white"/>
-      <circle cx="70" cy="67" r="5" fill="#1a0000"/>
-      <circle cx="94" cy="67" r="5" fill="#1a0000"/>
-      <circle cx="71" cy="66" r="2" fill="#dc2626"/>
-      <circle cx="95" cy="66" r="2" fill="#dc2626"/>
-      <!-- Evil grin -->
-      <path d="M64 82 Q80 95 96 82" stroke="#3d2b0a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-      <path d="M68 82 Q80 92 92 82" fill="#c0392b" opacity="0.3"/>
-      <!-- Teeth -->
-      <path d="M70 82 L72 88 M76 83 L77 89 M82 83 L83 89 M88 82 L86 88" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <!-- Top hat -->
-      <rect x="60" y="30" width="40" height="6" rx="3" fill="#0d0d0d"/>
-      <rect x="65" y="6" width="30" height="26" rx="4" fill="#0d0d0d"/>
-      <path d="M72 6 Q80 2 88 6" stroke="#dc2626" stroke-width="1.5" fill="none"/>
-      <!-- Monocle -->
-      <circle cx="92" cy="66" r="9" fill="none" stroke="#c8a84b" stroke-width="1.5"/>
-      <line x1="101" y1="66" x2="106" y2="72" stroke="#c8a84b" stroke-width="1.5"/>
-      <!-- Hands with fingers pointing -->
-      <ellipse cx="44" cy="112" rx="10" ry="8" fill="#e8c99a"/>
-      <ellipse cx="116" cy="112" rx="10" ry="8" fill="#e8c99a"/>
-      <!-- Evil laugh lines -->
-      <path d="M50 75 Q45 70 47 65" stroke="#c4a07a" stroke-width="1" fill="none"/>
-      <path d="M110 75 Q115 70 113 65" stroke="#c4a07a" stroke-width="1" fill="none"/>
+      <path d="M100 108 L68 120 L72 185 L100 178Z" fill="#161616"/>
+      <path d="M100 108 L132 120 L128 185 L100 178Z" fill="#161616"/>
+
+      <!-- FAT ARMS - stubby and chubby -->
+      <!-- Left arm -->
+      <ellipse cx="42" cy="145" rx="18" ry="14" fill="#1e1e1e" transform="rotate(-20 42 145)"/>
+      <ellipse cx="28" cy="158" rx="14" ry="11" fill="#e8c99a" transform="rotate(-10 28 158)"/>
+      <!-- Chubby left hand -->
+      <ellipse cx="20" cy="166" rx="13" ry="10" fill="#e8c99a"/>
+      <circle cx="12" cy="163" r="5" fill="#d4a876"/>
+      <circle cx="16" cy="158" r="5" fill="#d4a876"/>
+      <circle cx="22" cy="156" r="5" fill="#d4a876"/>
+      <circle cx="28" cy="157" r="4.5" fill="#d4a876"/>
+
+      <!-- Right arm -->
+      <ellipse cx="158" cy="145" rx="18" ry="14" fill="#1e1e1e" transform="rotate(20 158 145)"/>
+      <ellipse cx="172" cy="158" rx="14" ry="11" fill="#e8c99a" transform="rotate(10 172 158)"/>
+      <!-- Chubby right hand pointing -->
+      <ellipse cx="180" cy="166" rx="13" ry="10" fill="#e8c99a"/>
+      <circle cx="188" cy="163" r="5" fill="#d4a876"/>
+      <circle cx="184" cy="158" r="5" fill="#d4a876"/>
+      <circle cx="178" cy="156" r="5" fill="#d4a876"/>
+      <circle cx="172" cy="157" r="4.5" fill="#d4a876"/>
+
+      <!-- FAT NECK -->
+      <ellipse cx="100" cy="107" rx="24" ry="10" fill="#e8c99a"/>
+      <!-- Neck folds -->
+      <path d="M78 105 Q100 112 122 105" stroke="#c4a07a" stroke-width="1.5" fill="none"/>
+
+      <!-- BIG FAT HEAD -->
+      <ellipse cx="100" cy="72" rx="46" ry="44" fill="#e8c99a"/>
+      <!-- Chubby cheeks -->
+      <ellipse cx="62" cy="78" rx="18" ry="14" fill="#d4927a" opacity="0.5"/>
+      <ellipse cx="138" cy="78" rx="18" ry="14" fill="#d4927a" opacity="0.5"/>
+
+      <!-- Double chin -->
+      <path d="M70 104 Q100 118 130 104 Q120 112 100 115 Q80 112 70 104Z" fill="#d4b896"/>
+
+      <!-- ANGRY EYEBROWS - thick and menacing -->
+      <path d="M60 52 Q72 44 84 50" stroke="#3d2b0a" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <path d="M116 50 Q128 44 140 52" stroke="#3d2b0a" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <!-- Eyebrow furrow wrinkle -->
+      <path d="M92 52 L100 56 L108 52" stroke="#c4a07a" stroke-width="1.5" fill="none"/>
+
+      <!-- BEADY EVIL EYES -->
+      <ellipse cx="76" cy="66" rx="11" ry="10" fill="white"/>
+      <ellipse cx="124" cy="66" rx="11" ry="10" fill="white"/>
+      <!-- Squinting eyelids -->
+      <path d="M65 62 Q76 58 87 62" fill="#e8c99a"/>
+      <path d="M113 62 Q124 58 135 62" fill="#e8c99a"/>
+      <!-- Pupils - shifty looking sideways -->
+      <circle cx="79" cy="68" r="7" fill="#1a0000"/>
+      <circle cx="127" cy="68" r="7" fill="#1a0000"/>
+      <circle cx="81" cy="66" r="3" fill="#dc2626"/>
+      <circle cx="129" cy="66" r="3" fill="#dc2626"/>
+      <!-- Eye shine -->
+      <circle cx="82" cy="65" r="1.5" fill="white"/>
+      <circle cx="130" cy="65" r="1.5" fill="white"/>
+
+      <!-- BIG BULBOUS NOSE -->
+      <ellipse cx="100" cy="78" rx="12" ry="10" fill="#d4927a"/>
+      <circle cx="94" cy="80" r="4" fill="#c4826a" opacity="0.6"/>
+      <circle cx="106" cy="80" r="4" fill="#c4826a" opacity="0.6"/>
+      <!-- Nose highlight -->
+      <circle cx="97" cy="74" r="2.5" fill="#edb899" opacity="0.7"/>
+
+      <!-- EVIL GRIN with bad teeth -->
+      <path d="M68 90 Q100 110 132 90" fill="#8b1a1a" stroke="#5a0e0e" stroke-width="1.5"/>
+      <!-- Teeth - uneven and gapped -->
+      <rect x="76" y="90" width="8" height="10" rx="2" fill="#f5f0e8"/>
+      <rect x="86" y="89" width="9" height="12" rx="2" fill="#f5f0e8"/>
+      <rect x="97" y="89" width="6" height="11" rx="2" fill="#ede5d0"/>
+      <rect x="105" y="90" width="9" height="12" rx="2" fill="#f5f0e8"/>
+      <rect x="116" y="90" width="8" height="10" rx="2" fill="#f5f0e8"/>
+      <!-- Gap in teeth -->
+      <rect x="95" y="90" width="3" height="10" fill="#8b1a1a"/>
+      <!-- Bottom lip -->
+      <path d="M72 96 Q100 106 128 96" fill="#c0826a" opacity="0.6"/>
+
+      <!-- THICK MUSTACHE -->
+      <path d="M72 88 Q86 82 100 86 Q114 82 128 88 Q114 96 100 91 Q86 96 72 88Z" fill="#2a1a0a"/>
+      <!-- Mustache curl ends -->
+      <path d="M72 88 Q66 84 68 80 Q70 84 72 88Z" fill="#2a1a0a"/>
+      <path d="M128 88 Q134 84 132 80 Q130 84 128 88Z" fill="#2a1a0a"/>
+
+      <!-- TOP HAT - big and tilted -->
+      <rect x="54" y="22" width="92" height="9" rx="4" fill="#0d0d0d"/>
+      <rect x="64" y="-6" width="72" height="32" rx="6" fill="#0d0d0d"/>
+      <!-- Hat band -->
+      <rect x="64" y="20" width="72" height="6" fill="#dc2626"/>
+      <!-- Hat skull badge -->
+      <text x="100" y="14" text-anchor="middle" font-size="16" fill="#dc2626" opacity="0.7">☠</text>
+      <!-- Hat tilt shadow -->
+      <path d="M64 26 L136 26" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+
+      <!-- SWEAT DROPS - he's working hard being evil -->
+      <path d="M148 50 Q150 44 146 40 Q143 44 148 50Z" fill="#94c4e0" opacity="0.6"/>
+      <path d="M155 62 Q157 57 153 53 Q150 57 155 62Z" fill="#94c4e0" opacity="0.5"/>
+
+      <!-- Evil sparkles -->
+      <path d="M30 40 L32 34 L34 40 L40 42 L34 44 L32 50 L30 44 L24 42 Z" fill="#dc2626" opacity="0.7"/>
+      <path d="M165 35 L167 30 L169 35 L174 37 L169 39 L167 44 L165 39 L160 37 Z" fill="#fbbf24" opacity="0.6"/>
     </svg>
   </div>
 
