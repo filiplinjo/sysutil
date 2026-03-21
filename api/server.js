@@ -595,6 +595,61 @@ app.get('/api/speed', async (req, res) => {
   } catch (e) { res.status(502).json({ error: e.message }); }
 });
 
+// ── CVE lookup ────────────────────────────────────────────────────────────────
+const CVE_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+app.get('/api/cve', async (req, res) => {
+  const q = (req.query.q || '').trim();
+  if (!q) return res.status(400).json({ error: 'Query required.' });
+  if (q.length > 100) return res.status(400).json({ error: 'Query too long.' });
+
+  const cacheKey = 'cve:' + q.toLowerCase();
+  const cached   = getCache(cacheKey);
+  if (cached) return res.json({ ...cached, cached: true });
+
+  try {
+    const isCveId = /^CVE-\d{4}-\d{4,}$/i.test(q);
+    const url = isCveId
+      ? `https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${encodeURIComponent(q.toUpperCase())}`
+      : `https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=${encodeURIComponent(q)}&resultsPerPage=10`;
+
+    const resp = await fetch(url, {
+      headers: { 'User-Agent': 'SysUtil-CVE/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!resp.ok) return res.status(502).json({ error: 'NVD API error: ' + resp.status });
+    const data = await resp.json();
+
+    const items = (data.vulnerabilities || []).map(v => {
+      const cve    = v.cve;
+      const desc   = (cve.descriptions || []).find(d => d.lang === 'en')?.value || '';
+      const metrics = cve.metrics || {};
+      const cvssV3  = metrics.cvssMetricV31?.[0] || metrics.cvssMetricV30?.[0];
+      const cvssV2  = metrics.cvssMetricV2?.[0];
+      const score   = cvssV3?.cvssData?.baseScore ?? cvssV2?.cvssData?.baseScore ?? null;
+      const severity = cvssV3?.cvssData?.baseSeverity ?? cvssV2?.baseSeverity ?? null;
+      const vector   = cvssV3?.cvssData?.vectorString ?? cvssV2?.cvssData?.vectorString ?? null;
+      const refs     = (cve.references || []).slice(0, 5).map(r => ({ url: r.url, tags: r.tags || [] }));
+      return {
+        id: cve.id,
+        published: cve.published,
+        modified: cve.lastModified,
+        status: cve.vulnStatus,
+        description: desc,
+        score,
+        severity,
+        vector,
+        refs,
+      };
+    });
+
+    const result = { q, total: data.totalResults, items };
+    setCache(cacheKey, result, CVE_CACHE_TTL);
+    res.json(result);
+  } catch (e) {
+    res.status(502).json({ error: 'CVE lookup failed: ' + e.message });
+  }
+});
+
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (_, res) => res.json({ ok: true, model: AI_MODEL, uptime: process.uptime() }));
 

@@ -17,7 +17,7 @@
                    '/json', '/regex', '/diff', '/password',
                    '/base64', '/url-encode', '/uuid', '/jwt',
                    '/http-status', '/timestamp', '/dns',
-                   '/ip', '/ssl', '/network'];
+                   '/ip', '/ssl', '/network', '/cve'];
   var toolActive = toolPaths.some(function (p) {
     var h = p.replace(/\/$/, '') || '/';
     if (h === '/') return path === '/';
@@ -78,6 +78,11 @@
                 link('/network#trace', 'traceroute') +
               '</div>' +
 
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Security</div>' +
+                link('/cve', 'cve lookup') +
+              '</div>' +
+
             '</div>' +
           '</div>' +
         '</div>' +
@@ -118,6 +123,8 @@
       tsLink('/ip', 'ip lookup') +
       tsLink('/ssl', 'ssl checker') +
       tsLink('/network', 'network') +
+      '<span class="ts-sep"></span>' +
+      tsLink('/cve', 'cve') +
     '</div></div>';
 
   var script = document.currentScript;

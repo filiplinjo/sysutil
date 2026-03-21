@@ -204,6 +204,7 @@ body {
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   height: 34px;
   gap: 1px;

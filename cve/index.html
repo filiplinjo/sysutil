@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone=window.ezstandalone||{};ezstandalone.cmd=ezstandalone.cmd||[];</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free CVE vulnerability lookup. Search the NVD database by CVE ID or keyword. See CVSS scores, severity ratings, and references.">
+<title>CVE Lookup — Vulnerability Search | SysUtil</title>
+<meta property="og:title" content="CVE Lookup | SysUtil">
+<meta property="og:description" content="Search CVE vulnerabilities by ID or keyword. CVSS scores, severity, and references.">
+<meta property="og:url" content="https://sysutil.dev/cve/">
+<link rel="canonical" href="https://sysutil.dev/cve/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=5">
+<style>
+.container { max-width: 860px; }
+
+.lookup-row { display:flex; gap:10px; }
+.lookup-input { flex:1; background:#0a0c14; border:1px solid #1e2235; color:#e2e8f0; padding:13px 18px; border-radius:10px; font-size:1rem; font-family:inherit; outline:none; transition:border 0.2s; min-width:0; }
+.lookup-input:focus { border-color:#ef4444; }
+.lookup-input::placeholder { color:#2d3555; }
+.btn-run { background:#ef4444; border:none; color:#fff; padding:13px 26px; border-radius:10px; cursor:pointer; font-size:0.95rem; font-weight:600; font-family:inherit; transition:background 0.15s; white-space:nowrap; }
+.btn-run:hover { background:#dc2626; }
+.btn-run:disabled { background:#1e2235; color:#475569; cursor:default; }
+
+.examples { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.examples-label { font-size:0.78rem; color:#374151; }
+.example-chip { background:#0a0c14; border:1px solid #1e2235; color:#475569; padding:3px 12px; border-radius:999px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; font-family:monospace; }
+.example-chip:hover { border-color:#ef4444; color:#fca5a5; }
+
+.results-header { display:flex; align-items:center; justify-content:space-between; margin:28px 0 16px; }
+.results-count { font-size:0.82rem; color:#475569; }
+
+/* CVE card */
+.cve-card { background:#111320; border:1px solid #1e2235; border-radius:14px; padding:22px 24px; margin-bottom:12px; transition:border 0.15s; }
+.cve-card:hover { border-color:#2d3555; }
+.cve-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+.cve-id { font-family:monospace; font-size:1.05rem; font-weight:700; color:#e2e8f0; text-decoration:none; }
+.cve-id:hover { color:#fca5a5; }
+.cve-badges { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+/* Severity badges */
+.sev { display:inline-flex; align-items:center; gap:5px; padding:5px 14px; border-radius:999px; font-size:0.8rem; font-weight:700; letter-spacing:0.03em; }
+.sev-CRITICAL { background:rgba(239,68,68,0.15);  color:#f87171; border:1px solid rgba(239,68,68,0.35); }
+.sev-HIGH     { background:rgba(249,115,22,0.15); color:#fb923c; border:1px solid rgba(249,115,22,0.35); }
+.sev-MEDIUM   { background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.35); }
+.sev-LOW      { background:rgba(34,197,94,0.15);  color:#4ade80; border:1px solid rgba(34,197,94,0.35); }
+.sev-NONE     { background:rgba(71,85,105,0.15);  color:#64748b; border:1px solid rgba(71,85,105,0.35); }
+
+.score-badge { font-family:monospace; font-size:1.1rem; font-weight:800; }
+.score-CRITICAL { color:#f87171; }
+.score-HIGH     { color:#fb923c; }
+.score-MEDIUM   { color:#fbbf24; }
+.score-LOW      { color:#4ade80; }
+.score-NONE     { color:#64748b; }
+
+.status-badge { padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; background:#0a0c14; border:1px solid #1e2235; color:#475569; }
+
+.cve-desc { color:#94a3b8; font-size:0.9rem; line-height:1.7; margin-bottom:14px; }
+.cve-desc.truncated { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+.cve-meta { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+.cve-meta-item { font-size:0.78rem; color:#374151; }
+.cve-meta-item strong { color:#64748b; }
+
+.vector-box { background:#0a0c14; border:1px solid #1e2235; border-radius:8px; padding:8px 14px; font-family:monospace; font-size:0.78rem; color:#64748b; margin-bottom:14px; word-break:break-all; }
+
+.refs-list { display:flex; flex-wrap:wrap; gap:6px; }
+.ref-link { display:inline-flex; align-items:center; gap:4px; background:#0a0c14; border:1px solid #1e2235; color:#6366f1; padding:3px 10px; border-radius:6px; font-size:0.75rem; text-decoration:none; transition:all 0.15s; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ref-link:hover { border-color:#6366f1; color:#a5b4fc; }
+.ref-tag { background:rgba(99,102,241,0.12); color:#818cf8; padding:1px 6px; border-radius:4px; font-size:0.7rem; }
+
+.expand-btn { background:none; border:none; color:#475569; font-size:0.78rem; cursor:pointer; padding:0; font-family:inherit; }
+.expand-btn:hover { color:#94a3b8; }
+
+.spinner { text-align:center; padding:60px; color:#374151; font-size:0.9rem; }
+.error-box { background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:16px 20px; color:#f87171; margin-top:20px; }
+.empty-box { text-align:center; padding:60px 20px; color:#374151; }
+</style>
+</head>
+<body>
+<script src="/nav.js?v=5"></script>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">CVE Lookup</h1>
+    <p class="page-subtitle">Search the NVD vulnerability database by CVE ID or keyword.</p>
+  </div>
+
+  <div style="background:#111320;border:1px solid #1e2235;border-radius:16px;padding:24px;">
+    <div class="lookup-row">
+      <input type="text" id="query" class="lookup-input" placeholder="CVE-2024-1234 or nginx or openssl" autocomplete="off" data-form-type="other" data-lpignore="true" onkeydown="if(event.key==='Enter')search()">
+      <button class="btn-run" id="searchBtn" onclick="search()">Search</button>
+    </div>
+    <div class="examples">
+      <span class="examples-label">Try:</span>
+      <span class="example-chip" onclick="setQ('CVE-2021-44228')">CVE-2021-44228</span>
+      <span class="example-chip" onclick="setQ('CVE-2023-44487')">CVE-2023-44487</span>
+      <span class="example-chip" onclick="setQ('nginx')">nginx</span>
+      <span class="example-chip" onclick="setQ('openssl')">openssl</span>
+      <span class="example-chip" onclick="setQ('ssh')">ssh</span>
+    </div>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script>
+function setQ(v) { document.getElementById('query').value = v; search(); }
+
+async function search() {
+  const q = document.getElementById('query').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Searching…';
+  document.getElementById('results').innerHTML = '<div class="spinner">Querying NVD database…</div>';
+
+  try {
+    const r = await fetch('/api/cve?q=' + encodeURIComponent(q));
+    const d = await r.json();
+    if (d.error) { showError(d.error); return; }
+    renderResults(d);
+  } catch(e) {
+    showError('Request failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Search';
+  }
+}
+
+function showError(msg) {
+  document.getElementById('results').innerHTML = '<div class="error-box">'+escHtml(msg)+'</div>';
+}
+
+function sevColor(s) {
+  return s ? 'sev-'+s.toUpperCase() : 'sev-NONE';
+}
+function scoreColor(s) {
+  if (s === null) return 'score-NONE';
+  if (s >= 9) return 'score-CRITICAL';
+  if (s >= 7) return 'score-HIGH';
+  if (s >= 4) return 'score-MEDIUM';
+  if (s > 0)  return 'score-LOW';
+  return 'score-NONE';
+}
+function sevLabel(s) {
+  if (!s) return 'N/A';
+  return s.charAt(0) + s.slice(1).toLowerCase();
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return iso.slice(0,10);
+}
+
+function renderResults(d) {
+  if (!d.items || d.items.length === 0) {
+    document.getElementById('results').innerHTML =
+      '<div class="empty-box">No CVEs found for <strong style="color:#e2e8f0">'+escHtml(d.q)+'</strong></div>';
+    return;
+  }
+
+  const totalNote = d.total > d.items.length
+    ? ' <span style="color:#374151">(showing '+d.items.length+' of '+d.total+')</span>' : '';
+
+  let html = '<div class="results-header">'
+    + '<span class="results-count">'+d.total+' result'+(d.total!==1?'s':'')+' for <strong style="color:#e2e8f0">'+escHtml(d.q)+'</strong>'+totalNote+'</span>'
+    + '</div>';
+
+  d.items.forEach(function(c, idx) {
+    const sev = (c.severity || 'NONE').toUpperCase();
+    const scoreVal = c.score !== null ? c.score.toFixed(1) : '—';
+    const descId = 'desc-'+idx;
+    const shortDesc = c.description.length > 280;
+
+    html += '<div class="cve-card">';
+
+    // Top row
+    html += '<div class="cve-card-top">';
+    html += '<a class="cve-id" href="https://nvd.nist.gov/vuln/detail/'+escHtml(c.id)+'" target="_blank" rel="noopener">'+escHtml(c.id)+'</a>';
+    html += '<div class="cve-badges">';
+    if (c.score !== null) html += '<span class="score-badge '+scoreColor(c.score)+'">'+scoreVal+'</span>';
+    html += '<span class="sev '+sevColor(sev)+'">'+sevLabel(sev)+'</span>';
+    if (c.status) html += '<span class="status-badge">'+escHtml(c.status)+'</span>';
+    html += '</div></div>';
+
+    // Description
+    html += '<p class="cve-desc'+(shortDesc?' truncated':'')+'" id="'+descId+'">'+escHtml(c.description)+'</p>';
+    if (shortDesc) html += '<button class="expand-btn" onclick="expand(\''+descId+'\',this)">Show more ▾</button>';
+
+    // Meta
+    html += '<div class="cve-meta">';
+    html += '<div class="cve-meta-item"><strong>Published</strong> '+fmtDate(c.published)+'</div>';
+    html += '<div class="cve-meta-item"><strong>Modified</strong> '+fmtDate(c.modified)+'</div>';
+    html += '</div>';
+
+    // Vector
+    if (c.vector) html += '<div class="vector-box">'+escHtml(c.vector)+'</div>';
+
+    // References
+    if (c.refs && c.refs.length) {
+      html += '<div class="refs-list">';
+      c.refs.forEach(function(ref) {
+        const domain = ref.url.replace(/^https?:\/\//,'').split('/')[0];
+        html += '<a class="ref-link" href="'+escHtml(ref.url)+'" target="_blank" rel="noopener" title="'+escHtml(ref.url)+'">↗ '+escHtml(domain)+'</a>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  document.getElementById('results').innerHTML = html;
+}
+
+function expand(id, btn) {
+  var el = document.getElementById(id);
+  el.classList.remove('truncated');
+  btn.remove();
+}
+
+// Check for URL query param on load
+(function() {
+  var q = new URLSearchParams(window.location.search).get('q');
+  if (q) { document.getElementById('query').value = q; search(); }
+})();
+</script>
+</body>
+</html>
