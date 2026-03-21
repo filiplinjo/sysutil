@@ -16,7 +16,8 @@
   var toolPaths = ['/', '/cron', '/file-size', '/linux-commands',
                    '/json', '/regex', '/diff', '/password',
                    '/base64', '/url-encode', '/uuid', '/jwt',
-                   '/http-status', '/timestamp', '/dns'];
+                   '/http-status', '/timestamp', '/dns',
+                   '/ip', '/ssl', '/network'];
   var toolActive = toolPaths.some(function (p) {
     var h = p.replace(/\/$/, '') || '/';
     if (h === '/') return path === '/';
@@ -65,6 +66,9 @@
                 link('/http-status', 'http status') +
                 link('/timestamp', 'timestamp') +
                 link('/dns', 'dns') +
+                link('/ip', 'ip lookup') +
+                link('/ssl', 'ssl checker') +
+                link('/network', 'network tools') +
               '</div>' +
 
             '</div>' +
@@ -104,6 +108,9 @@
       tsLink('/http-status', 'http status') +
       tsLink('/timestamp', 'timestamp') +
       tsLink('/dns', 'dns') +
+      tsLink('/ip', 'ip lookup') +
+      tsLink('/ssl', 'ssl checker') +
+      tsLink('/network', 'network') +
     '</div></div>';
 
   var script = document.currentScript;

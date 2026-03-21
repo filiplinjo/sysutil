@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free online network tools: website speed test, port checker, ping test, and traceroute. Diagnose network issues from your browser.">
+<title>Network Tools — Speed Test, Port Checker, Ping, Traceroute | SysUtil</title>
+<meta property="og:title" content="Network Tools | SysUtil">
+<meta property="og:description" content="Online ping test, traceroute, port checker and website speed test.">
+<meta property="og:url" content="https://sysutil.dev/network/">
+<link rel="canonical" href="https://sysutil.dev/network/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=3">
+<style>
+.container { max-width: 820px; }
+.tabs { display:flex; gap:4px; background:#1e2130; border:1px solid #2d3148; border-radius:12px; padding:4px; margin-bottom:20px; flex-wrap:wrap; }
+.tab { flex:1; min-width:100px; padding:9px 12px; border-radius:8px; border:none; background:transparent; color:#64748b; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.15s; text-align:center; font-family:inherit; white-space:nowrap; }
+.tab:hover { color:#e2e8f0; }
+.tab.active { background:#6366f1; color:#fff; }
+.panel { display:none; }
+.panel.active { display:block; }
+
+.tool-card { background:#1e2130; border:1px solid #2d3148; border-radius:16px; padding:24px; margin-bottom:16px; }
+.lookup-row { display:flex; gap:10px; }
+.lookup-input { flex:1; background:#0f1117; border:1px solid #2d3148; color:#e2e8f0; padding:12px 18px; border-radius:10px; font-size:1rem; font-family:inherit; outline:none; transition:border 0.2s; min-width:0; }
+.lookup-input:focus { border-color:#6366f1; }
+.lookup-input::placeholder { color:#374151; }
+.btn-run { background:#6366f1; border:none; color:#fff; padding:12px 24px; border-radius:10px; cursor:pointer; font-size:0.95rem; font-weight:600; font-family:inherit; transition:background 0.15s; white-space:nowrap; }
+.btn-run:hover { background:#4f46e5; }
+.btn-run:disabled { background:#2d3148; color:#475569; cursor:default; }
+.examples { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.examples-label { font-size:0.78rem; color:#475569; }
+.example-chip { background:#0f1117; border:1px solid #2d3148; color:#64748b; padding:3px 12px; border-radius:999px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; }
+.example-chip:hover { border-color:#6366f1; color:#a5b4fc; }
+
+/* Speed result */
+.speed-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:16px; }
+.speed-stat { background:#0f1117; border:1px solid #1a1f35; border-radius:10px; padding:16px; text-align:center; }
+.speed-stat-val { font-size:1.6rem; font-weight:800; }
+.speed-stat-unit { font-size:0.75rem; color:#475569; }
+.speed-stat-label { font-size:0.72rem; color:#475569; text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+.fast { color:#4ade80; } .ok { color:#fbbf24; } .slow { color:#f87171; }
+.status-chip { display:inline-block; padding:4px 12px; border-radius:999px; font-size:0.8rem; font-weight:700; }
+.s2xx { background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3); }
+.s3xx { background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+.s4xx,.s5xx { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+
+/* Port result */
+.ports-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:8px; }
+.port-item { background:#0f1117; border:1px solid #1a1f35; border-radius:8px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; }
+.port-num { font-size:0.88rem; font-weight:700; font-family:monospace; color:#e2e8f0; }
+.port-name { font-size:0.7rem; color:#475569; }
+.port-open { color:#4ade80; font-size:0.75rem; font-weight:700; }
+.port-closed { color:#374151; font-size:0.75rem; }
+
+.port-categories { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.cat-toggle { background:#0f1117; border:1px solid #2d3148; color:#64748b; padding:4px 14px; border-radius:999px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.cat-toggle.on { border-color:#6366f1; color:#a5b4fc; background:rgba(99,102,241,0.1); }
+
+/* Terminal output */
+.terminal { background:#0a0a0f; border:1px solid #1a1f35; border-radius:10px; padding:16px; font-family:'SF Mono','Fira Code',monospace; font-size:0.82rem; line-height:1.7; color:#94a3b8; white-space:pre-wrap; word-break:break-all; max-height:400px; overflow-y:auto; }
+.terminal .hop { color:#64748b; }
+.terminal .hop-ip { color:#818cf8; }
+.terminal .hop-time { color:#4ade80; }
+
+.warn-box { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.2); border-radius:8px; padding:10px 14px; color:#fbbf24; font-size:0.82rem; margin-bottom:12px; }
+.result-card { background:#1e2130; border:1px solid #2d3148; border-radius:16px; padding:24px; }
+.result-label { font-size:0.72rem; color:#475569; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.spinner { text-align:center; padding:40px; color:#475569; }
+.error-box { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:14px 18px; color:#f87171; }
+</style>
+</head>
+<body>
+<script src="/nav.js"></script>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Network Tools</h1>
+    <p class="page-subtitle">Speed test, port checker, ping, and traceroute — all from your browser.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('speed')">⚡ Speed Test</button>
+    <button class="tab" onclick="switchTab('ports')">🔌 Port Checker</button>
+    <button class="tab" onclick="switchTab('ping')">📡 Ping</button>
+    <button class="tab" onclick="switchTab('trace')">🗺 Traceroute</button>
+  </div>
+
+  <!-- SPEED TEST -->
+  <div id="panel-speed" class="panel active">
+    <div class="tool-card">
+      <div class="lookup-row">
+        <input type="text" id="speedUrl" class="lookup-input" placeholder="https://example.com" autocomplete="off" data-form-type="other" data-lpignore="true">
+        <button class="btn-run" id="speedBtn" onclick="runSpeed()">Test Speed</button>
+      </div>
+      <div class="examples">
+        <span class="examples-label">Examples:</span>
+        <span class="example-chip" onclick="runSpeed('https://google.com')">google.com</span>
+        <span class="example-chip" onclick="runSpeed('https://github.com')">github.com</span>
+        <span class="example-chip" onclick="runSpeed('https://cloudflare.com')">cloudflare.com</span>
+      </div>
+    </div>
+    <div id="speed-result"></div>
+  </div>
+
+  <!-- PORT CHECKER -->
+  <div id="panel-ports" class="panel">
+    <div class="tool-card">
+      <div class="lookup-row">
+        <input type="text" id="portsHost" class="lookup-input" placeholder="example.com or 1.2.3.4" autocomplete="off" data-form-type="other" data-lpignore="true">
+        <button class="btn-run" id="portsBtn" onclick="runPorts()">Check Ports</button>
+      </div>
+      <div class="examples" style="margin-bottom:12px;">
+        <span class="examples-label">Examples:</span>
+        <span class="example-chip" onclick="document.getElementById('portsHost').value='google.com'">google.com</span>
+        <span class="example-chip" onclick="document.getElementById('portsHost').value='github.com'">github.com</span>
+      </div>
+      <div class="port-categories" id="portCats">
+        <button class="cat-toggle on" data-ports="80,443,8080,8443" onclick="toggleCat(this)">Web</button>
+        <button class="cat-toggle on" data-ports="22,21" onclick="toggleCat(this)">SSH/FTP</button>
+        <button class="cat-toggle on" data-ports="25,465,587,993,995" onclick="toggleCat(this)">Mail</button>
+        <button class="cat-toggle on" data-ports="3306,5432,27017,6379" onclick="toggleCat(this)">Database</button>
+        <button class="cat-toggle on" data-ports="53,3389" onclick="toggleCat(this)">Other</button>
+      </div>
+    </div>
+    <div id="ports-result"></div>
+  </div>
+
+  <!-- PING -->
+  <div id="panel-ping" class="panel">
+    <div class="tool-card">
+      <div class="lookup-row">
+        <input type="text" id="pingHost" class="lookup-input" placeholder="google.com or 8.8.8.8" autocomplete="off" data-form-type="other" data-lpignore="true">
+        <button class="btn-run" id="pingBtn" onclick="runPing()">Ping</button>
+      </div>
+      <div class="examples">
+        <span class="examples-label">Examples:</span>
+        <span class="example-chip" onclick="runPing('google.com')">google.com</span>
+        <span class="example-chip" onclick="runPing('8.8.8.8')">8.8.8.8</span>
+        <span class="example-chip" onclick="runPing('1.1.1.1')">1.1.1.1</span>
+      </div>
+    </div>
+    <div id="ping-result"></div>
+  </div>
+
+  <!-- TRACEROUTE -->
+  <div id="panel-trace" class="panel">
+    <div class="tool-card">
+      <div class="warn-box">⏱ Traceroute may take up to 30–60 seconds to complete.</div>
+      <div class="lookup-row">
+        <input type="text" id="traceHost" class="lookup-input" placeholder="google.com or 8.8.8.8" autocomplete="off" data-form-type="other" data-lpignore="true">
+        <button class="btn-run" id="traceBtn" onclick="runTrace()">Traceroute</button>
+      </div>
+      <div class="examples">
+        <span class="examples-label">Examples:</span>
+        <span class="example-chip" onclick="runTrace('google.com')">google.com</span>
+        <span class="example-chip" onclick="runTrace('cloudflare.com')">cloudflare.com</span>
+      </div>
+    </div>
+    <div id="trace-result"></div>
+  </div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['speed','ports','ping','trace'][i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function toggleCat(btn) { btn.classList.toggle('on'); }
+
+function getSelectedPorts() {
+  return [...document.querySelectorAll('.cat-toggle.on')]
+    .flatMap(b => b.dataset.ports.split(','))
+    .join(',');
+}
+
+const PORT_NAMES = {21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',80:'HTTP',110:'POP3',143:'IMAP',443:'HTTPS',465:'SMTPS',587:'SMTP',993:'IMAPS',995:'POP3S',3306:'MySQL',3389:'RDP',5432:'Postgres',6379:'Redis',8080:'HTTP-Alt',8443:'HTTPS-Alt',27017:'MongoDB'};
+
+// ── Speed Test ──
+async function runSpeed(url) {
+  if (url) document.getElementById('speedUrl').value = url;
+  const u = document.getElementById('speedUrl').value.trim();
+  if (!u) return;
+  const btn = document.getElementById('speedBtn');
+  btn.disabled = true;
+  document.getElementById('speed-result').innerHTML = '<div class="spinner">Testing…</div>';
+  try {
+    const data = await fetch(`/api/speed?url=${encodeURIComponent(u)}`).then(r => r.json());
+    if (data.error) throw new Error(data.error);
+    const ttfbClass = data.ttfb < 200 ? 'fast' : data.ttfb < 1000 ? 'ok' : 'slow';
+    const totalClass = data.total < 500 ? 'fast' : data.total < 2000 ? 'ok' : 'slow';
+    const sizeKB = (data.size / 1024).toFixed(1);
+    const sc = 's' + String(data.status)[0] + 'xx';
+    document.getElementById('speed-result').innerHTML = `
+      <div class="result-card">
+        <div style="margin-bottom:16px;">
+          <span class="status-chip ${sc}">${data.status}</span>
+          ${data.redirected ? `<span style="font-size:0.82rem;color:#64748b;margin-left:8px;">→ ${data.finalUrl}</span>` : ''}
+        </div>
+        <div class="speed-grid">
+          <div class="speed-stat">
+            <div class="speed-stat-val ${ttfbClass}">${data.ttfb}</div>
+            <div class="speed-stat-unit">ms</div>
+            <div class="speed-stat-label">TTFB</div>
+          </div>
+          <div class="speed-stat">
+            <div class="speed-stat-val ${totalClass}">${data.total}</div>
+            <div class="speed-stat-unit">ms</div>
+            <div class="speed-stat-label">Total</div>
+          </div>
+          <div class="speed-stat">
+            <div class="speed-stat-val">${sizeKB}</div>
+            <div class="speed-stat-unit">KB</div>
+            <div class="speed-stat-label">Page size</div>
+          </div>
+        </div>
+        ${data.headers?.server ? `<div style="font-size:0.82rem;color:#64748b;">Server: ${data.headers.server}</div>` : ''}
+      </div>`;
+  } catch(e) {
+    document.getElementById('speed-result').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+
+// ── Port Checker ──
+async function runPorts() {
+  const host = document.getElementById('portsHost').value.trim();
+  if (!host) return;
+  const ports = getSelectedPorts();
+  const btn = document.getElementById('portsBtn');
+  btn.disabled = true;
+  document.getElementById('ports-result').innerHTML = '<div class="spinner">Checking ports… (may take a few seconds)</div>';
+  try {
+    const data = await fetch(`/api/ports?host=${encodeURIComponent(host)}&ports=${ports}`).then(r => r.json());
+    if (data.error) throw new Error(data.error);
+    const items = data.ports.map(p => `
+      <div class="port-item">
+        <div>
+          <div class="port-num">${p.port}</div>
+          <div class="port-name">${PORT_NAMES[p.port] || ''}</div>
+        </div>
+        <div class="${p.open ? 'port-open' : 'port-closed'}">${p.open ? '● open' : '○ closed'}</div>
+      </div>`).join('');
+    document.getElementById('ports-result').innerHTML = `<div class="result-card"><div class="result-label">${host} — ${data.ports.filter(p=>p.open).length} open port(s)</div><div class="ports-grid">${items}</div></div>`;
+  } catch(e) {
+    document.getElementById('ports-result').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+
+// ── Ping ──
+async function runPing(host) {
+  if (host) document.getElementById('pingHost').value = host;
+  const h = document.getElementById('pingHost').value.trim();
+  if (!h) return;
+  const btn = document.getElementById('pingBtn');
+  btn.disabled = true;
+  document.getElementById('ping-result').innerHTML = '<div class="spinner">Pinging…</div>';
+  try {
+    const data = await fetch(`/api/ping?host=${encodeURIComponent(h)}`).then(r => r.json());
+    if (data.error) throw new Error(data.error);
+    document.getElementById('ping-result').innerHTML = `<div class="result-card"><div class="result-label">ping ${data.host}</div><div class="terminal">${escHtml(data.output)}</div></div>`;
+  } catch(e) {
+    document.getElementById('ping-result').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+
+// ── Traceroute ──
+async function runTrace(host) {
+  if (host) document.getElementById('traceHost').value = host;
+  const h = document.getElementById('traceHost').value.trim();
+  if (!h) return;
+  const btn = document.getElementById('traceBtn');
+  btn.disabled = true;
+  document.getElementById('trace-result').innerHTML = '<div class="spinner">Running traceroute… (up to 60s)</div>';
+  try {
+    const data = await fetch(`/api/traceroute?host=${encodeURIComponent(h)}`).then(r => r.json());
+    if (data.error) throw new Error(data.error);
+    document.getElementById('trace-result').innerHTML = `<div class="result-card"><div class="result-label">traceroute ${data.host}</div><div class="terminal">${escHtml(data.output)}</div></div>`;
+  } catch(e) {
+    document.getElementById('trace-result').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Keyboard enter support
+['speedUrl','portsHost','pingHost','traceHost'].forEach((id,i) => {
+  const fns = [runSpeed, runPorts, runPing, runTrace];
+  document.getElementById(id).addEventListener('keydown', e => e.key === 'Enter' && fns[i]());
+});
+</script>
+</body>
+</html>

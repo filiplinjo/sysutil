@@ -4,6 +4,12 @@ const express    = require('express');
 const dns        = require('dns').promises;
 const rateLimit  = require('express-rate-limit');
 const whoiser    = require('whoiser');
+const { execFile } = require('child_process');
+const net        = require('net');
+const tls        = require('tls');
+
+let geoip;
+try { geoip = require('geoip-lite'); } catch(e) { geoip = null; }
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -428,6 +434,165 @@ app.get('/api/whois', async (req, res) => {
     console.error('WHOIS error:', err.message);
     res.status(502).json({ error: 'WHOIS lookup failed. The domain may not exist or the WHOIS server is unavailable.' });
   }
+});
+
+// ── IP lookup ─────────────────────────────────────────────────────────────────
+app.get('/api/ip', async (req, res) => {
+  const query = (req.query.q || '').trim();
+  const ip    = query || req.ip.replace(/^::ffff:/, '');
+
+  if (query && !isValidIPv4(query) && !isValidIPv6(query) && !isValidDomain(query))
+    return res.status(400).json({ error: 'Invalid IP address or domain.' });
+
+  const cacheKey = 'ip:' + ip;
+  const cached   = getCache(cacheKey);
+  if (cached) return res.json({ ...cached, cached: true });
+
+  const geo  = geoip ? geoip.lookup(ip) : null;
+  const result = {
+    ip,
+    auto:     !query,
+    country:  geo?.country  || null,
+    region:   geo?.region   || null,
+    city:     geo?.city     || null,
+    ll:       geo?.ll       || null,
+    timezone: geo?.timezone || null,
+    eu:       geo?.eu === '1',
+    range:    geo?.range    || null,
+  };
+
+  setCache(cacheKey, result, 10 * 60 * 1000); // 10 min
+  res.json(result);
+});
+
+// ── SSL certificate checker ───────────────────────────────────────────────────
+app.get('/api/ssl', async (req, res) => {
+  const host = (req.query.host || '').trim().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
+  if (!host || !isValidDomain(host)) return res.status(400).json({ error: 'Invalid domain.' });
+
+  const cacheKey = 'ssl:' + host;
+  const cached   = getCache(cacheKey);
+  if (cached) return res.json({ ...cached, cached: true });
+
+  try {
+    const cert = await new Promise((resolve, reject) => {
+      const socket = tls.connect(443, host, { servername: host, rejectUnauthorized: false }, () => {
+        resolve(socket.getPeerCertificate(true));
+        socket.end();
+      });
+      socket.setTimeout(10000, () => { socket.destroy(); reject(new Error('Connection timed out')); });
+      socket.on('error', reject);
+    });
+
+    if (!cert || !cert.subject) return res.status(400).json({ error: 'No certificate returned.' });
+
+    const expiry   = new Date(cert.valid_to);
+    const daysLeft = Math.floor((expiry - Date.now()) / 86400000);
+    const result   = {
+      host,
+      valid:       daysLeft > 0,
+      daysLeft,
+      subject:     cert.subject,
+      issuer:      cert.issuer,
+      validFrom:   cert.valid_from,
+      validTo:     cert.valid_to,
+      san:         cert.subjectaltname
+                     ? cert.subjectaltname.split(', ').map(s => s.replace(/^DNS:/, '')).filter(s => !s.startsWith('IP:'))
+                     : [],
+      fingerprint: cert.fingerprint,
+      serial:      cert.serialNumber,
+    };
+
+    setCache(cacheKey, result, 60 * 60 * 1000); // 1 hour
+    res.json(result);
+  } catch (e) {
+    res.status(502).json({ error: e.message });
+  }
+});
+
+// ── Port checker ──────────────────────────────────────────────────────────────
+const ALLOWED_PORTS = new Set([
+  21, 22, 23, 25, 53, 80, 110, 143, 443, 465, 587,
+  993, 995, 3306, 3389, 5432, 6379, 8080, 8443, 27017
+]);
+
+app.get('/api/ports', async (req, res) => {
+  const host = (req.query.host || '').trim();
+  if (!host || (!isValidDomain(host) && !isValidIPv4(host)))
+    return res.status(400).json({ error: 'Invalid host.' });
+
+  const requested = req.query.ports
+    ? req.query.ports.split(',').map(Number).filter(p => ALLOWED_PORTS.has(p)).slice(0, 20)
+    : [...ALLOWED_PORTS];
+
+  const results = await Promise.all(requested.map(port =>
+    new Promise(resolve => {
+      const sock = new net.Socket();
+      sock.setTimeout(2000);
+      sock.on('connect', () => { sock.destroy(); resolve({ port, open: true  }); });
+      sock.on('timeout',  () => { sock.destroy(); resolve({ port, open: false }); });
+      sock.on('error',    () => { sock.destroy(); resolve({ port, open: false }); });
+      sock.connect(port, host);
+    })
+  ));
+
+  res.json({ host, ports: results.sort((a, b) => a.port - b.port) });
+});
+
+// ── Ping ──────────────────────────────────────────────────────────────────────
+app.get('/api/ping', async (req, res) => {
+  const host = (req.query.host || '').trim();
+  if (!host || !/^[a-zA-Z0-9.\-]+$/.test(host))
+    return res.status(400).json({ error: 'Invalid host.' });
+
+  try {
+    const output = await new Promise((resolve, reject) =>
+      execFile('ping', ['-c', '4', '-W', '3', host], { timeout: 20000 },
+        (err, stdout, stderr) => stdout ? resolve(stdout) : reject(new Error(stderr || err?.message || 'ping failed'))
+      )
+    );
+    res.json({ host, output });
+  } catch (e) { res.status(502).json({ error: e.message }); }
+});
+
+// ── Traceroute ────────────────────────────────────────────────────────────────
+app.get('/api/traceroute', async (req, res) => {
+  const host = (req.query.host || '').trim();
+  if (!host || !/^[a-zA-Z0-9.\-]+$/.test(host))
+    return res.status(400).json({ error: 'Invalid host.' });
+
+  try {
+    const output = await new Promise((resolve, reject) =>
+      execFile('traceroute', ['-m', '15', '-w', '2', host], { timeout: 60000 },
+        (err, stdout, stderr) => stdout ? resolve(stdout) : reject(new Error(stderr || err?.message || 'traceroute failed'))
+      )
+    );
+    res.json({ host, output });
+  } catch (e) { res.status(502).json({ error: e.message }); }
+});
+
+// ── Website speed test ────────────────────────────────────────────────────────
+app.get('/api/speed', async (req, res) => {
+  let url = (req.query.url || '').trim();
+  if (!url) return res.status(400).json({ error: 'url required' });
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  try {
+    const t0       = Date.now();
+    const response = await fetch(url, {
+      headers:  { 'User-Agent': 'Mozilla/5.0 SysUtil-SpeedTest/1.0' },
+      signal:   AbortSignal.timeout(15000),
+      redirect: 'follow',
+    });
+    const ttfb   = Date.now() - t0;
+    const body   = await response.text();
+    const total  = Date.now() - t0;
+    const size   = Buffer.byteLength(body, 'utf8');
+    const headers = {};
+    response.headers.forEach((v, k) => { headers[k] = v; });
+
+    res.json({ url, status: response.status, ttfb, total, size, redirected: response.redirected, finalUrl: response.url, headers });
+  } catch (e) { res.status(502).json({ error: e.message }); }
 });
 
 // ── Health check ──────────────────────────────────────────────────────────────

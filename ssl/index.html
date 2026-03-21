@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free SSL certificate checker. Verify any website's HTTPS certificate, check expiry date, issuer, and domain coverage instantly.">
+<title>SSL Certificate Checker — Check HTTPS Certificate Expiry | SysUtil</title>
+<meta property="og:title" content="SSL Certificate Checker | SysUtil">
+<meta property="og:description" content="Check SSL certificate validity, expiry date, issuer and SANs for any domain.">
+<meta property="og:url" content="https://sysutil.dev/ssl/">
+<link rel="canonical" href="https://sysutil.dev/ssl/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=3">
+<style>
+.container { max-width: 720px; }
+.lookup-card { background:#1e2130; border:1px solid #2d3148; border-radius:16px; padding:24px; margin-bottom:20px; }
+.lookup-row { display:flex; gap:10px; }
+.lookup-input { flex:1; background:#0f1117; border:1px solid #2d3148; color:#e2e8f0; padding:12px 18px; border-radius:10px; font-size:1rem; font-family:inherit; outline:none; transition:border 0.2s; min-width:0; }
+.lookup-input:focus { border-color:#6366f1; }
+.lookup-input::placeholder { color:#374151; }
+.btn-lookup { background:#6366f1; border:none; color:#fff; padding:12px 24px; border-radius:10px; cursor:pointer; font-size:0.95rem; font-weight:600; font-family:inherit; transition:background 0.15s; white-space:nowrap; }
+.btn-lookup:hover { background:#4f46e5; }
+.btn-lookup:disabled { background:#2d3148; color:#475569; cursor:default; }
+.examples { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.examples-label { font-size:0.78rem; color:#475569; }
+.example-chip { background:#0f1117; border:1px solid #2d3148; color:#64748b; padding:3px 12px; border-radius:999px; font-size:0.82rem; cursor:pointer; transition:all 0.15s; }
+.example-chip:hover { border-color:#6366f1; color:#a5b4fc; }
+
+.result-card { background:#1e2130; border:1px solid #2d3148; border-radius:16px; padding:28px; }
+.cert-header { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+.cert-badge { font-size:2rem; }
+.cert-domain { font-size:1.3rem; font-weight:700; color:#e2e8f0; }
+.cert-status { font-size:0.82rem; font-weight:700; padding:4px 12px; border-radius:999px; }
+.status-valid { background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.3); color:#4ade80; }
+.status-expiring { background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.3); color:#fbbf24; }
+.status-expired { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; }
+.days-left { font-size:2rem; font-weight:800; }
+.days-valid { color:#4ade80; }
+.days-expiring { color:#fbbf24; }
+.days-expired { color:#f87171; }
+
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.info-item { background:#0f1117; border:1px solid #1a1f35; border-radius:10px; padding:14px 16px; }
+.info-item.full { grid-column:1/-1; }
+.info-item-label { font-size:0.72rem; color:#475569; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.info-item-value { font-size:0.9rem; color:#e2e8f0; font-weight:500; word-break:break-all; }
+.san-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.san-chip { background:#1e2130; border:1px solid #2d3148; color:#94a3b8; padding:2px 10px; border-radius:6px; font-size:0.78rem; font-family:monospace; }
+.spinner { text-align:center; padding:40px; color:#475569; }
+.error-box { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:14px 18px; color:#f87171; }
+</style>
+</head>
+<body>
+<script src="/nav.js"></script>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">SSL Certificate Checker</h1>
+    <p class="page-subtitle">Verify HTTPS certificates — check expiry, issuer, and domain coverage for any website.</p>
+  </div>
+
+  <div class="lookup-card">
+    <div class="lookup-row">
+      <input type="text" id="hostInput" class="lookup-input" placeholder="example.com" autocomplete="off" data-form-type="other" data-lpignore="true">
+      <button class="btn-lookup" id="checkBtn" onclick="doCheck()">Check SSL</button>
+    </div>
+    <div class="examples">
+      <span class="examples-label">Examples:</span>
+      <span class="example-chip" onclick="doCheck('google.com')">google.com</span>
+      <span class="example-chip" onclick="doCheck('github.com')">github.com</span>
+      <span class="example-chip" onclick="doCheck('expired.badssl.com')">expired.badssl.com</span>
+    </div>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<script>
+document.getElementById('hostInput').addEventListener('keydown', e => e.key === 'Enter' && doCheck());
+
+async function doCheck(host) {
+  if (host) document.getElementById('hostInput').value = host;
+  const h = document.getElementById('hostInput').value.trim().replace(/^https?:\/\//, '').split('/')[0];
+  if (!h) return;
+
+  const btn = document.getElementById('checkBtn');
+  const result = document.getElementById('result');
+  btn.disabled = true;
+  result.innerHTML = '<div class="spinner">Checking certificate…</div>';
+
+  try {
+    const data = await fetch(`/api/ssl?host=${encodeURIComponent(h)}`).then(r => r.json());
+    if (data.error) throw new Error(data.error);
+
+    const daysClass = data.daysLeft > 90 ? 'days-valid' : data.daysLeft > 30 ? 'days-expiring' : 'days-expired';
+    const statusClass = data.daysLeft > 90 ? 'status-valid' : data.daysLeft > 30 ? 'status-expiring' : 'status-expired';
+    const statusText = data.valid ? (data.daysLeft < 30 ? 'Expiring Soon' : 'Valid') : 'Expired';
+    const badge = data.valid ? (data.daysLeft < 30 ? '⚠️' : '🔒') : '🔓';
+
+    const issuerCN = data.issuer?.O || data.issuer?.CN || '—';
+    const subjectCN = data.subject?.CN || '—';
+    const sans = data.san || [];
+    const sanDisplay = sans.slice(0, 8).map(s => `<span class="san-chip">${s}</span>`).join('');
+    const sanMore = sans.length > 8 ? `<span class="san-chip">+${sans.length - 8} more</span>` : '';
+
+    result.innerHTML = `
+      <div class="result-card">
+        <div class="cert-header">
+          <div class="cert-badge">${badge}</div>
+          <div>
+            <div class="cert-domain">${h}</div>
+            <span class="cert-status ${statusClass}">${statusText}</span>
+          </div>
+          <div style="margin-left:auto; text-align:right;">
+            <div class="days-left ${daysClass}">${data.daysLeft}</div>
+            <div style="font-size:0.78rem;color:#475569;">days remaining</div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-item-label">Issued To</div>
+            <div class="info-item-value">${subjectCN}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Issued By</div>
+            <div class="info-item-value">${issuerCN}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Valid From</div>
+            <div class="info-item-value">${data.validFrom}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Expires</div>
+            <div class="info-item-value">${data.validTo}</div>
+          </div>
+          <div class="info-item full">
+            <div class="info-item-label">Serial Number</div>
+            <div class="info-item-value">${data.serial || '—'}</div>
+          </div>
+          ${sans.length ? `
+          <div class="info-item full">
+            <div class="info-item-label">Domains Covered (SANs · ${sans.length} total)</div>
+            <div class="san-list">${sanDisplay}${sanMore}</div>
+          </div>` : ''}
+        </div>
+      </div>`;
+  } catch (e) {
+    result.innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>
