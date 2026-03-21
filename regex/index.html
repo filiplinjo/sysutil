@@ -23,15 +23,15 @@
 <link rel="stylesheet" href="/styles.css?v=6">
 <style>
   /* Regex input row */
-  .regex-row{display:flex;align-items:center;background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:6px 14px;gap:6px;margin-bottom:12px;transition:border 0.15s}
+  .regex-row{display:flex;align-items:center;background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:6px 14px;gap:6px;margin-bottom:12px;transition:border 0.15s}
   .regex-row:focus-within{border-color:#6366f1}
   .slash{color:#6366f1;font-size:1.3rem;font-family:monospace;font-weight:700;user-select:none}
   .regex-input{background:none;border:none;color:#a5b4fc;font-family:monospace;font-size:1rem;flex:1;padding:8px 4px;outline:none}
-  .flags-input{background:none;border:none;border-left:1px solid #2d3148;color:#6366f1;font-family:monospace;font-size:1rem;width:55px;padding:8px 8px;outline:none}
+  .flags-input{background:none;border:none;border-left:1px solid #1e2235;color:#6366f1;font-family:monospace;font-size:1rem;width:55px;padding:8px 8px;outline:none}
 
   /* Flag pills */
   .flags-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-  .flag-pill{background:#0f1117;border:1px solid #2d3148;color:#64748b;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-family:monospace;font-weight:600;transition:all 0.15s;user-select:none}
+  .flag-pill{background:#0a0c14;border:1px solid #1e2235;color:#64748b;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-family:monospace;font-weight:600;transition:all 0.15s;user-select:none}
   .flag-pill.on{background:#312e81;border-color:#6366f1;color:#a5b4fc}
 
   .regex-error{color:#ef4444;font-size:0.82rem;margin-bottom:8px;min-height:18px;font-family:monospace}
@@ -39,7 +39,7 @@
   /* Test area */
   .test-wrap{position:relative;margin-bottom:12px}
   .test-backdrop{position:absolute;top:0;left:0;right:0;bottom:0;padding:14px;font-family:monospace;font-size:0.95rem;line-height:1.75;white-space:pre-wrap;word-break:break-all;pointer-events:none;border-radius:10px;overflow:hidden;color:transparent}
-  .test-textarea{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.95rem;width:100%;min-height:140px;resize:vertical;outline:none;line-height:1.75;white-space:pre-wrap;word-break:break-all;position:relative;caret-color:#e2e8f0}
+  .test-textarea{background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:14px;color:#e2e8f0;font-family:monospace;font-size:0.95rem;width:100%;min-height:140px;resize:vertical;outline:none;line-height:1.75;white-space:pre-wrap;word-break:break-all;position:relative;caret-color:#e2e8f0}
   .test-textarea:focus{border-color:#6366f1}
   mark{background:#6366f1;color:#fff;border-radius:3px;padding:0 2px}
   mark.group{background:#7c3aed}
@@ -49,11 +49,11 @@
   .match-badge{font-size:0.9rem;font-weight:700;padding:4px 14px;border-radius:20px}
   .match-badge.ok{background:#0d2818;color:#22c55e;border:1px solid #166534}
   .match-badge.none{background:#2d1111;color:#ef4444;border:1px solid #7f1d1d}
-  .match-badge.idle{background:#1e2130;color:#64748b;border:1px solid #2d3148}
+  .match-badge.idle{background:#111320;color:#64748b;border:1px solid #1e2235}
 
   /* Matches table */
   .matches-table{width:100%;border-collapse:collapse;font-size:0.83rem;font-family:monospace}
-  .matches-table th{text-align:left;padding:6px 10px;color:#64748b;font-weight:600;border-bottom:1px solid #2d3148;font-size:0.75rem;text-transform:uppercase}
+  .matches-table th{text-align:left;padding:6px 10px;color:#64748b;font-weight:600;border-bottom:1px solid #1e2235;font-size:0.75rem;text-transform:uppercase}
   .matches-table td{padding:6px 10px;border-bottom:1px solid #161824;vertical-align:top}
   .matches-table tr:hover td{background:#161824}
   .match-val{color:#a5b4fc}
@@ -63,13 +63,13 @@
 
   /* Patterns */
   .patterns-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
-  .pat-btn{background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.15s;text-align:left}
+  .pat-btn{background:#0a0c14;border:1px solid #1e2235;color:#94a3b8;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.15s;text-align:left}
   .pat-btn:hover{border-color:#6366f1;color:#a5b4fc;background:#1a1d2e}
   .pat-btn code{display:block;color:#6366f1;font-family:monospace;font-size:0.73rem;margin-top:3px;word-break:break-all;white-space:normal}
 
   /* Cheatsheet */
   .cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-  .cheat-item{background:#0f1117;border-radius:8px;padding:8px 12px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+  .cheat-item{background:#0a0c14;border-radius:8px;padding:8px 12px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
   .cheat-sym{font-family:monospace;font-weight:700;color:#6366f1;font-size:0.9rem}
   .cheat-desc{font-size:0.77rem;color:#94a3b8}
 </style>

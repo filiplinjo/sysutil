@@ -48,9 +48,20 @@ const aiLimiter = rateLimit({
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'AI rate limit reached — max 10 requests per minute.' }
 });
+// Network tools run server-side processes — limit to 10/min per IP
+const networkLimiter = rateLimit({
+  windowMs: 60 * 1000, max: 10,
+  standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many requests — max 10 per minute for network tools.' }
+});
 
 app.use('/api/', limiter);
 app.use('/api/ai/', aiLimiter);
+app.use('/api/ping',       networkLimiter);
+app.use('/api/traceroute', networkLimiter);
+app.use('/api/ports',      networkLimiter);
+app.use('/api/speed',      networkLimiter);
+app.use('/api/ssl',        networkLimiter);
 
 // ── In-memory cache (5 min TTL) ───────────────────────────────────────────────
 const cache = new Map();

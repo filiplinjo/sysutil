@@ -24,7 +24,7 @@
 <style>
   .container{max-width:760px}
 
-  .uuid-display{background:#0f1117;border:1px solid #2d3148;border-radius:16px;padding:22px 24px;margin-bottom:16px}
+  .uuid-display{background:#0a0c14;border:1px solid #1e2235;border-radius:16px;padding:22px 24px;margin-bottom:16px}
   .uuid-main{font-family:monospace;font-size:1.35rem;font-weight:700;color:#a5b4fc;letter-spacing:1px;word-break:break-all;line-height:1.5;cursor:pointer}
   .uuid-main:hover{color:#c7d2fe}
   .uuid-parts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center}
@@ -33,32 +33,32 @@
   .uuid-seg.time-mid{background:#1a1d2e;color:#6366f1}
   .uuid-seg.version{background:#0d2818;color:#22c55e}
   .uuid-seg.variant{background:#1a1208;color:#f59e0b}
-  .uuid-seg.node{background:#0f1117;border:1px solid #2d3148;color:#64748b}
+  .uuid-seg.node{background:#0a0c14;border:1px solid #1e2235;color:#64748b}
   .uuid-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
   .btn{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;border:none}
   .btn-primary{background:#6366f1;color:#fff}
   .btn-primary:hover{background:#4f46e5}
-  .btn-secondary{background:#1e2130;border:1px solid #2d3148;color:#94a3b8}
+  .btn-secondary{background:#111320;border:1px solid #1e2235;color:#94a3b8}
   .btn-secondary:hover{border-color:#6366f1;color:#a5b4fc}
   .btn.copied{background:#22c55e;color:#fff}
 
-  .version-tabs{display:flex;gap:4px;background:#1e2130;border:1px solid #2d3148;border-radius:10px;padding:4px;margin-bottom:16px;width:fit-content}
+  .version-tabs{display:flex;gap:4px;background:#111320;border:1px solid #1e2235;border-radius:10px;padding:4px;margin-bottom:16px;width:fit-content}
   .vtab{padding:7px 16px;border-radius:7px;cursor:pointer;font-size:0.83rem;color:#64748b;font-weight:600;transition:all 0.15s;border:none;background:none}
   .vtab.active{background:#6366f1;color:#fff}
 
-  .bulk-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:20px;margin-bottom:16px}
+  .bulk-card{background:#111320;border:1px solid #1e2235;border-radius:16px;padding:20px;margin-bottom:16px}
   .bulk-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
   .bulk-header h3{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em}
   .bulk-controls{display:flex;gap:8px;align-items:center}
-  .count-select{background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:7px 10px;border-radius:7px;font-size:0.83rem;outline:none}
-  .bulk-list{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:260px;overflow-y:auto;color:#a5b4fc;cursor:pointer}
+  .count-select{background:#0a0c14;border:1px solid #1e2235;color:#94a3b8;padding:7px 10px;border-radius:7px;font-size:0.83rem;outline:none}
+  .bulk-list{background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:260px;overflow-y:auto;color:#a5b4fc;cursor:pointer}
   .bulk-list div{padding:1px 0;transition:background 0.1s;border-radius:4px;padding:2px 6px}
   .bulk-list div:hover{background:#161824;color:#c7d2fe}
   .bulk-copied{color:#22c55e!important}
 
-  .validate-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:20px;margin-bottom:16px}
+  .validate-card{background:#111320;border:1px solid #1e2235;border-radius:16px;padding:20px;margin-bottom:16px}
   .validate-card h3{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
-  .val-input{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:12px 16px;color:#a5b4fc;font-family:monospace;font-size:0.9rem;width:100%;outline:none;transition:border 0.15s}
+  .val-input{background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:12px 16px;color:#a5b4fc;font-family:monospace;font-size:0.9rem;width:100%;outline:none;transition:border 0.15s}
   .val-input:focus{border-color:#6366f1}
   .val-input.valid{border-color:#22c55e}
   .val-input.invalid{border-color:#ef4444}
@@ -67,9 +67,9 @@
   .val-err{color:#ef4444}
   .val-detail{color:#64748b;margin-top:4px;font-family:monospace;font-size:0.82rem}
 
-  .format-card{background:#1e2130;border:1px solid #2d3148;border-radius:16px;padding:20px;margin-bottom:16px}
+  .format-card{background:#111320;border:1px solid #1e2235;border-radius:16px;padding:20px;margin-bottom:16px}
   .format-card h3{font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
-  .fmt-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#0f1117;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:background 0.15s;gap:16px}
+  .fmt-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#0a0c14;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:background 0.15s;gap:16px}
   .fmt-row:hover{background:#161824}
   .fmt-name{font-size:0.78rem;color:#64748b;min-width:100px;flex-shrink:0}
   .fmt-val{font-family:monospace;font-size:0.83rem;color:#a5b4fc;word-break:break-all;flex:1}

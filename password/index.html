@@ -25,15 +25,15 @@
   .container{max-width:680px}
 
   /* Password display */
-  .pwd-display{background:#0f1117;border:1px solid #2d3148;border-radius:12px;padding:20px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .pwd-display{background:#0a0c14;border:1px solid #1e2235;border-radius:12px;padding:20px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
   .pwd-text{font-family:monospace;font-size:1.2rem;flex:1;word-break:break-all;letter-spacing:2px;color:#a5b4fc;line-height:1.5}
-  .icon-btn{background:#1e2130;border:1px solid #2d3148;color:#94a3b8;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+  .icon-btn{background:#111320;border:1px solid #1e2235;color:#94a3b8;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
   .icon-btn:hover{border-color:#6366f1;color:#a5b4fc}
 
   /* Strength bar */
   .strength-wrap{margin-bottom:20px}
   .strength-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85rem}
-  .strength-bar{height:6px;background:#0f1117;border-radius:3px;overflow:hidden}
+  .strength-bar{height:6px;background:#0a0c14;border-radius:3px;overflow:hidden}
   .strength-fill{height:100%;border-radius:3px;transition:all 0.3s}
 
   /* Length slider */
@@ -44,7 +44,7 @@
 
   /* Options */
   .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-  .option-card{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s}
+  .option-card{background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s}
   .option-card:hover{border-color:#4f46e5}
   .option-card.active{border-color:#6366f1;background:#1a1d2e}
   .option-card input{accent-color:#6366f1;width:16px;height:16px}
@@ -54,12 +54,12 @@
 
   /* Bulk */
   .bulk-section{margin-top:8px}
-  .bulk-list{background:#0f1117;border:1px solid #2d3148;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:200px;overflow-y:auto;color:#a5b4fc}
+  .bulk-list{background:#0a0c14;border:1px solid #1e2235;border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;line-height:2;max-height:200px;overflow-y:auto;color:#a5b4fc}
 
   .gen-btn{width:100%;background:#6366f1;color:#fff;border:none;padding:14px;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:700;transition:background 0.2s;letter-spacing:0.03em}
   .gen-btn:hover{background:#4f46e5}
 
-  .pwd-copy-btn{width:100%;background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:12px;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;margin-top:10px}
+  .pwd-copy-btn{width:100%;background:#0a0c14;border:1px solid #1e2235;color:#94a3b8;padding:12px;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:600;transition:all 0.2s;margin-top:10px}
   .pwd-copy-btn:hover{border-color:#6366f1;color:#a5b4fc}
   .pwd-copy-btn.copied{background:#22c55e;border-color:#22c55e;color:#fff}
 
@@ -151,14 +151,14 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div style="font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em">Bulk Generate</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <select id="bulkCount" style="background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:6px 10px;border-radius:6px;font-size:0.85rem">
+        <select id="bulkCount" style="background:#0a0c14;border:1px solid #1e2235;color:#94a3b8;padding:6px 10px;border-radius:6px;font-size:0.85rem">
           <option value="5">5</option>
           <option value="10" selected>10</option>
           <option value="20">20</option>
           <option value="50">50</option>
         </select>
         <button style="background:#6366f1;color:#fff;border:none;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600" onclick="generateBulk()">Generate</button>
-        <button style="background:#0f1117;border:1px solid #2d3148;color:#94a3b8;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem" onclick="copyBulk()">Copy All</button>
+        <button style="background:#0a0c14;border:1px solid #1e2235;color:#94a3b8;padding:7px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem" onclick="copyBulk()">Copy All</button>
       </div>
     </div>
     <div class="bulk-list" id="bulkList">Click Generate above to create multiple passwords at once.</div>
