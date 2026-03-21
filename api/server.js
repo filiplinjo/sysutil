@@ -114,6 +114,42 @@ function isValidIPv4(s)   { return IPV4_RE.test(s) && s.split('.').every(n => +n
 function isValidIPv6(s)   { return IPV6_RE.test(s); }
 function isIP(s)          { return isValidIPv4(s) || isValidIPv6(s); }
 
+// ── SSRF protection — block private/internal IP ranges ───────────────────────
+function isPrivateIP(ip) {
+  if (!isValidIPv4(ip)) return false;
+  const [a, b, c] = ip.split('.').map(Number);
+  return (
+    a === 10 ||                                    // 10.0.0.0/8
+    a === 127 ||                                   // 127.0.0.0/8 (loopback)
+    a === 169 && b === 254 ||                      // 169.254.0.0/16 (link-local)
+    a === 172 && b >= 16 && b <= 31 ||             // 172.16.0.0/12
+    a === 192 && b === 168 ||                      // 192.168.0.0/16
+    a === 0 ||                                     // 0.0.0.0/8
+    a === 100 && b >= 64 && b <= 127 ||            // 100.64.0.0/10 (CGNAT)
+    a === 198 && (b === 18 || b === 19) ||         // 198.18.0.0/15 (benchmarking)
+    a === 203 && b === 0 && c === 113 ||           // 203.0.113.0/24 (documentation)
+    ip === '255.255.255.255'                       // broadcast
+  );
+}
+
+async function resolveAndCheckSSRF(host) {
+  // If it's already an IP, check directly
+  if (isValidIPv4(host)) {
+    if (isPrivateIP(host)) throw new Error('Private/internal IP addresses are not allowed.');
+    return;
+  }
+  // Resolve domain to IP and check
+  try {
+    const addrs = await dns.resolve4(host);
+    for (const addr of addrs) {
+      if (isPrivateIP(addr)) throw new Error('Domain resolves to a private/internal IP address.');
+    }
+  } catch (e) {
+    if (e.message.includes('private') || e.message.includes('internal')) throw e;
+    // DNS resolution failure is fine — let the tool handle it
+  }
+}
+
 // ── Ollama helper ─────────────────────────────────────────────────────────────
 function extractJSON(text) {
   // Direct parse first
@@ -469,6 +505,7 @@ app.get('/api/ip', async (req, res) => {
 app.get('/api/ssl', async (req, res) => {
   const host = (req.query.host || '').trim().replace(/^https?:\/\//, '').split('/')[0].split(':')[0];
   if (!host || !isValidDomain(host)) return res.status(400).json({ error: 'Invalid domain.' });
+  try { await resolveAndCheckSSRF(host); } catch (e) { return res.status(400).json({ error: e.message }); }
 
   const cacheKey = 'ssl:' + host;
   const cached   = getCache(cacheKey);
@@ -520,6 +557,7 @@ app.get('/api/ports', async (req, res) => {
   const host = (req.query.host || '').trim();
   if (!host || (!isValidDomain(host) && !isValidIPv4(host)))
     return res.status(400).json({ error: 'Invalid host.' });
+  try { await resolveAndCheckSSRF(host); } catch (e) { return res.status(400).json({ error: e.message }); }
 
   const requested = req.query.ports
     ? req.query.ports.split(',').map(Number).filter(p => ALLOWED_PORTS.has(p)).slice(0, 20)
@@ -544,6 +582,7 @@ app.get('/api/ping', async (req, res) => {
   const host = (req.query.host || '').trim();
   if (!host || !/^[a-zA-Z0-9.\-]+$/.test(host))
     return res.status(400).json({ error: 'Invalid host.' });
+  try { await resolveAndCheckSSRF(host); } catch (e) { return res.status(400).json({ error: e.message }); }
 
   try {
     const output = await new Promise((resolve, reject) =>
@@ -560,6 +599,7 @@ app.get('/api/traceroute', async (req, res) => {
   const host = (req.query.host || '').trim();
   if (!host || !/^[a-zA-Z0-9.\-]+$/.test(host))
     return res.status(400).json({ error: 'Invalid host.' });
+  try { await resolveAndCheckSSRF(host); } catch (e) { return res.status(400).json({ error: e.message }); }
 
   try {
     const output = await new Promise((resolve, reject) =>
@@ -576,6 +616,13 @@ app.get('/api/speed', async (req, res) => {
   let url = (req.query.url || '').trim();
   if (!url) return res.status(400).json({ error: 'url required' });
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  try {
+    const hostname = new URL(url).hostname;
+    await resolveAndCheckSSRF(hostname);
+  } catch (e) {
+    if (e.message.includes('private') || e.message.includes('internal')) return res.status(400).json({ error: e.message });
+  }
 
   try {
     const t0       = Date.now();
