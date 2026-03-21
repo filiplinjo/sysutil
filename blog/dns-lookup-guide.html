@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/gmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone=window.ezstandalone||{};ezstandalone.cmd=ezstandalone.cmd||[];</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to DNS lookup. Learn how DNS works, understand every record type (A, AAAA, MX, CNAME, TXT, NS), and use nslookup and dig to query DNS records like a pro.">
+<meta name="keywords" content="dns lookup, how to look up dns records, what is dns, dns record types explained, nslookup tutorial, dig command dns, dns propagation, ttl dns">
+<title>DNS Lookup Guide: Understanding DNS Records &amp; How to Use nslookup | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="DNS Lookup Guide: Understanding DNS Records &amp; How to Use nslookup | SysUtil">
+<meta property="og:description" content="Learn how DNS works, understand every record type, and use nslookup and dig to query DNS records like a pro.">
+<meta property="og:url" content="https://sysutil.dev/blog/dns-lookup-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DNS Lookup Guide | SysUtil">
+<meta name="twitter:description" content="Learn how DNS works, understand every record type, and use nslookup and dig to query DNS records like a pro.">
+<link rel="canonical" href="https://sysutil.dev/blog/dns-lookup-guide">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=6">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  td:first-child{font-family:monospace;color:#6366f1;font-weight:600}
+  tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a DNS lookup?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A DNS lookup is the process of querying the Domain Name System to retrieve records associated with a domain name. The most common lookup resolves a domain to its IP address (an A or AAAA record), but you can also look up mail servers (MX), name servers (NS), text verification records (TXT), and more. You can perform a DNS lookup using an online tool, the nslookup command, or the dig command."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I look up DNS records for a domain?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There are three easy ways: (1) Use an online DNS lookup tool like sysutil.dev/dns — enter any domain and choose the record type. (2) Use nslookup in your terminal: nslookup -type=MX example.com. (3) Use dig for more detail: dig example.com MX. All three methods query the public DNS system and return the current published records."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does DNS propagation take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DNS propagation typically takes anywhere from a few minutes to 48 hours, depending on the TTL (Time To Live) of the old record and how quickly DNS resolvers around the world refresh their caches. Records with a low TTL (300 seconds / 5 minutes) propagate much faster than those with a high TTL (86400 seconds / 24 hours). To speed up a planned change, lower your TTL to 300 at least 24 hours before making the update."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between an A record and a CNAME record?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An A record maps a domain name directly to an IPv4 address (e.g., example.com → 93.184.216.34). A CNAME (Canonical Name) record maps a domain name to another domain name (e.g., www.example.com → example.com), acting as an alias. The resolver then follows the chain and looks up the target domain's A record. You cannot use a CNAME on a bare/apex domain (e.g., example.com) — only on subdomains."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does TTL mean in DNS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TTL stands for Time To Live. It is a value (in seconds) set on each DNS record that tells resolvers and caches how long they should store the record before querying authoritative servers again. A TTL of 3600 means the record can be cached for 1 hour. Lower TTLs give you faster propagation when you change records, but generate more DNS queries. Higher TTLs reduce query load and improve resolution speed for end users."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<script src="/nav.js?v=5"></script>
+<div class="container">
+<header>
+  <div class="meta">Guide · DNS · 9 min read</div>
+  <h1>DNS Lookup Guide: Understanding DNS Records &amp; How to Use nslookup</h1>
+  <p class="intro">Everything you need to know about DNS — how name resolution works, every record type explained, TTL and propagation, and how to query DNS from the command line.</p>
+</header>
+
+<div class="cta-box">
+  <p>Look up any domain's DNS records instantly — A, AAAA, MX, CNAME, TXT, NS, and more.</p>
+  <a href="/dns/" class="cta-btn">→ Open DNS Lookup Tool</a>
+</div>
+
+<h2>What Is DNS?</h2>
+<p>DNS — the Domain Name System — is often called the <strong style="color:#e2e8f0">phone book of the internet</strong>. When you type <code>example.com</code> into your browser, your computer doesn't know where that is. It needs a numeric IP address like <code>93.184.216.34</code> to actually reach the server. DNS is the system that performs this translation.</p>
+<p>Every device on the internet has an IP address. Domain names exist because humans are much better at remembering words than strings of numbers. DNS bridges that gap — it's a globally distributed database that maps human-readable names to machine-readable addresses.</p>
+<p>DNS was designed in the early 1980s and has scaled to handle hundreds of billions of queries per day across the entire internet, all while remaining fast enough that lookups typically complete in milliseconds.</p>
+
+<h2>How DNS Resolution Works Step by Step</h2>
+<p>When your browser needs to resolve a domain name, a multi-step process kicks off behind the scenes. Most of the time this takes under 50 milliseconds — so fast you never notice it.</p>
+
+<h3>The four players</h3>
+<table>
+  <tr><th>Component</th><th>Role</th></tr>
+  <tr><td>Recursive Resolver</td><td>Your ISP's (or chosen public) DNS server — does the legwork on your behalf</td></tr>
+  <tr><td>Root Name Servers</td><td>13 root server clusters worldwide — the top of the DNS hierarchy</td></tr>
+  <tr><td>TLD Name Servers</td><td>Handle top-level domains like .com, .org, .net — know which authoritative server to ask next</td></tr>
+  <tr><td>Authoritative Name Server</td><td>The final answer — holds the actual DNS records for the domain</td></tr>
+</table>
+
+<h3>The resolution sequence</h3>
+<pre><code>1. You type "example.com" in your browser.
+
+2. Browser checks its own cache → not found.
+   OS checks /etc/hosts → not found.
+   OS asks the Recursive Resolver (e.g. 8.8.8.8).
+
+3. Recursive Resolver checks its cache → not found.
+   Asks a Root Name Server: "Who handles .com?"
+
+4. Root Name Server replies:
+   "Ask the .com TLD server at 192.5.6.30"
+
+5. Recursive Resolver asks the .com TLD server:
+   "Who handles example.com?"
+
+6. TLD server replies:
+   "Ask the authoritative server at ns1.example.com"
+
+7. Recursive Resolver asks ns1.example.com:
+   "What is the A record for example.com?"
+
+8. Authoritative server replies: "93.184.216.34, TTL 3600"
+
+9. Recursive Resolver caches the result for 3600 seconds,
+   then returns 93.184.216.34 to your browser.
+
+10. Your browser connects to 93.184.216.34 — the page loads.</code></pre>
+
+<div class="tip-box">
+  <p><strong>Tip:</strong> Steps 3–8 only happen on a cache miss. On subsequent lookups within the TTL window, the resolver returns the cached answer immediately — which is why DNS feels near-instant for popular domains.</p>
+</div>
+
+<h2>DNS Record Types Explained</h2>
+<p>DNS isn't just for IP addresses. There are many record types, each serving a specific purpose. Here's a complete reference for the records you'll encounter most often.</p>
+
+<table>
+  <tr><th>Type</th><th>Full Name</th><th>Purpose</th><th>Example Value</th></tr>
+  <tr><td>A</td><td>Address</td><td>Maps a domain to an IPv4 address</td><td><code>93.184.216.34</code></td></tr>
+  <tr><td>AAAA</td><td>IPv6 Address</td><td>Maps a domain to an IPv6 address</td><td><code>2606:2800:220:1:248:1893:25c8:1946</code></td></tr>
+  <tr><td>CNAME</td><td>Canonical Name</td><td>Alias — points one domain to another domain name</td><td><code>www → example.com</code></td></tr>
+  <tr><td>MX</td><td>Mail Exchange</td><td>Specifies the mail server(s) for a domain, with priority</td><td><code>10 mail.example.com</code></td></tr>
+  <tr><td>TXT</td><td>Text</td><td>Holds arbitrary text — used for SPF, DKIM, domain verification</td><td><code>v=spf1 include:_spf.google.com ~all</code></td></tr>
+  <tr><td>NS</td><td>Name Server</td><td>Lists the authoritative name servers for the domain</td><td><code>ns1.example.com</code></td></tr>
+  <tr><td>PTR</td><td>Pointer</td><td>Reverse DNS — maps an IP address back to a domain name</td><td><code>34.216.184.93.in-addr.arpa → example.com</code></td></tr>
+  <tr><td>SOA</td><td>Start of Authority</td><td>Administrative info about the zone — primary NS, contact email, serial number</td><td><code>ns1.example.com. admin.example.com. 2024010101 …</code></td></tr>
+  <tr><td>CAA</td><td>Certification Authority Authorization</td><td>Restricts which CAs can issue SSL certificates for the domain</td><td><code>0 issue "letsencrypt.org"</code></td></tr>
+</table>
+
+<h3>A record — the workhorse</h3>
+<p>The A record is what most people mean when they say "DNS record." It's a direct mapping from a hostname to an IPv4 address. A domain can have multiple A records pointing to different IPs for load balancing or redundancy — resolvers typically return all of them and clients rotate through.</p>
+
+<h3>CNAME — aliases and subdomains</h3>
+<p>CNAMEs are useful for subdomains that should track another name. For example, <code>www.example.com</code> might CNAME to <code>example.com</code>, so you only need to update one A record when your IP changes. Important constraint: you cannot use a CNAME on an apex/bare domain (<code>example.com</code> itself) — only on subdomains.</p>
+
+<h3>MX — email routing</h3>
+<p>MX records tell the internet where to deliver email for your domain. Each MX record has a priority number — lower numbers are tried first. If the lowest-priority server is unreachable, the sender tries the next one.</p>
+<pre><code># Example MX setup with primary and backup
+example.com  MX  10  mail1.example.com   ← primary (tried first)
+example.com  MX  20  mail2.example.com   ← backup</code></pre>
+
+<h3>TXT — verification and email security</h3>
+<p>TXT records are used for a wide variety of purposes, all relying on the ability to store readable text in DNS:</p>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#e2e8f0">SPF</strong> — lists servers authorized to send email from your domain</li>
+  <li><strong style="color:#e2e8f0">DKIM</strong> — stores the public key used to verify email signatures</li>
+  <li><strong style="color:#e2e8f0">DMARC</strong> — defines policy for how receivers handle SPF/DKIM failures</li>
+  <li><strong style="color:#e2e8f0">Domain verification</strong> — Google, GitHub, and others ask you to add a TXT record to prove domain ownership</li>
+</ul>
+
+<h2>How to Do a DNS Lookup</h2>
+
+<h3>Using the online DNS Lookup tool</h3>
+<p>The fastest way is to use <a href="/dns/" style="color:#818cf8">sysutil.dev/dns</a>. Enter any domain name, select the record type you want (A, MX, TXT, etc.), and hit lookup. You'll immediately see all matching records along with their TTL values — no installation required, works from any device.</p>
+
+<div class="tip-box">
+  <p><strong>Tip:</strong> Use the online tool when you need to see what the public internet sees for a domain — especially useful during DNS propagation when your local resolver's cache may be stale.</p>
+</div>
+
+<h3>Using nslookup</h3>
+<p><code>nslookup</code> is available on Windows, macOS, and Linux without installing anything extra. It's the quickest command-line option for basic lookups.</p>
+<pre><code># Basic A record lookup
+nslookup example.com
+
+# Look up a specific record type
+nslookup -type=MX example.com
+nslookup -type=TXT example.com
+nslookup -type=NS example.com
+nslookup -type=AAAA example.com
+
+# Query a specific DNS server (bypasses your default resolver)
+nslookup example.com 8.8.8.8
+nslookup example.com 1.1.1.1
+
+# Reverse DNS lookup (IP to hostname)
+nslookup 93.184.216.34
+
+# Interactive mode — run multiple queries
+nslookup
+> set type=MX
+> example.com
+> exit</code></pre>
+
+<h3>Using dig (recommended for deeper inspection)</h3>
+<p><code>dig</code> (Domain Information Groper) gives you more detail than nslookup and is the preferred tool for diagnosing DNS issues. It's available by default on macOS and Linux; on Windows, install it via BIND or use WSL.</p>
+<pre><code># Basic A record lookup
+dig example.com
+
+# Specific record type
+dig example.com MX
+dig example.com TXT
+dig example.com NS
+dig example.com AAAA
+
+# Short output — just the answer
+dig example.com A +short
+
+# Query a specific DNS server
+dig @8.8.8.8 example.com A
+dig @1.1.1.1 example.com MX
+
+# Trace the full resolution path (root → TLD → authoritative)
+dig +trace example.com
+
+# Reverse DNS lookup
+dig -x 93.184.216.34
+
+# Show only the TTL
+dig example.com A +noall +answer
+
+# Check DNSSEC
+dig example.com +dnssec</code></pre>
+
+<pre><code># Example dig output — reading the ANSWER SECTION
+$ dig example.com A +noall +answer
+
+;; ANSWER SECTION:
+example.com.      3600    IN    A    93.184.216.34
+#   ^hostname     ^TTL         ^type  ^value</code></pre>
+
+<div class="tip-box">
+  <p><strong>Tip:</strong> <code>dig +trace</code> is invaluable for debugging. It shows every step of the resolution chain, which makes it obvious if a delegation is broken or if the wrong nameserver is answering.</p>
+</div>
+
+<h2>TTL Explained — Time To Live</h2>
+<p>Every DNS record has a TTL (Time To Live) value measured in seconds. TTL controls how long a resolver or cache is allowed to store a record before discarding it and fetching a fresh copy from the authoritative server.</p>
+
+<table>
+  <tr><th>TTL Value</th><th>Duration</th><th>Typical Use Case</th></tr>
+  <tr><td>60</td><td>1 minute</td><td>Failover setups, active migrations</td></tr>
+  <tr><td>300</td><td>5 minutes</td><td>Low-propagation-delay scenarios</td></tr>
+  <tr><td>3600</td><td>1 hour</td><td>Standard default for most records</td></tr>
+  <tr><td>86400</td><td>24 hours</td><td>Stable records that rarely change (NS, SOA)</td></tr>
+</table>
+
+<h3>Why TTL matters</h3>
+<p>When you update a DNS record, the old value stays cached in resolvers around the world until their TTL expires. If your A record had a TTL of 86400, some users could see the old IP for up to 24 hours after you make a change. This is DNS propagation.</p>
+
+<div class="warn-box">
+  <p><strong>Warning:</strong> If you're planning a server migration, lower your TTL to 300 (5 minutes) at least 24–48 hours before the change. This minimizes the propagation window. Remember to raise it back after migration is complete.</p>
+</div>
+
+<h2>DNS Propagation — Why Records Don't Update Instantly</h2>
+<p>When you update a DNS record at your registrar or DNS host, the change doesn't appear everywhere at the same time. This delay is called DNS propagation, and it's one of the most commonly misunderstood aspects of DNS.</p>
+
+<h3>Why propagation takes time</h3>
+<p>There is no central "push" mechanism in DNS. Instead, every resolver worldwide caches records independently and only fetches fresh data when the TTL expires. The timeline looks like this:</p>
+<pre><code>T=0:00   You update the A record for example.com at your DNS host.
+         The authoritative server now returns the new IP.
+
+T=0:01   Users whose resolver hadn't cached the record get the new IP.
+
+T+1hr    Resolvers that cached a TTL=3600 record start getting the new IP.
+
+T+24hr   Resolvers that cached a TTL=86400 record finally update.
+         Most of the world is now seeing the new record.</code></pre>
+
+<h3>Checking propagation from different locations</h3>
+<p>To see what different resolvers around the world are returning, use the online DNS tool at <a href="/dns/" style="color:#818cf8">sysutil.dev/dns</a> or compare results by querying multiple public DNS servers directly:</p>
+<pre><code># Compare what Google DNS vs Cloudflare vs your ISP sees
+dig @8.8.8.8   example.com A +short
+dig @1.1.1.1   example.com A +short
+dig @9.9.9.9   example.com A +short
+dig            example.com A +short    # your default resolver</code></pre>
+
+<div class="tip-box">
+  <p><strong>Tip:</strong> If all three public resolvers return the new IP but some of your users still see the old one, their ISP's resolver is the one that hasn't expired its cache yet. There's nothing you can do except wait for their TTL to expire.</p>
+</div>
+
+<h2>Common DNS Issues and How to Diagnose Them</h2>
+
+<h3>Domain resolves to the wrong IP</h3>
+<p>After a server migration, some users reach the old server. Check that the A record at your DNS host shows the new IP, then verify different resolvers are returning it. The likely cause is stale cache — wait for the old TTL to expire.</p>
+<pre><code># Check what the authoritative server says (bypasses all caches)
+dig @ns1.yourdns.com example.com A +short</code></pre>
+
+<h3>Email not delivering — MX record problems</h3>
+<p>If email to your domain is bouncing, your MX records may be missing, incorrect, or pointing to a non-existent hostname. Check both the MX record itself and that the target hostname has a valid A record.</p>
+<pre><code># Check MX records
+dig example.com MX +short
+
+# Verify the mail server hostname resolves
+dig mail.example.com A +short</code></pre>
+
+<div class="warn-box">
+  <p><strong>Warning:</strong> Never point an MX record at a CNAME. The DNS specification (RFC 2181) prohibits this. Always point MX records at hostnames that have their own A records.</p>
+</div>
+
+<h3>Subdomain not resolving</h3>
+<p>If <code>www.example.com</code> or <code>api.example.com</code> isn't resolving, check that an A record or CNAME exists for that exact subdomain in your DNS zone. A common mistake is adding the record as <code>www.example.com.</code> (with trailing dot causing a double-domain issue) or omitting it entirely.</p>
+<pre><code>dig www.example.com A +short
+dig api.example.com A +short</code></pre>
+
+<h3>SPF / DKIM failing — TXT record issues</h3>
+<p>Email authentication failures usually mean your SPF, DKIM, or DMARC TXT records are missing or malformed. Verify the TXT records exist and contain the exact strings your mail provider specifies.</p>
+<pre><code># Check SPF
+dig example.com TXT +short | grep spf
+
+# Check DMARC
+dig _dmarc.example.com TXT +short
+
+# Check DKIM (replace "selector" with your actual DKIM selector)
+dig selector._domainkey.example.com TXT +short</code></pre>
+
+<h3>NXDOMAIN — domain doesn't exist</h3>
+<p>An <code>NXDOMAIN</code> response means the DNS system has no records for that name at all. This could mean the domain has expired, was never registered, or the record was accidentally deleted from the zone.</p>
+<pre><code># dig shows NXDOMAIN in the status field
+dig nonexistent.example.com A
+# ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN</code></pre>
+
+<h2>Public DNS Servers — A Comparison</h2>
+<p>By default, your device uses your ISP's DNS resolver. You can change this to a public DNS service for better performance, privacy, or filtering. Here are the most widely used options:</p>
+
+<table>
+  <tr><th>Provider</th><th>Primary</th><th>Secondary</th><th>Notable Feature</th></tr>
+  <tr><td>Google Public DNS</td><td>8.8.8.8</td><td>8.8.4.4</td><td>Fast, globally distributed, no filtering</td></tr>
+  <tr><td>Cloudflare</td><td>1.1.1.1</td><td>1.0.0.1</td><td>Fastest globally (per benchmarks), strong privacy pledge</td></tr>
+  <tr><td>Quad9</td><td>9.9.9.9</td><td>149.112.112.112</td><td>Blocks known malicious domains by default</td></tr>
+  <tr><td>OpenDNS (Cisco)</td><td>208.67.222.222</td><td>208.67.220.220</td><td>Optional content filtering, phishing protection</td></tr>
+  <tr><td>Cloudflare for Families</td><td>1.1.1.3</td><td>1.0.0.3</td><td>Blocks malware + adult content</td></tr>
+</table>
+
+<h3>IPv6 addresses</h3>
+<table>
+  <tr><th>Provider</th><th>Primary (IPv6)</th><th>Secondary (IPv6)</th></tr>
+  <tr><td>Google</td><td>2001:4860:4860::8888</td><td>2001:4860:4860::8844</td></tr>
+  <tr><td>Cloudflare</td><td>2606:4700:4700::1111</td><td>2606:4700:4700::1001</td></tr>
+  <tr><td>Quad9</td><td>2620:fe::fe</td><td>2620:fe::9</td></tr>
+</table>
+
+<div class="tip-box">
+  <p><strong>Tip:</strong> Cloudflare's 1.1.1.1 consistently ranks as the fastest public DNS resolver in independent benchmarks. If you're not using it already, it's a simple change that can noticeably speed up browsing — especially on pages that load resources from many different domains.</p>
+</div>
+
+<h3>Changing your DNS server</h3>
+<pre><code># Linux — edit /etc/resolv.conf (or use systemd-resolved)
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+
+# macOS — System Settings → Network → your connection → DNS tab
+
+# Windows — Control Panel → Network Adapters → IPv4 Properties → DNS
+
+# Router-level change (affects all devices on your network)
+# Log in to your router admin page (usually 192.168.1.1)
+# Find DNS settings under WAN or DHCP settings</pre></code>
+
+<div class="cta-box">
+  <p>Ready to inspect DNS records for any domain? Use the free DNS Lookup tool — no installation, instant results.</p>
+  <a href="/dns/" class="cta-btn">→ Try the DNS Lookup Tool</a>
+</div>
+
+<footer>
+  <p>More tools: <a href="/ip/">IP Lookup</a> · <a href="/ssl/">SSL Checker</a> · <a href="/network/">Network Tools</a> · <a href="/blog/">All Guides</a></p>
+  <p style="margin-top:8px">© 2026 SysUtil</p>
+</footer>
+</div>
+</body>
+</html>

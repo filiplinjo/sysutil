@@ -29,4 +29,7 @@
 <url><loc>https://sysutil.dev/blog/ip-address-lookup-guide</loc><lastmod>2026-03-21</lastmod><priority>0.8</priority></url>
 <url><loc>https://sysutil.dev/blog/ssl-certificate-checker-guide</loc><lastmod>2026-03-21</lastmod><priority>0.8</priority></url>
 <url><loc>https://sysutil.dev/blog/network-tools-guide</loc><lastmod>2026-03-21</lastmod><priority>0.8</priority></url>
+<url><loc>https://sysutil.dev/cve/</loc><lastmod>2026-03-21</lastmod><priority>0.9</priority></url>
+<url><loc>https://sysutil.dev/blog/dns-lookup-guide</loc><lastmod>2026-03-21</lastmod><priority>0.8</priority></url>
+<url><loc>https://sysutil.dev/blog/cve-vulnerability-guide</loc><lastmod>2026-03-21</lastmod><priority>0.8</priority></url>
 </urlset>
