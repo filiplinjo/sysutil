@@ -170,7 +170,13 @@ function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['speed','ports','ping','trace'][i] === name));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
+  history.replaceState(null, '', '#' + name);
 }
+// Open tab from URL hash on load
+(function() {
+  var hash = window.location.hash.replace('#','');
+  if (['speed','ports','ping','trace'].includes(hash)) switchTab(hash);
+})();
 
 function toggleCat(btn) { btn.classList.toggle('on'); }
 

@@ -62,13 +62,20 @@
               '</div>' +
 
               '<div class="nav-cat">' +
-                '<div class="nav-cat-label">Web / Network</div>' +
+                '<div class="nav-cat-label">Web</div>' +
                 link('/http-status', 'http status') +
                 link('/timestamp', 'timestamp') +
-                link('/dns', 'dns') +
                 link('/ip', 'ip lookup') +
                 link('/ssl', 'ssl checker') +
-                link('/network', 'network tools') +
+              '</div>' +
+
+              '<div class="nav-cat">' +
+                '<div class="nav-cat-label">Network</div>' +
+                link('/dns', 'dns') +
+                link('/network#speed', 'speed test') +
+                link('/network#ports', 'port checker') +
+                link('/network#ping', 'ping') +
+                link('/network#trace', 'traceroute') +
               '</div>' +
 
             '</div>' +
