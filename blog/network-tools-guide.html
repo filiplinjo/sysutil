@@ -100,7 +100,7 @@
 </script>
 </head>
 <body>
-<script src="/nav.js"></script>
+<script src="/nav.js?v=4"></script>
 <div class="container">
 <header>
   <div class="meta">Guide · Network Diagnostics · 8 min read</div>
@@ -110,7 +110,10 @@
 
 <div class="cta-box">
   <p>Run ping, traceroute, port checks, and speed tests from your browser — no install required.</p>
-  <a href="/network/" class="cta-btn">→ Open Network Tools</a>
+  <a href="/network#speed" class="cta-btn" style="margin:4px">⚡ Speed Test</a>
+  <a href="/network#ports" class="cta-btn" style="margin:4px;background:#06b6d4">🔌 Port Checker</a>
+  <a href="/network#ping"  class="cta-btn" style="margin:4px;background:#10b981">📡 Ping</a>
+  <a href="/network#trace" class="cta-btn" style="margin:4px;background:#a855f7">🗺 Traceroute</a>
 </div>
 
 <h2>Website Speed Test</h2>
@@ -307,8 +310,11 @@ ping -f -l 1472 example.com
 <p>If large pings fail but small ones succeed, set your router's MTU to a smaller value (1400 is safe for most VPN/PPPoE setups).</p>
 
 <div class="cta-box">
-  <p>Run ping, traceroute, port checks, and speed tests directly in your browser.</p>
-  <a href="/network/" class="cta-btn">→ Open Network Tools</a>
+  <p>Run all of these directly in your browser — no install, no signup.</p>
+  <a href="/network#speed" class="cta-btn" style="margin:4px">⚡ Speed Test</a>
+  <a href="/network#ports" class="cta-btn" style="margin:4px;background:#06b6d4">🔌 Port Checker</a>
+  <a href="/network#ping"  class="cta-btn" style="margin:4px;background:#10b981">📡 Ping</a>
+  <a href="/network#trace" class="cta-btn" style="margin:4px;background:#a855f7">🗺 Traceroute</a>
 </div>
 
 <footer>
