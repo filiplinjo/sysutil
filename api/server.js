@@ -439,7 +439,7 @@ app.get('/api/whois', async (req, res) => {
 // ── IP lookup ─────────────────────────────────────────────────────────────────
 app.get('/api/ip', async (req, res) => {
   const query = (req.query.q || '').trim();
-  const ip    = query || req.ip.replace(/^::ffff:/, '');
+  const ip    = query || req.headers['cf-connecting-ip'] || req.ip.replace(/^::ffff:/, '');
 
   if (query && !isValidIPv4(query) && !isValidIPv6(query) && !isValidDomain(query))
     return res.status(400).json({ error: 'Invalid IP address or domain.' });
