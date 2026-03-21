@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone=window.ezstandalone||{};ezstandalone.cmd=ezstandalone.cmd||[];</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to network diagnostic tools. Learn how to use ping, traceroute, port scanners, and speed tests to troubleshoot internet and network connectivity problems.">
+<meta name="keywords" content="network tools, ping test, traceroute, port checker, website speed test, network diagnostics, troubleshoot internet connection, check open ports">
+<title>Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test | SysUtil">
+<meta property="og:description" content="Learn how to use ping, traceroute, port scanners, and speed tests to diagnose network problems.">
+<meta property="og:url" content="https://sysutil.dev/blog/network-tools-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Network Tools Guide | SysUtil">
+<meta name="twitter:description" content="Learn how to use ping, traceroute, port scanners, and speed tests to diagnose network problems.">
+<link rel="canonical" href="https://sysutil.dev/blog/network-tools-guide">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=3">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  td:first-child{font-family:monospace;color:#6366f1;font-weight:600}
+  tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I test my internet connection speed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use a website speed test tool that measures Time to First Byte (TTFB) and total load time for a real URL. You can also use the browser's built-in DevTools Network tab to see exactly how long each request takes. Command line: curl -o /dev/null -s -w '%{time_total}' https://example.com"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check if a port is open?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use a port checker tool — enter the hostname and select ports to test. From the command line: nc -zv example.com 443 or nmap -p 443 example.com. A port that is open means a service is actively listening and accepting connections on that port."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does ping measure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ping measures round-trip time (RTT) — how long it takes for a small packet to travel from your machine to a remote host and back. It also shows packet loss percentage. High ping (latency) means slow responses; packet loss means an unreliable connection."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is traceroute used for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Traceroute shows the path network packets take from your machine to a destination, listing every router (hop) along the way with its latency. It's used to identify where in the network a connection is slow or dropping packets — whether the problem is in your ISP, a transit provider, or near the destination."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a good ping response time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Under 20ms is excellent (same city), 20-50ms is good (same country), 50-100ms is acceptable, 100-200ms is noticeable, and over 200ms is poor for interactive use. For gaming, under 50ms is generally recommended. For web browsing, latency under 100ms rarely affects the experience."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<script src="/nav.js"></script>
+<div class="container">
+<header>
+  <div class="meta">Guide · Network Diagnostics · 8 min read</div>
+  <h1>Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test</h1>
+  <p class="intro">Learn how to use the essential network diagnostic tools to troubleshoot connectivity, measure performance, and understand how your traffic flows.</p>
+</header>
+
+<div class="cta-box">
+  <p>Run ping, traceroute, port checks, and speed tests from your browser — no install required.</p>
+  <a href="/network/" class="cta-btn">→ Open Network Tools</a>
+</div>
+
+<h2>Website Speed Test</h2>
+<p>A website speed test measures how quickly a server responds to an HTTP request. This is useful for checking your own server's performance or comparing response times across different hosting providers.</p>
+
+<h3>Key metrics</h3>
+<table>
+  <tr><th>Metric</th><th>What it measures</th><th>Good target</th></tr>
+  <tr><td>TTFB</td><td>Time to First Byte — server processing + network latency</td><td>&lt; 200ms</td></tr>
+  <tr><td>Total time</td><td>Full response including download</td><td>&lt; 1s</td></tr>
+  <tr><td>Response size</td><td>Bytes transferred</td><td>Depends on content</td></tr>
+  <tr><td>HTTP status</td><td>Whether the request succeeded</td><td>200</td></tr>
+</table>
+
+<p><strong>TTFB</strong> (Time to First Byte) is the most important metric for server performance. It measures how long the server takes to begin responding — covering DNS resolution, TCP handshake, TLS negotiation, and server processing time.</p>
+
+<h3>From the command line</h3>
+<pre><code># Measure response time breakdown
+curl -o /dev/null -s -w "\
+DNS:        %{time_namelookup}s\n\
+Connect:    %{time_connect}s\n\
+TLS:        %{time_appconnect}s\n\
+TTFB:       %{time_starttransfer}s\n\
+Total:      %{time_total}s\n\
+Size:       %{size_download} bytes\n" \
+https://example.com
+</code></pre>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> High TTFB often means a slow database query or missing cache. High total time with low TTFB usually means a large response payload — optimize images and minify assets.</p>
+</div>
+
+<h2>Port Checker</h2>
+<p>A port checker tests whether a specific TCP port on a remote host is open and accepting connections. This is essential for verifying firewall rules, checking if a service is running, or diagnosing why a connection is refused.</p>
+
+<h3>Common ports and their services</h3>
+<table>
+  <tr><th>Port</th><th>Protocol</th><th>Service</th></tr>
+  <tr><td>21</td><td>TCP</td><td>FTP</td></tr>
+  <tr><td>22</td><td>TCP</td><td>SSH</td></tr>
+  <tr><td>25</td><td>TCP</td><td>SMTP (email)</td></tr>
+  <tr><td>53</td><td>TCP/UDP</td><td>DNS</td></tr>
+  <tr><td>80</td><td>TCP</td><td>HTTP</td></tr>
+  <tr><td>443</td><td>TCP</td><td>HTTPS</td></tr>
+  <tr><td>3306</td><td>TCP</td><td>MySQL</td></tr>
+  <tr><td>5432</td><td>TCP</td><td>PostgreSQL</td></tr>
+  <tr><td>6379</td><td>TCP</td><td>Redis</td></tr>
+  <tr><td>27017</td><td>TCP</td><td>MongoDB</td></tr>
+</table>
+
+<h3>Port states explained</h3>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#4ade80">Open</strong> — a service is listening and accepted the connection</li>
+  <li><strong style="color:#f87171">Closed</strong> — the host responded but no service is listening on that port</li>
+  <li><strong style="color:#fbbf24">Filtered</strong> — no response (firewall is dropping packets silently)</li>
+</ul>
+
+<h3>From the command line</h3>
+<pre><code># Check a single port with netcat
+nc -zv example.com 443
+
+# Check multiple ports with nmap
+nmap -p 22,80,443 example.com
+
+# Quick TCP connection test with bash
+timeout 2 bash -c 'echo >/dev/tcp/example.com/443' \
+  && echo "open" || echo "closed/filtered"
+</code></pre>
+
+<div class="warn-box">
+  <p>⚠️ <strong>Note:</strong> Never port scan systems you don't own or have explicit permission to test. Unauthorized scanning may violate computer misuse laws.</p>
+</div>
+
+<h2>Ping</h2>
+<p>Ping is the most basic network diagnostic tool. It sends ICMP Echo Request packets to a host and measures the round-trip time (RTT). Use it to verify a host is reachable and measure latency.</p>
+
+<h3>Reading ping output</h3>
+<pre><code>PING google.com (142.250.74.46): 56 data bytes
+64 bytes from 142.250.74.46: icmp_seq=0 ttl=118 time=12.4 ms
+64 bytes from 142.250.74.46: icmp_seq=1 ttl=118 time=11.9 ms
+64 bytes from 142.250.74.46: icmp_seq=2 ttl=118 time=12.1 ms
+64 bytes from 142.250.74.46: icmp_seq=3 ttl=118 time=11.8 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss
+round-trip min/avg/max/stddev = 11.8/12.1/12.4/0.2 ms</code></pre>
+
+<table>
+  <tr><th>Field</th><th>Meaning</th></tr>
+  <tr><td>icmp_seq</td><td>Packet sequence number</td></tr>
+  <tr><td>ttl</td><td>Time to live — hops remaining (starts at 64 or 128)</td></tr>
+  <tr><td>time</td><td>Round-trip time in milliseconds</td></tr>
+  <tr><td>packet loss</td><td>% of packets that didn't return</td></tr>
+  <tr><td>stddev</td><td>Jitter — variation in latency (lower is better)</td></tr>
+</table>
+
+<h3>Latency benchmarks</h3>
+<table>
+  <tr><th>RTT</th><th>Quality</th><th>Typical scenario</th></tr>
+  <tr><td>&lt; 5ms</td><td>Excellent</td><td>Same datacenter</td></tr>
+  <tr><td>5–20ms</td><td>Very good</td><td>Same city</td></tr>
+  <tr><td>20–50ms</td><td>Good</td><td>Same country</td></tr>
+  <tr><td>50–100ms</td><td>Acceptable</td><td>Cross-continent</td></tr>
+  <tr><td>100–200ms</td><td>Noticeable</td><td>Intercontinental</td></tr>
+  <tr><td>&gt; 200ms</td><td>Poor</td><td>Distant servers or congestion</td></tr>
+</table>
+
+<h3>Common ping flags</h3>
+<pre><code># Linux/Mac: send 10 packets
+ping -c 10 example.com
+
+# Set packet size (test MTU issues)
+ping -s 1400 example.com
+
+# Flood ping (requires root) — stress test
+ping -f example.com
+
+# Windows equivalent
+ping -n 10 example.com
+</code></pre>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> If ping shows 0% packet loss but your site feels slow, check the TTFB with a speed test — latency alone doesn't explain slow page loads. The bottleneck might be server-side processing.</p>
+</div>
+
+<h2>Traceroute</h2>
+<p>Traceroute maps the path packets take across the network, showing each router (hop) between you and the destination. It's invaluable for finding where in the network a problem lies.</p>
+
+<h3>How traceroute works</h3>
+<p>Traceroute sends packets with increasing TTL values starting at 1. Each router decrements the TTL; when it reaches 0 the router sends back a "Time Exceeded" message. By incrementing the TTL, traceroute reveals each hop in the path.</p>
+
+<h3>Reading traceroute output</h3>
+<pre><code>traceroute to google.com (142.250.74.46)
+ 1  192.168.1.1      1.2 ms   1.1 ms   1.0 ms   (your router)
+ 2  10.0.0.1         8.4 ms   8.6 ms   8.3 ms   (ISP gateway)
+ 3  72.14.215.165   11.2 ms  11.0 ms  11.3 ms   (ISP backbone)
+ 4  * * *                                        (no response)
+ 5  142.250.74.46   12.1 ms  12.0 ms  11.9 ms   (destination)</code></pre>
+
+<p>Each line shows: <strong>hop number</strong>, <strong>router IP/hostname</strong>, and <strong>three round-trip time measurements</strong>. Stars (<code>* * *</code>) mean the router didn't respond to traceroute — this is normal for many routers that block ICMP and doesn't necessarily indicate a problem.</p>
+
+<h3>What to look for</h3>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#e2e8f0">Sudden latency jump</strong> — a hop where RTT increases sharply is likely the bottleneck</li>
+  <li><strong style="color:#e2e8f0">All stars after a point</strong> — packets are being dropped beyond that hop</li>
+  <li><strong style="color:#e2e8f0">Routing loops</strong> — if you see the same IP multiple times, BGP routing may be misconfigured</li>
+  <li><strong style="color:#e2e8f0">Unexpected geography</strong> — traffic going through distant countries adds latency</li>
+</ul>
+
+<h3>Command line usage</h3>
+<pre><code># Linux
+traceroute example.com
+
+# Mac
+traceroute example.com
+
+# Windows
+tracert example.com
+
+# Use TCP instead of ICMP (bypasses some firewalls)
+traceroute -T -p 443 example.com
+
+# Limit hops
+traceroute -m 20 example.com
+</code></pre>
+
+<h2>Diagnosing Network Problems: A Workflow</h2>
+<p>When troubleshooting a connectivity issue, work through these steps in order:</p>
+
+<ol style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2.2">
+  <li><strong style="color:#e2e8f0">Ping the destination</strong> — Is the host reachable? What's the latency?</li>
+  <li><strong style="color:#e2e8f0">Check the port</strong> — Is the specific service port open? (e.g., port 443 for HTTPS)</li>
+  <li><strong style="color:#e2e8f0">Run traceroute</strong> — Where does the path slow down or fail?</li>
+  <li><strong style="color:#e2e8f0">Test speed</strong> — What is the TTFB and total response time?</li>
+  <li><strong style="color:#e2e8f0">Check DNS</strong> — Is the domain resolving to the right IP?</li>
+</ol>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> Run the same tests from multiple locations (your machine + an online tool) to distinguish between a problem on your end vs. the remote server.</p>
+</div>
+
+<h2>MTU and Packet Fragmentation</h2>
+<p>Maximum Transmission Unit (MTU) is the largest packet size a network can carry. Mismatched MTU settings cause intermittent failures that are hard to diagnose — large packets get silently dropped while small packets (like pings) succeed.</p>
+
+<pre><code># Find the path MTU to a host
+# Try progressively smaller sizes until it works
+ping -M do -s 1472 example.com    # 1472 + 28 header = 1500 (standard Ethernet)
+ping -M do -s 1400 example.com    # Works if 1472 fails (VPN or PPPoE)
+
+# On Windows
+ping -f -l 1472 example.com
+</code></pre>
+
+<p>If large pings fail but small ones succeed, set your router's MTU to a smaller value (1400 is safe for most VPN/PPPoE setups).</p>
+
+<div class="cta-box">
+  <p>Run ping, traceroute, port checks, and speed tests directly in your browser.</p>
+  <a href="/network/" class="cta-btn">→ Open Network Tools</a>
+</div>
+
+<footer>
+  <p>More tools: <a href="/ip/">IP Lookup</a> · <a href="/ssl/">SSL Checker</a> · <a href="/dns/">DNS Lookup</a> · <a href="/blog/">All Guides</a></p>
+  <p style="margin-top:8px">© 2026 SysUtil</p>
+</footer>
+</div>
+</body>
+</html>

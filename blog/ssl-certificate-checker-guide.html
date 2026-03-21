@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone=window.ezstandalone||{};ezstandalone.cmd=ezstandalone.cmd||[];</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to SSL certificate checking. Learn how to verify HTTPS certificates, check expiry dates, understand certificate chains, and troubleshoot SSL errors.">
+<meta name="keywords" content="ssl certificate checker, check ssl certificate, https certificate expiry, ssl expiry checker, tls certificate, ssl error, certificate chain">
+<title>SSL Certificate Checker: Complete Guide to HTTPS Certificates | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="SSL Certificate Checker: Complete Guide to HTTPS Certificates | SysUtil">
+<meta property="og:description" content="Learn how to check SSL certificates, verify expiry dates, and troubleshoot HTTPS errors.">
+<meta property="og:url" content="https://sysutil.dev/blog/ssl-certificate-checker-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSL Certificate Checker Guide | SysUtil">
+<meta name="twitter:description" content="Learn how to check SSL certificates, verify expiry dates, and troubleshoot HTTPS errors.">
+<link rel="canonical" href="https://sysutil.dev/blog/ssl-certificate-checker-guide">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=3">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  td:first-child{font-family:monospace;color:#6366f1;font-weight:600}
+  tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I check if an SSL certificate is valid?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can check an SSL certificate by visiting an SSL checker tool and entering the domain name. The tool will connect to the server and report whether the certificate is valid, when it expires, who issued it, and which domains it covers. You can also check in your browser by clicking the padlock icon in the address bar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check when my SSL certificate expires?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use an SSL certificate checker tool — enter your domain and it will show the exact expiry date and how many days remain. From the command line, use: echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/null | openssl x509 -noout -dates"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a certificate chain?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A certificate chain (or chain of trust) links your site's certificate back to a root certificate authority that browsers trust. It typically has three levels: the root CA, an intermediate CA, and your site certificate. If any link in the chain is missing or untrusted, browsers will show a security warning."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What causes an SSL certificate error?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Common causes include: the certificate has expired, the domain name doesn't match what the certificate covers, the certificate chain is incomplete (missing intermediate certificate), the certificate was issued by an untrusted authority, or the system clock is wrong. Use an SSL checker to diagnose which issue applies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between DV, OV, and EV certificates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DV (Domain Validation) only verifies you own the domain — cheapest and fastest, used by most websites. OV (Organization Validation) verifies the organization's identity — used by businesses. EV (Extended Validation) involves the most thorough vetting and used to show the company name in the browser bar, but most browsers no longer display EV differently."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<script src="/nav.js"></script>
+<div class="container">
+<header>
+  <div class="meta">Guide · SSL / TLS · 7 min read</div>
+  <h1>SSL Certificate Checker: Complete Guide to HTTPS Certificates</h1>
+  <p class="intro">Everything you need to know about SSL/TLS certificates — how to check them, what they contain, and how to fix common errors.</p>
+</header>
+
+<div class="cta-box">
+  <p>Check any website's SSL certificate instantly — expiry, issuer, and domain coverage.</p>
+  <a href="/ssl/" class="cta-btn">→ Open SSL Certificate Checker</a>
+</div>
+
+<h2>What Is an SSL Certificate?</h2>
+<p>An SSL (Secure Sockets Layer) certificate — more accurately called a TLS certificate today — is a digital file that authenticates a website's identity and enables encrypted connections. When you visit a site with <code>https://</code>, your browser verifies the site's certificate before establishing a secure connection.</p>
+<p>Certificates are issued by Certificate Authorities (CAs) — trusted organizations that verify identity before issuing a cert. Your browser comes with a list of trusted root CAs built in.</p>
+
+<h3>What a Certificate Contains</h3>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td>Subject</td><td>The domain or organization the cert belongs to</td></tr>
+  <tr><td>Issuer</td><td>The Certificate Authority that signed it</td></tr>
+  <tr><td>Valid From / To</td><td>The certificate's active date range</td></tr>
+  <tr><td>SANs</td><td>Subject Alternative Names — all domains covered</td></tr>
+  <tr><td>Serial Number</td><td>Unique ID assigned by the CA</td></tr>
+  <tr><td>Fingerprint</td><td>Hash of the certificate — used to verify authenticity</td></tr>
+</table>
+
+<h2>Certificate Types</h2>
+<p>There are three validation levels, each with a different level of identity verification:</p>
+<table>
+  <tr><th>Type</th><th>Validation</th><th>Typical Use</th><th>Cost</th></tr>
+  <tr><td>DV</td><td>Domain only</td><td>Personal sites, blogs</td><td>Free (Let's Encrypt)</td></tr>
+  <tr><td>OV</td><td>Organization verified</td><td>Business websites</td><td>Paid</td></tr>
+  <tr><td>EV</td><td>Extended — full legal entity check</td><td>Banks, enterprise</td><td>More expensive</td></tr>
+</table>
+
+<p>For most websites, a free DV certificate from Let's Encrypt is perfectly adequate. The padlock looks identical to end users regardless of certificate type.</p>
+
+<h2>How to Check an SSL Certificate</h2>
+
+<h3>Using the SSL Checker tool</h3>
+<p>Visit <a href="/ssl/" style="color:#818cf8">sysutil.dev/ssl</a> and enter any domain. You'll instantly see:</p>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li>Valid / expiring soon / expired status</li>
+  <li>Exact expiry date and days remaining</li>
+  <li>Who issued the certificate</li>
+  <li>All domains covered (SANs)</li>
+  <li>Serial number and fingerprint</li>
+</ul>
+
+<h3>In your browser</h3>
+<p>Click the padlock icon in the address bar of any HTTPS site. Then click "Connection is secure" → "Certificate is valid" to see full certificate details including the expiry date and issuer.</p>
+
+<h3>From the command line (openssl)</h3>
+<pre><code># View full certificate details
+echo | openssl s_client -servername example.com \
+  -connect example.com:443 2>/dev/null | openssl x509 -noout -text
+
+# Just the expiry dates
+echo | openssl s_client -servername example.com \
+  -connect example.com:443 2>/dev/null | openssl x509 -noout -dates
+
+# Days until expiry (number only)
+echo | openssl s_client -servername example.com \
+  -connect example.com:443 2>/dev/null | openssl x509 -noout -enddate \
+  | cut -d= -f2 | xargs -I{} date -d "{}" +%s \
+  | xargs -I{} sh -c 'echo $(( ({} - $(date +%s)) / 86400 ))'
+</code></pre>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> Set up a cron job or monitoring alert to notify you 30 days before your certificate expires. A lapsed SSL cert will break your site for all visitors.</p>
+</div>
+
+<h2>Understanding the Certificate Chain</h2>
+<p>Certificates work in a chain of trust. Your site's certificate is signed by an intermediate CA, which is in turn signed by a root CA that browsers trust.</p>
+
+<pre><code>Root CA (built into browser)
+  └── Intermediate CA (issued by root)
+        └── Your site certificate (issued by intermediate)</code></pre>
+
+<p>If your server doesn't send the intermediate certificate, some clients will show a warning even though the cert itself is valid. This is one of the most common SSL configuration mistakes.</p>
+
+<h3>Check your chain with openssl</h3>
+<pre><code># Verify the full chain
+openssl s_client -servername example.com \
+  -connect example.com:443 -showcerts 2>/dev/null \
+  | grep -E "^(subject|issuer)"
+</code></pre>
+
+<h2>Common SSL Errors and How to Fix Them</h2>
+<table>
+  <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+  <tr><td>ERR_CERT_DATE_INVALID</td><td>Certificate expired</td><td>Renew the certificate</td></tr>
+  <tr><td>ERR_CERT_COMMON_NAME_INVALID</td><td>Domain mismatch</td><td>Reissue cert for correct domain</td></tr>
+  <tr><td>ERR_CERT_AUTHORITY_INVALID</td><td>Untrusted issuer</td><td>Use a trusted CA; don't use self-signed in production</td></tr>
+  <tr><td>ERR_CERT_INCOMPLETE_CHAIN</td><td>Missing intermediate cert</td><td>Configure server to send full chain</td></tr>
+  <tr><td>SSL_ERROR_RX_RECORD_TOO_LONG</td><td>HTTP served on HTTPS port</td><td>Check server config — port 443 must serve TLS</td></tr>
+</table>
+
+<h2>Wildcard Certificates and SANs</h2>
+<p>A single certificate can cover multiple domains using Subject Alternative Names (SANs):</p>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#e2e8f0">Wildcard</strong> — <code>*.example.com</code> covers all subdomains (api.example.com, www.example.com, etc.) but not the root domain or sub-subdomains</li>
+  <li><strong style="color:#e2e8f0">Multi-domain SAN</strong> — lists specific domains explicitly, can cover completely different domains</li>
+  <li><strong style="color:#e2e8f0">Let's Encrypt</strong> — issues free certs with up to 100 SANs per certificate</li>
+</ul>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> Always include both <code>example.com</code> and <code>www.example.com</code> in your certificate's SANs. A cert for only one won't work for the other.</p>
+</div>
+
+<h2>Automating SSL with Let's Encrypt</h2>
+<p>Let's Encrypt provides free, automatically-renewing certificates. On most Linux servers, Certbot handles everything:</p>
+<pre><code># Install certbot (Ubuntu/Debian)
+apt install certbot python3-certbot-nginx
+
+# Issue a certificate for your domain
+certbot --nginx -d example.com -d www.example.com
+
+# Auto-renewal runs via cron or systemd timer
+# Test renewal manually:
+certbot renew --dry-run
+</code></pre>
+
+<p>Certificates are valid for 90 days. Certbot auto-renews when there are fewer than 30 days left. Check the renewal timer:</p>
+<pre><code>systemctl status certbot.timer</code></pre>
+
+<h2>Monitoring Certificate Expiry</h2>
+<p>For production servers, proactive monitoring prevents expired cert outages:</p>
+
+<h3>Simple cron-based check</h3>
+<pre><code>#!/bin/bash
+# Check SSL expiry and alert if < 30 days
+DOMAIN="example.com"
+EXPIRY=$(echo | openssl s_client -servername $DOMAIN \
+  -connect $DOMAIN:443 2>/dev/null \
+  | openssl x509 -noout -enddate | cut -d= -f2)
+EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s)
+NOW_EPOCH=$(date +%s)
+DAYS=$(( ($EXPIRY_EPOCH - $NOW_EPOCH) / 86400 ))
+
+if [ $DAYS -lt 30 ]; then
+  echo "WARNING: $DOMAIN SSL cert expires in $DAYS days" | mail -s "SSL Alert" admin@example.com
+fi
+</code></pre>
+
+<div class="warn-box">
+  <p>⚠️ <strong>Note:</strong> An expired certificate will immediately break your site for all visitors. Most browsers show a full-page warning with no easy override, causing nearly 100% bounce rate.</p>
+</div>
+
+<h2>HTTP Strict Transport Security (HSTS)</h2>
+<p>HSTS tells browsers to always use HTTPS for your domain — even if the user types <code>http://</code>. Add this header to your server response:</p>
+<pre><code># Nginx
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+# Apache
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</code></pre>
+
+<p>Once HSTS is active, browsers cache this directive. Be careful: if you let your certificate expire while HSTS is active, users won't be able to bypass the warning.</p>
+
+<div class="cta-box">
+  <p>Check your website's SSL certificate — expiry, issuer, domains covered, and more.</p>
+  <a href="/ssl/" class="cta-btn">→ Try the SSL Certificate Checker</a>
+</div>
+
+<footer>
+  <p>More tools: <a href="/ip/">IP Lookup</a> · <a href="/dns/">DNS Lookup</a> · <a href="/network/">Network Tools</a> · <a href="/blog/">All Guides</a></p>
+  <p style="margin-top:8px">© 2026 SysUtil</p>
+</footer>
+</div>
+</body>
+</html>

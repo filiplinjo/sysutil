@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone=window.ezstandalone||{};ezstandalone.cmd=ezstandalone.cmd||[];</script>
+<script src="//ezoicanalytics.com/analytics.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Complete guide to IP address lookup. Learn what your IP address reveals, how geolocation works, the difference between IPv4 and IPv6, and how to look up any IP address online.">
+<meta name="keywords" content="ip address lookup, what is my ip, ip geolocation, ip address location, find ip address, ipv4 vs ipv6, ip lookup tool">
+<title>IP Address Lookup: Complete Guide to Finding & Understanding IP Addresses | SysUtil</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="SysUtil">
+<meta property="og:title" content="IP Address Lookup: Complete Guide to Finding & Understanding IP Addresses | SysUtil">
+<meta property="og:description" content="Learn what your IP address reveals, how geolocation works, and how to look up any IP address online.">
+<meta property="og:url" content="https://sysutil.dev/blog/ip-address-lookup-guide">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IP Address Lookup Guide | SysUtil">
+<meta name="twitter:description" content="Learn what your IP address reveals, how geolocation works, and how to look up any IP address online.">
+<link rel="canonical" href="https://sysutil.dev/blog/ip-address-lookup-guide">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css?v=3">
+<style>
+  .container{max-width:780px}
+  header{text-align:center;padding:40px 0 32px}
+  header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.3}
+  .meta{color:#64748b;font-size:0.85rem;margin-bottom:8px}
+  .intro{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto}
+  .cta-box{background:#1e2130;border:1px solid #6366f1;border-radius:12px;padding:20px 24px;margin:32px 0;text-align:center}
+  .cta-box p{color:#94a3b8;margin-bottom:12px;font-size:0.95rem}
+  .cta-btn{display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 28px;border-radius:8px;font-weight:600;font-size:0.95rem;transition:background 0.2s}
+  .cta-btn:hover{background:#4f46e5}
+  h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-top:8px;border-top:1px solid #1e2130}
+  h3{font-size:1.1rem;font-weight:600;color:#a5b4fc;margin:24px 0 10px}
+  p{color:#94a3b8;margin-bottom:16px}
+  code{background:#1e2130;border:1px solid #2d3148;border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.9rem;color:#a5b4fc}
+  pre{background:#0a0c12;border:1px solid #2d3148;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0}
+  pre code{background:none;border:none;padding:0;font-size:0.88rem;line-height:1.8;color:#e2e8f0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#161824;color:#64748b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;text-align:left;border-bottom:1px solid #2d3148}
+  td{padding:10px 14px;border-bottom:1px solid #161824;color:#94a3b8;font-size:0.9rem}
+  td:first-child{font-family:monospace;color:#6366f1;font-weight:600}
+  tr:hover td{background:#0f1117}
+  .tip-box{background:#1a1d2e;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .tip-box p{margin:0;font-size:0.9rem}
+  .warn-box{background:#1a1208;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0}
+  .warn-box p{margin:0;font-size:0.9rem;color:#fcd34d}
+  footer{text-align:center;padding:40px 0 20px;color:#374151;font-size:0.85rem;border-top:1px solid #1e2130;margin-top:48px}
+  footer a{color:#6366f1;text-decoration:none}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is my IP address?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your IP address is the unique number assigned to your device on the internet. You can find it instantly using an IP lookup tool — it typically looks like 192.168.1.1 (IPv4) or a longer string like 2001:db8::1 (IPv6)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can an IP address reveal my exact location?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. IP geolocation can typically identify your country, region, and approximate city, but not your exact street address. The location shown is usually the data centre or ISP exchange your connection routes through, which may be miles from where you actually are."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between IPv4 and IPv6?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IPv4 uses 32-bit addresses in the format 192.168.1.1, allowing about 4.3 billion unique addresses. IPv6 uses 128-bit addresses like 2001:db8::1, supporting virtually unlimited addresses. IPv6 was introduced because the internet ran out of IPv4 addresses."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my IP address change?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most home internet connections use a dynamic IP that changes periodically when your router reconnects. Businesses and servers usually pay for a static IP that never changes. Mobile devices may change IP frequently as they switch between WiFi and cellular networks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I hide my IP address?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can hide your IP address using a VPN (Virtual Private Network), which routes your traffic through a server in another location. The Tor browser also hides your IP by routing traffic through multiple relays. Proxy servers are another option but generally less secure."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<script src="/nav.js"></script>
+<div class="container">
+<header>
+  <div class="meta">Guide · IP Addresses · 6 min read</div>
+  <h1>IP Address Lookup: Complete Guide to Finding & Understanding IP Addresses</h1>
+  <p class="intro">Everything you need to know about IP addresses — what they reveal, how geolocation works, and how to look up any IP in seconds.</p>
+</header>
+
+<div class="cta-box">
+  <p>Find your IP address or look up any IP instantly — no signup required.</p>
+  <a href="/ip/" class="cta-btn">→ Open IP Lookup Tool</a>
+</div>
+
+<h2>What Is an IP Address?</h2>
+<p>An IP (Internet Protocol) address is a unique number assigned to every device connected to the internet. Think of it like a postal address — without it, data packets wouldn't know where to go. Every time you load a website, your browser sends requests from your IP address, and the server sends responses back to it.</p>
+<p>There are two versions in use today: IPv4 and IPv6.</p>
+
+<h3>IPv4 vs IPv6</h3>
+<table>
+  <tr><th>Feature</th><th>IPv4</th><th>IPv6</th></tr>
+  <tr><td>Format</td><td>192.168.1.1</td><td>2001:0db8:85a3::8a2e:0370:7334</td></tr>
+  <tr><td>Address space</td><td>~4.3 billion</td><td>~340 undecillion</td></tr>
+  <tr><td>Still in use</td><td>Yes (majority)</td><td>Yes (growing fast)</td></tr>
+  <tr><td>Example</td><td>8.8.8.8</td><td>2001:4860:4860::8888</td></tr>
+</table>
+
+<p>The world ran out of IPv4 addresses around 2011, which is why IPv6 was introduced. Most modern networks support both simultaneously — a setup called <strong>dual stack</strong>.</p>
+
+<h2>What Does an IP Address Reveal?</h2>
+<p>When someone has your IP address, they can typically find out:</p>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#e2e8f0">Country</strong> — very accurate (99%+)</li>
+  <li><strong style="color:#e2e8f0">Region / State</strong> — usually accurate</li>
+  <li><strong style="color:#e2e8f0">City</strong> — approximate (often the nearest exchange point)</li>
+  <li><strong style="color:#e2e8f0">ISP / Carrier</strong> — who provides your internet</li>
+  <li><strong style="color:#e2e8f0">Timezone</strong> — inferred from location</li>
+</ul>
+<p>What they <strong>cannot</strong> find from your IP alone: your exact street address, your name, or any personal information. That data requires a court order to your ISP.</p>
+
+<div class="tip-box">
+  <p>💡 <strong>Tip:</strong> The city shown in an IP lookup is often the location of your ISP's network exchange, not where you physically are. This is especially common with mobile carriers and business connections.</p>
+</div>
+
+<h2>Public vs Private IP Addresses</h2>
+<p>There are two types of IP addresses you'll encounter:</p>
+
+<h3>Public IP</h3>
+<p>Your public IP is what the rest of the internet sees. It's assigned by your ISP and is the address returned by any "what is my IP" tool. All devices on your home network share the same public IP through a process called NAT (Network Address Translation).</p>
+
+<h3>Private IP</h3>
+<p>Private IPs are used inside local networks (your home WiFi, office network). They're not routable on the public internet. The reserved ranges are:</p>
+<table>
+  <tr><th>Range</th><th>Common Use</th></tr>
+  <tr><td>10.0.0.0 – 10.255.255.255</td><td>Large corporate networks</td></tr>
+  <tr><td>172.16.0.0 – 172.31.255.255</td><td>Mid-size networks</td></tr>
+  <tr><td>192.168.0.0 – 192.168.255.255</td><td>Home routers (most common)</td></tr>
+</table>
+
+<p>When you check your IP on a laptop connected to home WiFi, you'll get the public IP — not the <code>192.168.x.x</code> private address your router assigned to your laptop.</p>
+
+<h2>How to Find Your IP Address</h2>
+
+<h3>Using a tool (easiest)</h3>
+<p>Visit <a href="/ip/" style="color:#818cf8">sysutil.dev/ip</a> — your IP is displayed instantly, along with country, region, city and timezone.</p>
+
+<h3>On Linux / Mac (terminal)</h3>
+<pre><code># External IP (what the internet sees)
+curl ifconfig.me
+
+# Or
+curl -s https://api.ipify.org
+
+# Local network IP
+ip addr show        # Linux
+ifconfig            # Mac/Linux
+</code></pre>
+
+<h3>On Windows (Command Prompt)</h3>
+<pre><code># External IP
+curl ifconfig.me
+
+# Local IP
+ipconfig
+</code></pre>
+
+<h2>How to Look Up Any IP Address</h2>
+<p>To look up geolocation and details for any IP address:</p>
+<ol style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2.2">
+  <li>Go to <a href="/ip/" style="color:#818cf8">sysutil.dev/ip</a></li>
+  <li>Enter the IP address in the input field</li>
+  <li>Click <strong style="color:#e2e8f0">Look Up</strong></li>
+  <li>See country, region, city, coordinates and timezone</li>
+</ol>
+
+<p>You can also look up IP addresses from the command line:</p>
+<pre><code># Using curl with a free geo API
+curl -s https://ipapi.co/8.8.8.8/json/ | python3 -m json.tool
+
+# Or using dig to find the hostname
+dig -x 8.8.8.8 +short
+</code></pre>
+
+<h2>Static vs Dynamic IP Addresses</h2>
+<table>
+  <tr><th></th><th>Dynamic IP</th><th>Static IP</th></tr>
+  <tr><td>Changes</td><td>Yes, periodically</td><td>No, stays the same</td></tr>
+  <tr><td>Who uses it</td><td>Home internet users</td><td>Servers, businesses</td></tr>
+  <tr><td>Cost</td><td>Included in plan</td><td>Extra charge from ISP</td></tr>
+  <tr><td>Good for</td><td>General browsing</td><td>Hosting, remote access</td></tr>
+</table>
+
+<h2>How to Hide Your IP Address</h2>
+<p>There are several ways to mask your public IP:</p>
+
+<h3>VPN (Recommended)</h3>
+<p>A VPN routes all your traffic through a server in another location. Websites see the VPN server's IP instead of yours. Good for privacy, streaming geo-restricted content, and using public WiFi safely.</p>
+
+<h3>Tor Browser</h3>
+<p>Routes traffic through multiple volunteer-operated relays, making it very difficult to trace back to you. Much slower than a VPN but more anonymous. Used by journalists and privacy advocates.</p>
+
+<h3>Proxy Server</h3>
+<p>Similar to a VPN but typically only for web traffic and less secure. Free proxies in particular should be avoided as they may log your traffic.</p>
+
+<div class="warn-box">
+  <p>⚠️ <strong>Note:</strong> Hiding your IP doesn't make you anonymous — websites can still track you through cookies, browser fingerprinting, and logged-in accounts.</p>
+</div>
+
+<h2>Common Uses for IP Lookup</h2>
+<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
+  <li><strong style="color:#e2e8f0">Security analysis</strong> — identify suspicious traffic sources in server logs</li>
+  <li><strong style="color:#e2e8f0">Geo-restriction</strong> — verify what country a connection appears to come from</li>
+  <li><strong style="color:#e2e8f0">Troubleshooting</strong> — confirm your VPN is working by checking your apparent IP</li>
+  <li><strong style="color:#e2e8f0">Email headers</strong> — trace the origin of suspicious emails</li>
+  <li><strong style="color:#e2e8f0">Fraud prevention</strong> — check if a user's IP matches their claimed location</li>
+</ul>
+
+<div class="cta-box">
+  <p>Look up your IP address or any other IP — location, country, timezone and more.</p>
+  <a href="/ip/" class="cta-btn">→ Try the IP Lookup Tool</a>
+</div>
+
+<footer>
+  <p>More tools: <a href="/dns/">DNS Lookup</a> · <a href="/ssl/">SSL Checker</a> · <a href="/network/">Network Tools</a> · <a href="/blog/">All Guides</a></p>
+  <p style="margin-top:8px">© 2026 SysUtil</p>
+</footer>
+</div>
+</body>
+</html>
