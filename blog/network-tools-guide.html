@@ -8,17 +8,17 @@
 <script src="//ezoicanalytics.com/analytics.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Complete guide to network diagnostic tools. Learn how to use ping, traceroute, port scanners, and speed tests to troubleshoot internet and network connectivity problems.">
-<meta name="keywords" content="network tools, ping test, traceroute, port checker, website speed test, network diagnostics, troubleshoot internet connection, check open ports">
-<title>Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test | SysUtil</title>
+<meta name="description" content="Complete guide to network diagnostic tools. Learn how to use ping, port scanners, and speed tests to troubleshoot internet and network connectivity problems.">
+<meta name="keywords" content="network tools, ping test, port checker, website speed test, network diagnostics, troubleshoot internet connection, check open ports">
+<title>Network Tools Guide: Ping, Port Checker & Speed Test | SysUtil</title>
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="SysUtil">
-<meta property="og:title" content="Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test | SysUtil">
-<meta property="og:description" content="Learn how to use ping, traceroute, port scanners, and speed tests to diagnose network problems.">
+<meta property="og:title" content="Network Tools Guide: Ping, Port Checker & Speed Test | SysUtil">
+<meta property="og:description" content="Learn how to use ping, port scanners, and speed tests to diagnose network problems.">
 <meta property="og:url" content="https://sysutil.dev/blog/network-tools-guide">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Network Tools Guide | SysUtil">
-<meta name="twitter:description" content="Learn how to use ping, traceroute, port scanners, and speed tests to diagnose network problems.">
+<meta name="twitter:description" content="Learn how to use ping, port scanners, and speed tests to diagnose network problems.">
 <link rel="canonical" href="https://sysutil.dev/blog/network-tools-guide">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/styles.css?v=6">
@@ -81,14 +81,6 @@
     },
     {
       "@type": "Question",
-      "name": "What is traceroute used for?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Traceroute shows the path network packets take from your machine to a destination, listing every router (hop) along the way with its latency. It's used to identify where in the network a connection is slow or dropping packets — whether the problem is in your ISP, a transit provider, or near the destination."
-      }
-    },
-    {
-      "@type": "Question",
       "name": "What is a good ping response time?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -104,16 +96,15 @@
 <div class="container">
 <header>
   <div class="meta">Guide · Network Diagnostics · 8 min read</div>
-  <h1>Network Tools Guide: Ping, Traceroute, Port Checker & Speed Test</h1>
-  <p class="intro">Learn how to use the essential network diagnostic tools to troubleshoot connectivity, measure performance, and understand how your traffic flows.</p>
+  <h1>Network Tools Guide: Ping, Port Checker & Speed Test</h1>
+  <p class="intro">Learn how to use the essential network diagnostic tools to troubleshoot connectivity, measure performance, and understand your network.</p>
 </header>
 
 <div class="cta-box">
-  <p>Run ping, traceroute, port checks, and speed tests from your browser — no install required.</p>
+  <p>Run ping, port checks, and speed tests from your browser — no install required.</p>
   <a href="/network#speed" class="cta-btn" style="margin:4px">⚡ Speed Test</a>
   <a href="/network#ports" class="cta-btn" style="margin:4px;background:#06b6d4">🔌 Port Checker</a>
   <a href="/network#ping"  class="cta-btn" style="margin:4px;background:#10b981">📡 Ping</a>
-  <a href="/network#trace" class="cta-btn" style="margin:4px;background:#a855f7">🗺 Traceroute</a>
 </div>
 
 <h2>Website Speed Test</h2>
@@ -239,46 +230,6 @@ ping -n 10 example.com
   <p>💡 <strong>Tip:</strong> If ping shows 0% packet loss but your site feels slow, check the TTFB with a speed test — latency alone doesn't explain slow page loads. The bottleneck might be server-side processing.</p>
 </div>
 
-<h2>Traceroute</h2>
-<p>Traceroute maps the path packets take across the network, showing each router (hop) between you and the destination. It's invaluable for finding where in the network a problem lies.</p>
-
-<h3>How traceroute works</h3>
-<p>Traceroute sends packets with increasing TTL values starting at 1. Each router decrements the TTL; when it reaches 0 the router sends back a "Time Exceeded" message. By incrementing the TTL, traceroute reveals each hop in the path.</p>
-
-<h3>Reading traceroute output</h3>
-<pre><code>traceroute to google.com (142.250.74.46)
- 1  192.168.1.1      1.2 ms   1.1 ms   1.0 ms   (your router)
- 2  10.0.0.1         8.4 ms   8.6 ms   8.3 ms   (ISP gateway)
- 3  72.14.215.165   11.2 ms  11.0 ms  11.3 ms   (ISP backbone)
- 4  * * *                                        (no response)
- 5  142.250.74.46   12.1 ms  12.0 ms  11.9 ms   (destination)</code></pre>
-
-<p>Each line shows: <strong>hop number</strong>, <strong>router IP/hostname</strong>, and <strong>three round-trip time measurements</strong>. Stars (<code>* * *</code>) mean the router didn't respond to traceroute — this is normal for many routers that block ICMP and doesn't necessarily indicate a problem.</p>
-
-<h3>What to look for</h3>
-<ul style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2">
-  <li><strong style="color:#e2e8f0">Sudden latency jump</strong> — a hop where RTT increases sharply is likely the bottleneck</li>
-  <li><strong style="color:#e2e8f0">All stars after a point</strong> — packets are being dropped beyond that hop</li>
-  <li><strong style="color:#e2e8f0">Routing loops</strong> — if you see the same IP multiple times, BGP routing may be misconfigured</li>
-  <li><strong style="color:#e2e8f0">Unexpected geography</strong> — traffic going through distant countries adds latency</li>
-</ul>
-
-<h3>Command line usage</h3>
-<pre><code># Linux
-traceroute example.com
-
-# Mac
-traceroute example.com
-
-# Windows
-tracert example.com
-
-# Use TCP instead of ICMP (bypasses some firewalls)
-traceroute -T -p 443 example.com
-
-# Limit hops
-traceroute -m 20 example.com
-</code></pre>
 
 <h2>Diagnosing Network Problems: A Workflow</h2>
 <p>When troubleshooting a connectivity issue, work through these steps in order:</p>
@@ -286,7 +237,6 @@ traceroute -m 20 example.com
 <ol style="color:#94a3b8;margin-bottom:16px;padding-left:20px;line-height:2.2">
   <li><strong style="color:#e2e8f0">Ping the destination</strong> — Is the host reachable? What's the latency?</li>
   <li><strong style="color:#e2e8f0">Check the port</strong> — Is the specific service port open? (e.g., port 443 for HTTPS)</li>
-  <li><strong style="color:#e2e8f0">Run traceroute</strong> — Where does the path slow down or fail?</li>
   <li><strong style="color:#e2e8f0">Test speed</strong> — What is the TTFB and total response time?</li>
   <li><strong style="color:#e2e8f0">Check DNS</strong> — Is the domain resolving to the right IP?</li>
 </ol>
@@ -314,11 +264,10 @@ ping -f -l 1472 example.com
   <a href="/network#speed" class="cta-btn" style="margin:4px">⚡ Speed Test</a>
   <a href="/network#ports" class="cta-btn" style="margin:4px;background:#06b6d4">🔌 Port Checker</a>
   <a href="/network#ping"  class="cta-btn" style="margin:4px;background:#10b981">📡 Ping</a>
-  <a href="/network#trace" class="cta-btn" style="margin:4px;background:#a855f7">🗺 Traceroute</a>
 </div>
 
 <footer>
-  <p>More tools: <a href="/ip/">IP Lookup</a> · <a href="/ssl/">SSL Checker</a> · <a href="/dns/">DNS Lookup</a> · <a href="/blog/">All Guides</a></p>
+  <p>Free tools: <a href="/">chmod</a> · <a href="/cron/">cron</a> · <a href="/file-size/">file size</a> · <a href="/linux-commands/">commands</a> · <a href="/json/">json</a> · <a href="/regex/">regex</a> · <a href="/diff/">diff</a> · <a href="/password/">password</a> · <a href="/base64/">base64</a> · <a href="/url-encode/">url encode</a> · <a href="/uuid/">uuid</a> · <a href="/jwt/">jwt</a> · <a href="/http-status/">http status</a> · <a href="/timestamp/">timestamp</a> · <a href="/dns/">dns</a> · <a href="/ip/">ip lookup</a> · <a href="/ssl/">ssl checker</a> · <a href="/network/">network</a> · <a href="/cve/">cve lookup</a></p>
   <p style="margin-top:8px">© 2026 SysUtil</p>
 </footer>
 </div>

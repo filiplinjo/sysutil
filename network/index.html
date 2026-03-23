@@ -8,10 +8,10 @@
 <script src="//ezoicanalytics.com/analytics.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Free online network tools: website speed test, port checker, ping test, and traceroute. Diagnose network issues from your browser.">
-<title>Network Tools — Speed Test, Port Checker, Ping, Traceroute | SysUtil</title>
+<meta name="description" content="Free online network tools: website speed test, port checker, and ping test. Diagnose network issues from your browser.">
+<title>Network Tools — Speed Test, Port Checker, Ping | SysUtil</title>
 <meta property="og:title" content="Network Tools | SysUtil">
-<meta property="og:description" content="Online ping test, traceroute, port checker and website speed test.">
+<meta property="og:description" content="Online ping test, port checker and website speed test.">
 <meta property="og:url" content="https://sysutil.dev/network/">
 <link rel="canonical" href="https://sysutil.dev/network/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -24,7 +24,6 @@
   --c-speed: #f59e0b;
   --c-ports: #06b6d4;
   --c-ping:  #10b981;
-  --c-trace: #a855f7;
 }
 
 .tabs { display:flex; gap:4px; background:#0d0f1a; border:1px solid #1e2235; border-radius:14px; padding:5px; margin-bottom:20px; flex-wrap:wrap; }
@@ -33,7 +32,7 @@
 .tab[data-tab="speed"].active { background:rgba(245,158,11,0.15); color:var(--c-speed); box-shadow:0 0 0 1px rgba(245,158,11,0.3); }
 .tab[data-tab="ports"].active { background:rgba(6,182,212,0.15);  color:var(--c-ports); box-shadow:0 0 0 1px rgba(6,182,212,0.3); }
 .tab[data-tab="ping"].active  { background:rgba(16,185,129,0.15); color:var(--c-ping);  box-shadow:0 0 0 1px rgba(16,185,129,0.3); }
-.tab[data-tab="trace"].active { background:rgba(168,85,247,0.15); color:var(--c-trace); box-shadow:0 0 0 1px rgba(168,85,247,0.3); }
+
 .panel { display:none; }
 .panel.active { display:block; }
 
@@ -50,8 +49,6 @@
 #panel-ports  .btn-run:hover { background:#0891b2; }
 #panel-ping   .btn-run { background:var(--c-ping); }
 #panel-ping   .btn-run:hover { background:#059669; }
-#panel-trace  .btn-run { background:var(--c-trace); }
-#panel-trace  .btn-run:hover { background:#9333ea; }
 
 .btn-run { border:none; color:#fff; padding:12px 24px; border-radius:10px; cursor:pointer; font-size:0.95rem; font-weight:600; font-family:inherit; transition:background 0.15s; white-space:nowrap; }
 .btn-run:disabled { background:#1e2235 !important; color:#475569; cursor:default; }
@@ -102,14 +99,13 @@
 <div class="container">
   <div class="page-header">
     <h1 class="page-title">Network Tools</h1>
-    <p class="page-subtitle">Speed test, port checker, ping, and traceroute — all from your browser.</p>
+    <p class="page-subtitle">Speed test, port checker, and ping — all from your browser.</p>
   </div>
 
   <div class="tabs">
     <button class="tab active" data-tab="speed" onclick="switchTab('speed')">⚡ Speed Test</button>
     <button class="tab" data-tab="ports" onclick="switchTab('ports')">🔌 Port Checker</button>
     <button class="tab" data-tab="ping"  onclick="switchTab('ping')">📡 Ping</button>
-    <button class="tab" data-tab="trace" onclick="switchTab('trace')">🗺 Traceroute</button>
   </div>
 
   <!-- SPEED TEST -->
@@ -169,27 +165,11 @@
     <div id="ping-result"></div>
   </div>
 
-  <!-- TRACEROUTE -->
-  <div id="panel-trace" class="panel">
-    <div class="tool-card">
-      <div class="warn-box">⏱ Traceroute may take up to 30–60 seconds to complete.</div>
-      <div class="lookup-row">
-        <input type="text" id="traceHost" class="lookup-input" placeholder="google.com or 8.8.8.8" autocomplete="off" data-form-type="other" data-lpignore="true">
-        <button class="btn-run" id="traceBtn" onclick="runTrace()">Traceroute</button>
-      </div>
-      <div class="examples">
-        <span class="examples-label">Examples:</span>
-        <span class="example-chip" onclick="runTrace('google.com')">google.com</span>
-        <span class="example-chip" onclick="runTrace('cloudflare.com')">cloudflare.com</span>
-      </div>
-    </div>
-    <div id="trace-result"></div>
-  </div>
 </div>
 
 <script>
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['speed','ports','ping','trace'][i] === name));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['speed','ports','ping'][i] === name));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
   history.replaceState(null, '', '#' + name);
@@ -197,7 +177,7 @@ function switchTab(name) {
 // Open tab from URL hash on load
 (function() {
   var hash = window.location.hash.replace('#','');
-  if (['speed','ports','ping','trace'].includes(hash)) switchTab(hash);
+  if (['speed','ports','ping'].includes(hash)) switchTab(hash);
 })();
 
 function toggleCat(btn) { btn.classList.toggle('on'); }
@@ -300,29 +280,12 @@ async function runPing(host) {
   btn.disabled = false;
 }
 
-// ── Traceroute ──
-async function runTrace(host) {
-  if (host) document.getElementById('traceHost').value = host;
-  const h = document.getElementById('traceHost').value.trim();
-  if (!h) return;
-  const btn = document.getElementById('traceBtn');
-  btn.disabled = true;
-  document.getElementById('trace-result').innerHTML = '<div class="spinner">Running traceroute… (up to 60s)</div>';
-  try {
-    const data = await fetch(`/api/traceroute?host=${encodeURIComponent(h)}`).then(r => r.json());
-    if (data.error) throw new Error(data.error);
-    document.getElementById('trace-result').innerHTML = `<div class="result-card"><div class="result-label">traceroute ${data.host}</div><div class="terminal">${escHtml(data.output)}</div></div>`;
-  } catch(e) {
-    document.getElementById('trace-result').innerHTML = `<div class="error-box">Error: ${e.message}</div>`;
-  }
-  btn.disabled = false;
-}
 
 function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // Keyboard enter support
-['speedUrl','portsHost','pingHost','traceHost'].forEach((id,i) => {
-  const fns = [runSpeed, runPorts, runPing, runTrace];
+['speedUrl','portsHost','pingHost'].forEach((id,i) => {
+  const fns = [runSpeed, runPorts, runPing];
   document.getElementById(id).addEventListener('keydown', e => e.key === 'Enter' && fns[i]());
 });
 </script>

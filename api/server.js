@@ -58,7 +58,6 @@ const networkLimiter = rateLimit({
 app.use('/api/', limiter);
 app.use('/api/ai/', aiLimiter);
 app.use('/api/ping',       networkLimiter);
-app.use('/api/traceroute', networkLimiter);
 app.use('/api/ports',      networkLimiter);
 app.use('/api/speed',      networkLimiter);
 app.use('/api/ssl',        networkLimiter);
@@ -605,22 +604,6 @@ app.get('/api/ping', async (req, res) => {
   } catch (e) { res.status(502).json({ error: e.message }); }
 });
 
-// ── Traceroute ────────────────────────────────────────────────────────────────
-app.get('/api/traceroute', async (req, res) => {
-  const host = (req.query.host || '').trim();
-  if (!host || !/^[a-zA-Z0-9.\-]+$/.test(host))
-    return res.status(400).json({ error: 'Invalid host.' });
-  try { await resolveAndCheckSSRF(host); } catch (e) { return res.status(400).json({ error: e.message }); }
-
-  try {
-    const output = await new Promise((resolve, reject) =>
-      execFile('traceroute', ['-m', '15', '-w', '2', host], { timeout: 60000 },
-        (err, stdout, stderr) => stdout ? resolve(stdout) : reject(new Error(stderr || err?.message || 'traceroute failed'))
-      )
-    );
-    res.json({ host, output });
-  } catch (e) { res.status(502).json({ error: e.message }); }
-});
 
 // ── Website speed test ────────────────────────────────────────────────────────
 app.get('/api/speed', async (req, res) => {

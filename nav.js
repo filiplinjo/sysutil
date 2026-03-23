@@ -75,7 +75,6 @@
                 link('/network#speed', 'speed test') +
                 link('/network#ports', 'port checker') +
                 link('/network#ping', 'ping') +
-                link('/network#trace', 'traceroute') +
               '</div>' +
 
               '<div class="nav-cat">' +
@@ -123,6 +122,7 @@
       tsLink('/ip', 'ip lookup') +
       tsLink('/ssl', 'ssl checker') +
       tsLink('/network', 'network') +
+
       '<span class="ts-sep"></span>' +
       tsLink('/cve', 'cve') +
     '</div></div>';
